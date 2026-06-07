@@ -13,7 +13,7 @@ export default function SettingsButton({ style = {} }) {
       whileTap={{ scale: 0.88 }}
       onClick={toggleSettings}
       className="fixed top-5 right-5 z-[60] w-11 h-11 rounded-2xl flex items-center justify-center border border-white/8 backdrop-blur-xl hover:bg-white/8 transition-all"
-      style={{ background: 'rgba(255,255,255,0.04)', ...style }}
+      style={{ background: 'rgba(255,255,255,0.04)', top: 'env(safe-area-inset-top, 20px)', right: 'env(safe-area-inset-right, 20px)', ...style }}
     >
       <Settings size={20} className="text-smoke-400" />
     </motion.button>
