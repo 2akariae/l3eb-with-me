@@ -61,27 +61,16 @@ export default function AuthScreen() {
     setError('');
     setLoading(true);
     try {
-      // Popup first — faster UX. Falls back to redirect if popup is blocked.
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (popupErr) {
-        const blocked = ['auth/popup-blocked','auth/popup-closed-by-user','auth/cancelled-popup-request'];
-        if (blocked.includes(popupErr.code)) {
-          await signInWithRedirect(auth, provider);
-          return; // page reloads after redirect
-        }
-        throw popupErr;
-      }
+      await signInWithRedirect(auth, provider);
     } catch (e) {
       if (e.code === 'auth/unauthorized-domain') {
         setError('Setup: add this site domain to Firebase Console → Authentication → Authorized Domains.');
       } else if (e.code === 'auth/network-request-failed') {
         setError('Network error. Check your connection.');
-      } else if (e.code !== 'auth/popup-closed-by-user') {
+      } else {
         setError(e.message);
       }
-    } finally {
-      if (mounted.current) setLoading(false);
+      setLoading(false);
     }
   }
 
