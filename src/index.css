@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── THE MAFIA — Global Styles ─────────────────────────────────────────── */
+
+@layer base {
+  :root {
+    --noir-950: #03020a;
+    --noir-900: #07050f;
+    --noir-850: #0d0a18;
+    --noir-800: #12101f;
+    --crimson: #e02020;
+    --gold-400: #e8c060;
+    --gold-500: #c9943a;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  html, body, #root {
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--noir-950);
+    color: white;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: rgba(201, 148, 58, 0.3);
+    color: #f5d98a;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,148,58,0.3); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(201,148,58,0.6); }
+}
+
+@layer components {
+  /* ── Screen container ──────────────────────────────────────────────────── */
+  .screen {
+    @apply fixed inset-0 flex flex-col w-full h-full;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* ── Noise texture overlay ─────────────────────────────────────────────── */
+  .noise::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* ── Glass card ─────────────────────────────────────────────────────────── */
+  .glass {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-crimson {
+    background: rgba(224, 32, 32, 0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(224, 32, 32, 0.2);
+  }
+
+  .glass-gold {
+    background: rgba(201, 148, 58, 0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(201, 148, 58, 0.25);
+  }
+
+  /* ── Typography ─────────────────────────────────────────────────────────── */
+  .display {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .mono {
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── Button base ─────────────────────────────────────────────────────────── */
+  .btn {
+    @apply relative flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 cursor-pointer select-none;
+    min-height: 48px;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn-primary {
+    @apply btn bg-crimson-600 hover:bg-crimson-500 text-white;
+    box-shadow: 0 0 20px rgba(224,32,32,0.25);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0 32px rgba(224,32,32,0.45);
+  }
+
+  .btn-gold {
+    @apply btn bg-gold-600 hover:bg-gold-500 text-noir-950;
+    box-shadow: 0 0 20px rgba(201,148,58,0.25);
+  }
+
+  .btn-ghost {
+    @apply btn glass text-smoke-200 hover:text-white;
+  }
+
+  .btn-danger {
+    @apply btn bg-noir-800 hover:bg-crimson-700 border border-crimson-700/40 text-crimson-400 hover:text-white;
+  }
+
+  /* ── Input ───────────────────────────────────────────────────────────────── */
+  .input {
+    @apply w-full px-4 py-3 rounded-lg bg-noir-800 border border-white/10 text-white placeholder-smoke-400 transition-all duration-200 outline-none;
+    min-height: 48px;
+  }
+
+  .input:focus {
+    border-color: rgba(201,148,58,0.5);
+    box-shadow: 0 0 0 3px rgba(201,148,58,0.1);
+  }
+
+  /* ── Avatar glow (voice active) ─────────────────────────────────────────── */
+  .avatar-speaking {
+    animation: speakingPulse 0.6s ease-in-out infinite alternate;
+  }
+
+  @keyframes speakingPulse {
+    from { box-shadow: 0 0 0 0 rgba(201,148,58,0.0), 0 0 0 2px rgba(201,148,58,0.6); }
+    to   { box-shadow: 0 0 0 8px rgba(201,148,58,0.0), 0 0 0 4px rgba(201,148,58,0.9); }
+  }
+
+  /* ── Phase gradient backgrounds ─────────────────────────────────────────── */
+  .bg-night {
+    background: radial-gradient(ellipse at 50% 0%, rgba(43,20,80,0.6) 0%, var(--noir-950) 70%);
+  }
+
+  .bg-day {
+    background: radial-gradient(ellipse at 50% 0%, rgba(80,40,20,0.6) 0%, var(--noir-950) 70%);
+  }
+
+  .bg-vote {
+    background: radial-gradient(ellipse at 50% 0%, rgba(80,20,20,0.6) 0%, var(--noir-950) 70%);
+  }
+
+  /* ── Envelope 3D flip ────────────────────────────────────────────────────── */
+  .envelope-scene {
+    perspective: 1000px;
+  }
+
+  .envelope-card {
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .envelope-card.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .envelope-front,
+  .envelope-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .envelope-back {
+    transform: rotateY(180deg);
+  }
+
+  /* ── Scroll unroll animation ─────────────────────────────────────────────── */
+  @keyframes unrollScroll {
+    from {
+      clip-path: inset(0 0 100% 0);
+      transform: scaleY(0.8);
+    }
+    to {
+      clip-path: inset(0 0 0% 0);
+      transform: scaleY(1);
+    }
+  }
+
+  .scroll-unroll {
+    animation: unrollScroll 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    transform-origin: top center;
+  }
+
+  /* ── Typewriter cursor ────────────────────────────────────────────────────── */
+  .typewriter::after {
+    content: '|';
+    animation: blink 0.8s step-end infinite;
+    color: var(--gold-500);
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  /* ── Dead player overlay ─────────────────────────────────────────────────── */
+  .player-dead {
+    filter: grayscale(1) brightness(0.4);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* ── Gold divider ─────────────────────────────────────────────────────────── */
+  .gold-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-500), transparent);
+  }
+}
+
+/* ── Mouse tracking CSS variables (set by useMouseTracker) ─────────────────── */
+:root {
+  --mx: 0;       /* normalized mouse X, -1 .. 1 */
+  --my: 0;       /* normalized mouse Y, -1 .. 1 */
+  --cx: 50vw;    /* raw cursor X */
+  --cy: 50vh;    /* raw cursor Y */
+}
+
+/* ── CSS-variable-driven parallax helpers ──────────────────────────────────── */
+/* Positive speed = layer moves same dir as cursor (near)  */
+/* Negative speed = layer moves opposite (far / stars)     */
+.parallax-far  { transform: translate(calc(var(--mx) * -9px),  calc(var(--my) * -6px));  will-change: transform; transition: transform 0.08s linear; }
+.parallax-mid  { transform: translate(calc(var(--mx) * -18px), calc(var(--my) * -11px)); will-change: transform; transition: transform 0.10s linear; }
+.parallax-near { transform: translate(calc(var(--mx) * -30px), calc(var(--my) * -18px)); will-change: transform; transition: transform 0.06s linear; }
+
+/* ── Bat wing-flap keyframe (CSS fallback) ─────────────────────────────────── */
+@keyframes wingFlap {
+  0%, 100% { transform: scaleY(1)    skewX(0deg);  }
+  50%       { transform: scaleY(-0.5) skewX(8deg); }
+}
+
+/* ── Smooth page transitions ───────────────────────────────────────────────── */
+
+
+/* ── Glow text utility ──────────────────────────────────────────────────────── */
+.glow-gold  { text-shadow: 0 0 24px rgba(232,192,96,0.5);  }
+.glow-red   { text-shadow: 0 0 24px rgba(224,32,32,0.6);   }
+.glow-green { text-shadow: 0 0 24px rgba(16,185,129,0.5);  }
+.glow-white { text-shadow: 0 0 30px rgba(255,255,255,0.3); }
+
+/* ── Card 3D perspective wrapper ────────────────────────────────────────────── */
+.card-3d { transform-style: preserve-3d; }

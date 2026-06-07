@@ -1,0 +1,73 @@
+{
+  "rules": {
+    "rooms": {
+      "$roomId": {
+        ".read": "auth !== null",
+        "meta": {
+          ".write": "auth !== null && (!data.exists() || data.child('hostUid').val() === auth.uid)"
+        },
+        "players": {
+          "$playerId": {
+            ".write": "auth !== null && (!data.exists() || data.child('authUid').val() === auth.uid || $playerId === auth.uid || root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid)"
+          }
+        },
+        "joinRequests": {
+          "$uid": {
+            ".write": "auth !== null && (auth.uid === $uid || root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid)"
+          }
+        },
+        "banned": {
+          ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
+        },
+        "$gameType": {
+          "gameState": {
+            ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
+          },
+          "roles": {
+            ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
+          },
+          "meta": {
+            ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
+          },
+          "doctorState": {
+            ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
+          },
+          "history": {
+            ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
+          },
+          "nightActions": {
+            "$actorKey": {
+              ".write": "auth !== null && ($actorKey === auth.uid || root.child('rooms').child($roomId).child('players').child($actorKey).child('authUid').val() === auth.uid)"
+            }
+          },
+          "votes": {
+            "$actorKey": {
+              ".write": "auth !== null && ($actorKey === auth.uid || root.child('rooms').child($roomId).child('players').child($actorKey).child('authUid').val() === auth.uid)"
+            }
+          },
+          "skipVotes": {
+            "$actorKey": {
+              ".write": "auth !== null && ($actorKey === auth.uid || root.child('rooms').child($roomId).child('players').child($actorKey).child('authUid').val() === auth.uid)"
+            }
+          },
+          "chat": {
+            ".write": "auth !== null"
+          },
+          "mafiaChat": {
+            ".write": "auth !== null"
+          }
+        }
+      }
+    },
+    "users": {
+      "$uid": {
+        ".read": "auth !== null",
+        ".write": "auth !== null && auth.uid === $uid"
+      }
+    },
+    "$other": {
+      ".read":  false,
+      ".write": false
+    }
+  }
+}

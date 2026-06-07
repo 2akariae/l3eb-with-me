@@ -1,0 +1,15 @@
+/*
+ * THE MAFIA — Security Headers
+ * Works with: Netlify (_headers file), Cloudflare Pages, Vercel (via vercel.json)
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(self), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://*.firebaseapp.com https://*.googleapis.com https://agora.io https://*.agora.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' wss://*.firebaseio.com https://*.googleapis.com https://*.firebaseapp.com https://*.agora.io wss://*.agora.io; img-src 'self' data: https:; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';
+*/

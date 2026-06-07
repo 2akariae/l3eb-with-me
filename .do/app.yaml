@@ -1,0 +1,48 @@
+# ─── DigitalOcean App Platform — app.yaml ─────────────────────────────────────
+# Docs: https://docs.digitalocean.com/products/app-platform/reference/app-spec/
+name: the-mafia
+region: nyc
+
+services:
+  - name: web
+    source_dir: /
+    github:
+      repo: 2akariae/the-mafia
+      branch: main
+      deploy_on_push: true
+    build_command: npm install && npm run build
+    run_command: npm start
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb   # cheapest — $0 on Student credit
+    http_port: 3000
+    health_check:
+      http_path: /
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: AGORA_APP_ID
+        type: SECRET        # set in DO dashboard — never in code
+      - key: AGORA_APP_CERTIFICATE
+        type: SECRET        # set in DO dashboard — never in code
+      # Firebase vars (VITE_ prefix needed for Vite build)
+      - key: VITE_FIREBASE_API_KEY
+        type: SECRET
+      - key: VITE_FIREBASE_AUTH_DOMAIN
+        type: SECRET
+      - key: VITE_FIREBASE_DATABASE_URL
+        type: SECRET
+      - key: VITE_FIREBASE_PROJECT_ID
+        type: SECRET
+      - key: VITE_FIREBASE_STORAGE_BUCKET
+        type: SECRET
+      - key: VITE_FIREBASE_MESSAGING_SENDER_ID
+        type: SECRET
+      - key: VITE_FIREBASE_APP_ID
+        type: SECRET
+      - key: VITE_FIREBASE_MEASUREMENT_ID
+        type: SECRET
+      - key: VITE_AGORA_APP_ID
+        type: SECRET
+      - key: VITE_APP_URL
+        value: https://the-mafia.ondigitalocean.app  # update after first deploy
