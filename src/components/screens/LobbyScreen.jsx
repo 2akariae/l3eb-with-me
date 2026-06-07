@@ -225,13 +225,13 @@ export default function LobbyScreen({ user, playerId }) {
       </div>
 
       {/* Header */}
-      <div className="relative z-10 flex items-center justify-between px-6 pt-safe pt-5 pb-4 border-b border-white/5 backdrop-blur-xl">
+      <div className="relative z-10 grid grid-cols-[auto,1fr,auto] items-center px-6 pt-safe pt-5 pb-4 border-b border-white/5 backdrop-blur-xl gap-4">
         <BackButton onClick={handleLeave} />
 
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center justify-center">
           <p className="text-[9px] font-black uppercase tracking-[0.3em] mb-1"
             style={{ color: accentColor }}>{t('waitingRoom')}</p>
-          <button onClick={handleShare} className="flex items-center gap-2 group">
+          <button onClick={handleShare} className="flex items-center gap-2 group justify-center">
             <span className="text-white font-black text-2xl tracking-widest">{roomId}</span>
             <Share2 size={14} className="text-smoke-600 group-hover:text-white transition-colors" />
           </button>
