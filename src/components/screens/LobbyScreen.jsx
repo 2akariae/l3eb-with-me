@@ -210,7 +210,7 @@ export default function LobbyScreen({ user, playerId }) {
   const requests = Object.entries(joinRequests);
 
   return (
-    <div className="screen overflow-hidden flex flex-col"
+    <div className="screen overflow-hidden flex flex-col pt-safe"
       style={{ background: 'linear-gradient(170deg,#080810 0%,#050508 100%)' }}
       dir={isAr ? 'rtl' : 'ltr'}>
 
