@@ -237,10 +237,8 @@ export default function LobbyScreen({ user, playerId }) {
           </button>
         </div>
 
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/8 bg-white/5">
-          <Users size={12} className="text-smoke-400" />
-          <span className="text-white text-xs font-black">{count}</span>
-        </div>
+        {/* Empty div to balance grid for center-alignment of Room ID */}
+        <div className="w-10" />
       </div>
 
       {/* Join requests (host only) */}
