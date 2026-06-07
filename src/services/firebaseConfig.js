@@ -11,6 +11,7 @@ import { initializeApp } from 'firebase/app';
 import {
   getAuth,
   GoogleAuthProvider,
+  signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
   signInAnonymously,
@@ -53,6 +54,8 @@ export const googleProvider = new GoogleAuthProvider();
 
 // Re-export frequently used Firebase functions so app code imports from one place
 export {
+  GoogleAuthProvider,
+  signInWithPopup,
   ref, set, get, push, update, remove,
   onValue, onDisconnect, serverTimestamp, off,
   signInWithRedirect, getRedirectResult,
