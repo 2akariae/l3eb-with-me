@@ -224,7 +224,7 @@ export default function SettingsPanel({ onClose }) {
               </div>
 
               {/* Sign in with different account */}
-              <button onClick={() => { resetSession(); onClose(); }}
+              <button onClick={async () => { await signOut(auth); resetSession(); onClose(); }}
                 className="flex items-center gap-3 w-full h-14 px-5 rounded-2xl bg-white/5 border border-white/8 hover:border-white/20 transition-all text-white font-bold text-sm">
                 <UserPlus size={18} className="text-blue-400" />
                 {isAr ? 'إضافة حساب آخر' : 'Switch Account'}
