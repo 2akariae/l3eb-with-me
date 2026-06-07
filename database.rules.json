@@ -3,6 +3,7 @@
     "rooms": {
       "$roomId": {
         ".read": "auth !== null",
+        ".write": "auth !== null && (!data.exists() || data.child('meta').child('hostUid').val() === auth.uid)",
         "meta": {
           ".write": "auth !== null && (!data.exists() || data.child('hostUid').val() === auth.uid)"
         },
@@ -20,21 +21,7 @@
           ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
         },
         "$gameType": {
-          "gameState": {
-            ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
-          },
-          "roles": {
-            ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
-          },
-          "meta": {
-            ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
-          },
-          "doctorState": {
-            ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
-          },
-          "history": {
-            ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
-          },
+          ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid",
           "nightActions": {
             "$actorKey": {
               ".write": "auth !== null && ($actorKey === auth.uid || root.child('rooms').child($roomId).child('players').child($actorKey).child('authUid').val() === auth.uid)"
