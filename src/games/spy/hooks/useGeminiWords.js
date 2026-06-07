@@ -24,7 +24,7 @@ Rules:
 - Be creative and avoid repetition.`;
 
   const res = await fetch(
-    \`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=\${apiKey}\`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
     {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -34,7 +34,7 @@ Rules:
       }),
     }
   );
-  if (!res.ok) throw new Error(\`Gemini \${res.status}\`);
+  if (!res.ok) throw new Error(`Gemini ${res.status}`);
   const data    = await res.json();
   const raw     = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
   const cleaned = raw.replace(/```json|```/g, '').trim();
