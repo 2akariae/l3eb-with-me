@@ -67,3 +67,9 @@ export const WORD_PACKS = [
     ],
   },
 ];
+
+export function getRandomWord() {
+  const flat = WORD_PACKS.flatMap(pack => pack.words);
+  return flat[Math.floor(Math.random() * flat.length)];
+}
+
