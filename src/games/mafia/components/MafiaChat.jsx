@@ -5,6 +5,7 @@ import { useGameStore } from '../../../store/gameStore.js';
 import { sendMafiaChat, subscribeMafiaChat } from '../../../services/gameEngine.js';
 import { Avatar } from '../../../components/ui/index.jsx';
 import { vibrate, HAPTICS } from '../../../utils/haptics.js';
+import { useTranslation } from '../../../constants/translations.js';
 
 /* ── SVG Mafia Icon ── */
 function MafiaIcon({ size = 20, color = '#e02020' }) {
@@ -17,7 +18,8 @@ function MafiaIcon({ size = 20, color = '#e02020' }) {
 }
 
 export default function MafiaChat({ user, playerId }) {
-  const { roomId, players, myRole } = useGameStore();
+  const { roomId, players, myRole, language } = useGameStore();
+  const t = useTranslation(language);
 
   const [open,     setOpen]     = useState(false);
   const [messages, setMessages] = useState([]);
@@ -102,8 +104,8 @@ export default function MafiaChat({ user, playerId }) {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-crimson-900/30">
-              <span className="text-crimson-500 text-[10px] font-black uppercase tracking-[0.25em]">Mafia Underground</span>
-              <button onClick={() => { setOpen(false); vibrate(HAPTICS.TAP); }} className="p-2 text-smoke-500">Close</button>
+              <span className="text-crimson-500 text-[10px] font-black uppercase tracking-[0.25em]">{t('mafiaUnderground')}</span>
+              <button onClick={() => { setOpen(false); vibrate(HAPTICS.TAP); }} className="p-2 text-smoke-500 text-xs uppercase font-black tracking-widest">{t('close')}</button>
             </div>
 
             {/* Messages */}
@@ -130,12 +132,12 @@ export default function MafiaChat({ user, playerId }) {
               <div className="flex gap-2">
                 <input
                   className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-crimson-600/40"
-                  placeholder="Whisper..."
+                  placeholder={t('whisper')}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 />
-                <button onClick={handleSend} className="px-4 py-3 bg-crimson-700/40 text-white rounded-xl text-xs">Send</button>
+                <button onClick={handleSend} className="px-4 py-3 bg-crimson-700/40 text-white rounded-xl text-xs font-black uppercase tracking-widest">{t('send')}</button>
               </div>
             </div>
           </motion.div>

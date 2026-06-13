@@ -225,6 +225,48 @@ export const translations = {
     // FIX: these were hardcoded English strings in GameOverScreen.jsx
     fullRosterReveal: 'Full Roster Reveal',
     backToHub:        'Back to Hub',
+
+    // ── Transition Subs ──────────────────────────────────────────────────────
+    nightSub:         'The city sleeps. Secrets stir.',
+    dawnSub:          'The morning reveals all secrets.',
+    discussionSub:    'Accuse. Defend. Survive.',
+    votingSub:        'Choose wisely. One will fall.',
+    executionSub:     'The city has spoken.',
+    gameOverSub:      'The truth is revealed.',
+    spyDiscussionSub: 'Listen closely. Identify the anomaly.',
+    spyVotingSub:     'Target confirmed. Initiate protocol.',
+    spyGameOverSub:   'Operation outcome finalized.',
+
+    // ── UI / Components ──────────────────────────────────────────────────────
+    kickPlayer:      'Kick Player?',
+    youParen:        '(you)',
+    away:            'away',
+    close:           'Close',
+    whisper:         'Whisper...',
+    send:            'Send',
+    mafiaUnderground:'Mafia Underground',
+
+    // ── Roles & Descs ────────────────────────────────────────────────────────
+    mafiaLabel:      'MAFIA',
+    mafiaDesc:       'Kill one villager each night. Stay hidden.',
+    doctorLabel:     'DOCTOR',
+    doctorDesc:      'Each night protect one player from death.',
+    sheikhLabel:     'DETECTIVE',
+    sheikhDesc:      'Each night investigate one player\'s alignment.',
+    citizenLabel:    'CIVILIAN',
+    citizenDesc:     'Find and exile the Mafia through debate.',
+
+    // ── Screen Labels ────────────────────────────────────────────────────────
+    yourIdentity:    'Your Identity',
+    youAre:          'You are...',
+    yourEnvelope:    'Your Envelope',
+    tapToRevealRole: 'TAP TO REVEAL YOUR ROLE',
+    keepRoleSecret:  'KEEP THIS ROLE SECRET',
+    gameStartingSoon:'Game starting soon',
+    tapToReveal:     'TAP TO REVEAL',
+
+    // ── Spy Specific ────────────────────────────────────────────────────────
+    spyRoleDesc:     'You do not know the secret word. Bluff your way through.',
   },
 
   ar: {
@@ -446,6 +488,48 @@ export const translations = {
     // ── Game Over (NEW in v10) ───────────────────────────────────────────────
     fullRosterReveal: 'كشف الأسماء الكاملة',
     backToHub:        'العودة للقائمة',
+
+    // ── Transition Subs ──────────────────────────────────────────────────────
+    nightSub:         'المدينة نائمة. الأسرار تتحرك.',
+    dawnSub:          'الصباح يكشف كل الأسرار.',
+    discussionSub:    'اتهم. دافع. ابقَ حياً.',
+    votingSub:        'اختر بحكمة. واحد سيسقط.',
+    executionSub:     'لقد قالت المدينة كلمتها.',
+    gameOverSub:      'الحقيقة تم كشفها.',
+    spyDiscussionSub: 'استمع جيداً. حدد الخلل.',
+    spyVotingSub:     'تم تحديد الهدف. ابدأ البروتوكول.',
+    spyGameOverSub:   'تم حسم نتيجة العملية.',
+
+    // ── UI / Components ──────────────────────────────────────────────────────
+    kickPlayer:      'طرد اللاعب؟',
+    youParen:        '(أنت)',
+    away:            'غائب',
+    close:           'إغلاق',
+    whisper:         'اهمس...',
+    send:            'إرسال',
+    mafiaUnderground:'عصابة المافيا',
+
+    // ── Roles & Descs ────────────────────────────────────────────────────────
+    mafiaLabel:      'مافيا',
+    mafiaDesc:       'اقتل مواطناً كل ليلة. ابقَ متخفياً.',
+    doctorLabel:     'طبيب',
+    doctorDesc:      'احمِ لاعباً من القتل كل ليلة.',
+    sheikhLabel:     'محقق',
+    sheikhDesc:      'حقق في هوية أحد اللاعبين كل ليلة.',
+    citizenLabel:    'مدني',
+    citizenDesc:     'اكشف المافيا واطردهم عبر النقاش.',
+
+    // ── Screen Labels ────────────────────────────────────────────────────────
+    yourIdentity:    'هويتك السرية',
+    youAre:          'أنت...',
+    yourEnvelope:    'مغلفك السري',
+    tapToRevealRole: 'اضغط للكشف عن دورك',
+    keepRoleSecret:  'حافظ على سرية دورك',
+    gameStartingSoon:'تبدأ اللعبة قريباً',
+    tapToReveal:     'اضغط للكشف',
+
+    // ── Spy Specific ────────────────────────────────────────────────────────
+    spyRoleDesc:     'أنت لا تعرف الكلمة السرية. حاول خداع الآخرين.',
   },
 };
 

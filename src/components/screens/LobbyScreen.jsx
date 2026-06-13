@@ -1,9 +1,5 @@
-// ─── THE MAFIA PLATFORM — LobbyScreen.jsx (v10) ─────────────────────────────
-// v10: Full cyber/neon redesign. Players arranged in a circular "round table"
-//      layout using CSS transform. Real agent SVG avatars. Smooth entry stagger.
-//      window.confirm replaced with in-app confirm dialog.
-//      BackButton injected. Connected status dots per player.
-import React, { useEffect, useState, useRef } from 'react';
+// ─── THE MAFIA PLATFORM — LobbyScreen.jsx (v11-improved) ─────────────────────────────
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore.js';
 import {
@@ -14,11 +10,10 @@ import { Avatar, toast, Spinner } from '../ui/index.jsx';
 import { getMafiaCount } from '../../constants/game.js';
 import { useTranslation } from '../../constants/translations.js';
 import BackButton from '../ui/BackButton.jsx';
-import { Share2, Users, Crown, UserX } from 'lucide-react';
+import { Share2, Crown, UserX } from 'lucide-react';
 
 // ── Kick Confirm Modal ────────────────────────────────────────────────────────
-function KickConfirmModal({ player, onConfirm, onCancel, language }) {
-  const isAr = language === 'ar';
+function KickConfirmModal({ player, onConfirm, onCancel, t }) {
   return (
     <motion.div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-6"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -26,14 +21,14 @@ function KickConfirmModal({ player, onConfirm, onCancel, language }) {
         className="w-full max-w-xs rounded-[2rem] p-8 text-center"
         style={{ background: '#0e0e14', border: '1px solid rgba(224,32,32,0.3)' }}>
         <UserX size={40} className="text-crimson-500 mx-auto mb-4" />
-        <h3 className="text-white font-black text-xl mb-2">{isAr ? 'طرد اللاعب؟' : 'Kick Player?'}</h3>
+        <h3 className="text-white font-black text-xl mb-2">{t('kickPlayer')}</h3>
         <p className="text-smoke-400 text-sm mb-6">{player?.name}</p>
         <div className="flex gap-3">
           <button onClick={onCancel} className="flex-1 h-12 rounded-2xl bg-white/5 border border-white/10 text-white text-xs font-black uppercase">
-            {isAr ? 'إلغاء' : 'Cancel'}
+            {t('abort')}
           </button>
           <button onClick={onConfirm} className="flex-1 h-12 rounded-2xl bg-crimson-500 text-white text-xs font-black uppercase">
-            {isAr ? 'طرد' : 'Kick'}
+            {t('kick')}
           </button>
         </div>
       </motion.div>
@@ -42,8 +37,7 @@ function KickConfirmModal({ player, onConfirm, onCancel, language }) {
 }
 
 // ── Circular Player Table ─────────────────────────────────────────────────────
-function RoundTable({ players, myPlayerId, isHost, onKick, language }) {
-  const isAr = language === 'ar';
+function RoundTable({ players, myPlayerId, isHost, onKick, t }) {
   const count = players.length;
   if (count === 0) return null;
 
@@ -73,12 +67,9 @@ function RoundTable({ players, myPlayerId, isHost, onKick, language }) {
         const cx     = Math.cos(angle) * tableR;
         const cy     = Math.sin(angle) * tableR;
         const isMe   = p.uid === myPlayerId;
-        const isConnected = p.connected !== false; // undefined = connected
+        const isConnected = p.connected !== false;
 
         return (
-          // FIX A: position in a regular div — Framer Motion owns `transform`
-          // and will override any translate set in style when animate.scale is used.
-          // Separation: outer div handles position, inner motion.div handles animation.
           <div
             key={p.uid}
             style={{
@@ -96,7 +87,6 @@ function RoundTable({ players, myPlayerId, isHost, onKick, language }) {
             >
             <div className="flex flex-col items-center gap-1.5">
               <div className="relative">
-                {/* Glow ring for host */}
                 {p.isHost && (
                   <motion.div
                     animate={{ opacity: [0.4, 0.9, 0.4] }}
@@ -106,18 +96,15 @@ function RoundTable({ players, myPlayerId, isHost, onKick, language }) {
                 )}
                 <Avatar uid={p.uid} name={p.name} avatar={p.avatar} size="sm" />
 
-                {/* Connection indicator */}
                 <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-noir-950 ${isConnected ? 'bg-emerald-500' : 'bg-amber-500'}`}
                   style={{ boxShadow: isConnected ? '0 0 6px rgba(16,185,129,0.8)' : '0 0 6px rgba(245,158,11,0.8)' }} />
 
-                {/* Host crown */}
                 {p.isHost && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <Crown size={12} className="text-gold-500 drop-shadow-md" />
                   </div>
                 )}
 
-                {/* Kick button (host only, not self) */}
                 {isHost && !p.isHost && (
                   <motion.button initial={{ opacity: 0 }} whileHover={{ opacity: 1 }}
                     onClick={() => onKick(p)}
@@ -131,11 +118,11 @@ function RoundTable({ players, myPlayerId, isHost, onKick, language }) {
               <div className="text-center" style={{ maxWidth: 60 }}>
                 <p className="text-white font-black leading-none truncate"
                   style={{ fontSize: 9 }}>
-                  {isMe ? (isAr ? '(أنت)' : '(you)') : p.name}
+                  {isMe ? t('youParen') : p.name}
                 </p>
                 {!isConnected && (
                   <p className="text-amber-500 font-mono" style={{ fontSize: 7 }}>
-                    {isAr ? 'غائب' : 'away'}
+                    {t('away')}
                   </p>
                 )}
               </div>
@@ -148,19 +135,18 @@ function RoundTable({ players, myPlayerId, isHost, onKick, language }) {
   );
 }
 
-// ── Main LobbyScreen ──────────────────────────────────────────────────────────
 export default function LobbyScreen({ user, playerId }) {
   const { roomId, isHost, players, clearRoom, language, joinRequests, setJoinRequests, gameType } = useGameStore();
   const [starting,   setStarting]  = useState(false);
   const [leaving,    setLeaving]   = useState(false);
-  const [kickTarget, setKickTarget]= useState(null); // player object to kick
+  const [kickTarget, setKickTarget]= useState(null);
   const t   = useTranslation(language);
   const isAr = language === 'ar';
 
   useEffect(() => {
     if (!roomId || !isHost) return;
     return subscribeJoinRequests(roomId, setJoinRequests);
-  }, [roomId, isHost]); // eslint-disable-line
+  }, [roomId, isHost, setJoinRequests]);
 
   const playerList = Object.entries(players).map(([uid, p]) => ({ uid, ...p }));
   const count      = playerList.length;
@@ -172,7 +158,7 @@ export default function LobbyScreen({ user, playerId }) {
     if (!canStart) { toast(t('needMorePlayers', { n: minPlayers - count }), 'error'); return; }
     setStarting(true);
     try {
-      await (gameType === 'spy' ? startSpyGame(roomId) : startGame(roomId, user.uid));
+      await (gameType === 'spy' ? startSpyGame(roomId) : startGame(roomId));
     } catch (e) { toast(e.message, 'error'); setStarting(false); }
   }
 
@@ -214,7 +200,6 @@ export default function LobbyScreen({ user, playerId }) {
       style={{ background: 'linear-gradient(170deg,#080810 0%,#050508 100%)' }}
       dir={isAr ? 'rtl' : 'ltr'}>
 
-      {/* Ambient background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
           animate={{ scale: [1, 1.15, 1], opacity: [0.06, 0.14, 0.06] }}
@@ -224,7 +209,6 @@ export default function LobbyScreen({ user, playerId }) {
         />
       </div>
 
-      {/* Header */}
       <div className="relative z-10 grid grid-cols-[auto,1fr,auto] items-center px-6 pt-safe pt-5 pb-4 border-b border-white/5 backdrop-blur-xl gap-4">
         <BackButton onClick={handleLeave} />
 
@@ -237,11 +221,9 @@ export default function LobbyScreen({ user, playerId }) {
           </button>
         </div>
 
-        {/* Empty div to balance grid for center-alignment of Room ID */}
         <div className="w-10" />
       </div>
 
-      {/* Join requests (host only) */}
       <AnimatePresence>
         {isHost && requests.length > 0 && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
@@ -267,7 +249,6 @@ export default function LobbyScreen({ user, playerId }) {
         )}
       </AnimatePresence>
 
-      {/* Round table */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-6 px-4 overflow-hidden">
         <AnimatePresence>
           {count > 0 && (
@@ -275,13 +256,12 @@ export default function LobbyScreen({ user, playerId }) {
               exit={{ opacity: 0 }}>
               <RoundTable
                 players={playerList} myPlayerId={playerId}
-                isHost={isHost} onKick={setKickTarget} language={language}
+                isHost={isHost} onKick={setKickTarget} t={t}
               />
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Role breakdown pill */}
         {count >= minPlayers && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
             className="flex gap-3 px-5 py-2 rounded-full border border-white/8 bg-white/[0.04] text-[10px] font-black">
@@ -304,7 +284,6 @@ export default function LobbyScreen({ user, playerId }) {
         )}
       </div>
 
-      {/* CTA footer */}
       <div className="relative z-10 px-6 pb-safe pb-8 pt-4 border-t border-white/5 backdrop-blur-xl">
         {isHost ? (
           <motion.button whileTap={{ scale: 0.97 }} onClick={handleStart}
@@ -334,11 +313,10 @@ export default function LobbyScreen({ user, playerId }) {
         )}
       </div>
 
-      {/* Kick confirm modal */}
       <AnimatePresence>
         {kickTarget && (
           <KickConfirmModal
-            player={kickTarget} language={language}
+            player={kickTarget} t={t}
             onConfirm={confirmKick} onCancel={() => setKickTarget(null)}
           />
         )}

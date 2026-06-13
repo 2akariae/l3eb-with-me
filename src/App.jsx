@@ -59,6 +59,7 @@ import OfflineExecutionScreen  from './games/mafia/components/offline/OfflineExe
 import OfflineGameOverScreen   from './games/mafia/components/offline/OfflineGameOverScreen.jsx';
 
 import { PhaseTransitionOverlay } from './components/game/PhaseTransitionOverlay.jsx';
+import { CinematicOverlay }       from './components/game/CinematicOverlay.jsx';
 import { CursorGlow }             from './components/game/CursorGlow.jsx';
 import { useMouseTracker }        from './hooks/useMouseTracker.js';
 import { GameHUD }                from './components/game/GameHUD.jsx';
@@ -233,21 +234,30 @@ export default function App() {
   // ── Loading: wait for useEffect hydration tick ─────────────────────────────
   if (appMode === 'loading') {
     return (
-      <div className="screen bg-noir-950 flex items-center justify-center">
-        {/* FIX (P2): removed conflicting CSS `animation` property. Framer Motion
-            handles the spin via `animate.rotate` with `repeat: Infinity`. Mixing
-            both on the same element caused jitter as the two systems fought. */}
-        <motion.div
-          animate={{
-            rotate:  360,
-            opacity: [0.4, 1, 0.4],
-          }}
-          transition={{
-            rotate:  { duration: 1,   repeat: Infinity, ease: 'linear'     },
-            opacity: { duration: 1.5, repeat: Infinity, ease: 'easeInOut'  },
-          }}
-          className="w-8 h-8 rounded-full border-2 border-gold-500/40 border-t-gold-500"
-        />
+      <div className="screen bg-noir-950 flex flex-col items-center justify-center gap-6">
+        <div className="relative">
+          <motion.div
+            animate={{
+              rotate:  360,
+              opacity: [0.4, 1, 0.4],
+            }}
+            transition={{
+              rotate:  { duration: 1.5, repeat: Infinity, ease: 'linear'     },
+              opacity: { duration: 2,   repeat: Infinity, ease: 'easeInOut'  },
+            }}
+            className="w-16 h-16 rounded-full border-[3px] border-gold-500/10 border-t-gold-500 shadow-[0_0_40px_rgba(201,148,58,0.2)]"
+          />
+          <div className="absolute inset-0 blur-xl bg-gold-500/10 rounded-full animate-pulse" />
+        </div>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0.3, 0.7, 0.3] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-gold-500/60 text-[10px] uppercase tracking-[0.3em] font-black"
+        >
+          {t('loading')}
+        </motion.p>
+        <CinematicOverlay />
         <CursorGlow />
       </div>
     );
@@ -405,6 +415,7 @@ export default function App() {
         <SettingsButton />
         {settingsOpen && <SettingsPanel onClose={toggleSettings} />}
         <ToastContainer />
+        <CinematicOverlay />
         <CursorGlow />
       </div>
     );
@@ -440,6 +451,7 @@ export default function App() {
       <SettingsButton />
       {settingsOpen && <SettingsPanel onClose={toggleSettings} />}
       <ToastContainer />
+      <CinematicOverlay />
       <CursorGlow />
     </div>
   );

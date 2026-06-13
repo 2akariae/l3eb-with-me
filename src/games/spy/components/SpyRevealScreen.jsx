@@ -111,7 +111,7 @@ export default function SpyRevealScreen({ user, onExpire }) {
                 {isSpy ? (
                   <div className="space-y-4">
                     <p className="text-emerald-400/80 text-xs font-medium leading-relaxed">
-                      {isAr ? 'أنت لا تعرف الكلمة السرية. حاول خداع الآخرين.' : 'You do not know the secret word. Bluff your way through.'}
+                      {t('spyRoleDesc')}
                     </p>
                     {displayCategory && (
                       <div className="p-3 rounded-xl bg-black/40 border border-emerald-500/30">
