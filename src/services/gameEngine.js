@@ -51,19 +51,26 @@ async function findUniqueRoomId() {
 
 export async function restartRoom(roomId, gameType = 'mafia') {
   const gamePath = getGamePath(roomId, gameType);
-  const updates = {};
+  const snap     = await get(ref(db, `${gamePath}/gameState`));
+  const gs       = snap.val() ?? {};
   
+  const updates = {};
   updates[`${gamePath}/gameState`] = {
-    phase: PHASES.LOBBY,
-    round: 0,
+    phase:     PHASES.LOBBY,
+    round:     0,
+    usedWords: gs.usedWords || [],
   };
   updates[`rooms/${roomId}/meta/status`] = 'waiting';
   
   // Clear roles and other game state but keep players
-  await remove(ref(db, `${gamePath}/roles`));
-  await remove(ref(db, `${gamePath}/history`));
-  await remove(ref(db, `${gamePath}/chat`));
-  await remove(ref(db, `${gamePath}/mafiaChat`));
+  updates[`${gamePath}/roles`]        = null;
+  updates[`${gamePath}/history`]      = null;
+  updates[`${gamePath}/chat`]         = null;
+  updates[`${gamePath}/mafiaChat`]    = null;
+  updates[`${gamePath}/nightActions`] = null;
+  updates[`${gamePath}/votes`]        = null;
+  updates[`${gamePath}/skipVotes`]    = null;
+
   await update(ref(db), updates);
 }
 
