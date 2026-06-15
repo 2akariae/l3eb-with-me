@@ -3,6 +3,7 @@
 // FIX-B2: reset() now preserves gameType+language so restarting an offline
 //         Spy game stays in Spy, not Mafia.
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { useTranslation } from '../constants/translations.js';
 
 export const OFFLINE_PHASES = {
@@ -56,7 +57,7 @@ const INITIAL = {
   language: 'en',
 };
 
-export const useOfflineStore = create((set, get) => ({
+export const useOfflineStore = create(persist((set, get) => ({
   ...INITIAL,
 
   // Preserves gameType and language — so restarting Spy stays in Spy.
@@ -154,4 +155,13 @@ export const useOfflineStore = create((set, get) => ({
     if (aliveMafia >= aliveTown) return 'mafia';
     return null;
   },
+}), {
+  name: 'mafia-offline-storage',
+  storage: createJSONStorage(() => localStorage),
+  partialize: (state) => ({
+    players: state.players,
+    gameType: state.gameType,
+    language: state.language,
+    usedWords: state.usedWords,
+  }),
 }));
