@@ -18,10 +18,11 @@ import { motion } from 'framer-motion';
 import { ref, remove } from 'firebase/database';
 import { db } from '../../services/firebaseConfig.js';
 import { useGameStore } from '../../store/gameStore.js';
+import { restartRoom } from '../../services/gameEngine.js';
 import { Avatar } from '../ui/index.jsx';
 import { ROLE_META } from '../../constants/game.js';
 import { useTranslation } from '../../constants/translations.js';
-import { Trophy, Skull, Ghost, ArrowLeft } from 'lucide-react';
+import { Trophy, Skull, Ghost, ArrowLeft, RotateCcw } from 'lucide-react';
 
 // FIX (P2): explicit Tailwind class map instead of nonexistent ROLE_META.textClass
 const ROLE_COLOR_CLASS = {
@@ -49,7 +50,16 @@ export default function GameOverScreen({ user }) {
       return 0;
     });
 
-  async function handlePlayAgain() {
+  async function handleRestart() {
+    if (!roomId || !isHost) return;
+    try {
+      await restartRoom(roomId, gameType);
+    } catch (e) {
+      console.error('Restart failed:', e);
+    }
+  }
+
+  async function handleBackToHub() {
     if (roomId && isHost) {
       try { await remove(ref(db, `rooms/${roomId}`)); } catch {}
     }
@@ -157,16 +167,29 @@ export default function GameOverScreen({ user }) {
           </div>
         </div>
 
-        {/* Back button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-          onClick={handlePlayAgain}
-          className="h-20 w-full rounded-[2rem] bg-white text-black font-black text-lg shadow-2xl flex items-center justify-center gap-3 transition-all"
-        >
-          <ArrowLeft size={20} />
-          {/* FIX (P2): was hardcoded 'BACK TO HUB' / 'العودة للقائمة' ternary */}
-          <span>{t('backToHub').toUpperCase()}</span>
-        </motion.button>
+        {/* Action Buttons */}
+        <div className="w-full flex flex-col gap-4">
+          {isHost && (
+            <motion.button
+              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              onClick={handleRestart}
+              className="h-20 w-full rounded-[2rem] bg-gold-500 text-black font-black text-lg shadow-2xl flex items-center justify-center gap-3 transition-all"
+            >
+              <RotateCcw size={20} />
+              <span>{t('playAgain').toUpperCase()}</span>
+            </motion.button>
+          )}
+
+          <motion.button
+            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+            onClick={handleBackToHub}
+            className="h-16 w-full rounded-[2rem] bg-white/5 border border-white/10 text-white font-black text-sm shadow-2xl flex items-center justify-center gap-3 transition-all"
+          >
+            <ArrowLeft size={16} />
+            {/* FIX (P2): was hardcoded 'BACK TO HUB' / 'العودة للقائمة' ternary */}
+            <span>{t('backToHub').toUpperCase()}</span>
+          </motion.button>
+        </div>
       </div>
     </div>
   );

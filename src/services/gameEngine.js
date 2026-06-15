@@ -49,6 +49,24 @@ async function findUniqueRoomId() {
 
 // ── Room Management ───────────────────────────────────────────────────────────
 
+export async function restartRoom(roomId, gameType = 'mafia') {
+  const gamePath = getGamePath(roomId, gameType);
+  const updates = {};
+  
+  updates[`${gamePath}/gameState`] = {
+    phase: PHASES.LOBBY,
+    round: 0,
+  };
+  updates[`rooms/${roomId}/meta/status`] = 'waiting';
+  
+  // Clear roles and other game state but keep players
+  await remove(ref(db, `${gamePath}/roles`));
+  await remove(ref(db, `${gamePath}/history`));
+  await remove(ref(db, `${gamePath}/chat`));
+  await remove(ref(db, `${gamePath}/mafiaChat`));
+  await update(ref(db), updates);
+}
+
 export async function createRoom(user, name, avatar, tabPlayerId, gameType = 'mafia') {
   const roomId   = await findUniqueRoomId();
   const playerId = tabPlayerId || user.uid;
@@ -208,18 +226,29 @@ export async function startGame(roomId) {
 // ── Game Start (SPY) ──────────────────────────────────────────────────────────
 
 export async function startSpyGame(roomId) {
-  const snap = await get(ref(db, `rooms/${roomId}/players`));
-  if (!snap.exists()) throw new Error('No players found.');
+  const [playersSnap, gsSnap] = await Promise.all([
+    get(ref(db, `rooms/${roomId}/players`)),
+    get(ref(db, `${getGamePath(roomId, 'spy')}/gameState`))
+  ]);
+  
+  if (!playersSnap.exists()) throw new Error('No players found.');
 
-  const players = snap.val();
+  const players = playersSnap.val();
   const pids    = Object.keys(players);
   if (pids.length < 3) throw new Error('Need at least 3 players for Spy game.');
 
-  const spyId                 = pids[Math.floor(Math.random() * pids.length)];
-  const { word, hint }        = await generateSpyWord();
-  const gamePath              = getGamePath(roomId, 'spy');
-  const updates               = {};
+  const spyId     = pids[Math.floor(Math.random() * pids.length)];
+  const gamePath  = getGamePath(roomId, 'spy');
+  const usedWords = gsSnap.val()?.usedWords || [];
 
+  let picked = await generateSpyWord();
+  let attempts = 0;
+  while (usedWords.includes(picked.word.en) && attempts < 15) {
+    picked = await generateSpyWord();
+    attempts++;
+  }
+
+  const updates = {};
   pids.forEach((pid) => {
     updates[`${gamePath}/roles/${pid}`]               = pid === spyId ? 'spy' : 'citizen';
     updates[`rooms/${roomId}/players/${pid}/isAlive`] = true;
@@ -228,9 +257,10 @@ export async function startSpyGame(roomId) {
   updates[`${gamePath}/gameState`] = {
     phase:          PHASES.ENVELOPE,
     round:          1,
-    word,
-    hint,
+    word:           picked.word,
+    hint:           picked.hint,
     spyId,
+    usedWords:      [...usedWords, picked.word.en],
     timerStartedAt: serverTimestamp(),
     timerDuration:  10,
   };
