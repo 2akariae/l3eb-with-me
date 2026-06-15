@@ -68,7 +68,7 @@ export default function SettingsPanel({ onClose }) {
 
   const [sec,       setSec]       = useState(SEC.MAIN);
   const [editName,  setEditName]  = useState(profile?.name  ?? '');
-  const [editPhoto, setEditPhoto] = useState(profile?.avatar || profile?.photo ?? '');
+  const [editPhoto, setEditPhoto] = useState((profile?.avatar || profile?.photo) ?? '');
   const [saved,     setSaved]     = useState(false);
   const [loggingOut,setLoggingOut]= useState(false);
 
