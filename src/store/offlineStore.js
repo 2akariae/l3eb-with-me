@@ -23,15 +23,13 @@ export function useOfflineLang(lang = 'en') {
   return useTranslation(lang);
 }
 
-// Ephemeral state reset per game — does NOT include gameType or language.
+// Ephemeral state reset per game — does NOT include gameType, language, or players.
 const RESETTABLE = {
   phase:           OFFLINE_PHASES.LOBBY,
-  players:         [],
   roles:           {},
   word:            null,
   hint:            null,
   spyId:           null,
-  usedWords:       [], // Tracks used words to prevent repetition
   round:           0,
   envelopeIndex:   0,
   envelopeDone:    false,
@@ -53,6 +51,8 @@ const RESETTABLE = {
 
 const INITIAL = {
   ...RESETTABLE,
+  players: [],
+  usedWords: [], 
   gameType: 'mafia',
   language: 'en',
 };
@@ -60,22 +60,19 @@ const INITIAL = {
 export const useOfflineStore = create(persist((set, get) => ({
   ...INITIAL,
 
-  // Preserves gameType, language, and players — so restarting Spy stays in Spy and keeps names.
+  // Reset EVERYTHING except players, gameType, and language
   reset: () => set((s) => ({ 
     ...RESETTABLE, 
     gameType: s.gameType, 
     language: s.language, 
-    players: s.players,
-    usedWords: s.usedWords 
+    usedWords: [] // Full reset clears used words
   })),
 
-  // Restart with SAME players
+  // Restart with SAME players and SAME word-repetition memory
   restart: () => set((s) => ({
     ...RESETTABLE,
     gameType: s.gameType,
     language: s.language,
-    players: s.players,
-    usedWords: s.usedWords
   })),
 
   addUsedWord: (word) => set((s) => ({ usedWords: [...s.usedWords, word] })),
@@ -83,6 +80,7 @@ export const useOfflineStore = create(persist((set, get) => ({
   setPhase:         (phase)  => set({ phase }),
   setGameType:      (gt)     => set({ gameType: gt }),
   setPlayers:       (p)      => set({ players: p }),
+  clearPlayers:     ()       => set({ players: [] }),
   setRoles:         (r)      => set({ roles: r }),
   setLanguage:      (lang)   => set({ language: lang }),
   setMafiaKill:     (id)     => set({ mafiaKill: id }),
