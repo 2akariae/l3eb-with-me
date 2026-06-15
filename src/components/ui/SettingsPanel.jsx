@@ -151,31 +151,48 @@ export default function SettingsPanel({ onClose }) {
           {/* ── PROFILE ──────────────────────────────────────────────────── */}
           {sec === SEC.PROFILE && (
             <motion.div key="profile"
-              initial={{ x: 18, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 18, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="p-6 flex flex-col gap-6"
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -20, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="p-8 flex flex-col gap-8"
             >
-              <div className="flex flex-col gap-3">
-                <label className="text-[10px] font-black text-smoke-500 uppercase tracking-widest">{t('profileName')}</label>
+              <div className="flex flex-col gap-4">
+                <label className="text-[10px] font-black text-smoke-500 uppercase tracking-[0.2em]">{t('profileName')}</label>
                 <input
-                  className="h-16 rounded-2xl bg-white/5 border border-white/10 px-6 text-white font-bold text-lg placeholder-smoke-700 focus:outline-none focus:border-gold-500/50 transition-all"
-                  value={editName} onChange={(e) => setEditName(e.target.value)} maxLength={28}
-                  placeholder={isAr ? 'اسمك في اللعبة...' : 'Your game name...'}
+                  className="w-full h-16 rounded-2xl bg-white/5 border border-white/10 px-6 text-white font-bold text-lg placeholder-smoke-700 focus:outline-none focus:border-gold-500/50 transition-all duration-300"
+                  value={editName} onChange={(e) => setEditName(e.target.value)} maxLength={20}
+                  placeholder={isAr ? 'اسمك في اللعبة...' : 'Enter your name...'}
                 />
               </div>
 
-              <div className="flex flex-col gap-3">
-                <label className="text-[10px] font-black text-smoke-500 uppercase tracking-widest">{t('chooseAvatar')}</label>
-                <div className="p-4 rounded-3xl bg-white/5 border border-white/5">
+              <div className="flex flex-col gap-4">
+                <label className="text-[10px] font-black text-smoke-500 uppercase tracking-[0.2em]">{t('chooseAvatar')}</label>
+                <div className="bg-white/5 border border-white/5 rounded-3xl p-6">
                   <AvatarMatrix selected={editAv} onSelect={setEditAv} />
                 </div>
               </div>
 
-              <button onClick={savePro} disabled={editName.trim().length < 2}
-                className="w-full h-16 rounded-2xl font-black text-sm uppercase tracking-widest text-white flex items-center justify-center gap-2 transition-all disabled:opacity-30 hover:scale-[1.02] active:scale-[0.98]"
-                style={{ background: saved ? '#059669' : 'linear-gradient(135deg,#c9943a,#b4802c)', boxShadow: saved ? '0 0 20px rgba(5,150,105,0.35)' : 'none' }}>
-                {saved ? <><Check size={18} /> {isAr ? 'تم الحفظ' : 'Saved!'}</> : t('saveProfile')}
-              </button>
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={savePro} 
+                disabled={editName.trim().length < 1}
+                className="w-full h-16 rounded-2xl font-black text-sm uppercase tracking-[0.2em] text-white flex items-center justify-center gap-3 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
+                style={{ 
+                  background: saved ? '#059669' : 'linear-gradient(135deg, #c9943a, #b4802c)',
+                  boxShadow: saved ? '0 0 20px rgba(5,150,105,0.35)' : '0 10px 30px rgba(201, 148, 58, 0.2)' 
+                }}
+              >
+                {saved ? (
+                  <>
+                    <Check size={20} />
+                    {isAr ? 'تم الحفظ' : 'Saved'}
+                  </>
+                ) : (
+                  t('saveProfile')
+                )}
+              </motion.button>
             </motion.div>
           )}
 
