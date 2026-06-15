@@ -9,7 +9,8 @@ import { signOut, auth } from '../../services/firebaseConfig.js';
 import { useGameStore } from '../../store/gameStore.js';
 import { useOfflineStore } from '../../store/offlineStore.js';
 import { useTranslation } from '../../constants/translations.js';
-import AvatarMatrix from './AvatarMatrix.jsx';
+import { AGENT_AVATARS } from '../../constants/game.js';
+import AvatarMatrix, { AgentAvatarTile } from './AvatarMatrix.jsx';
 import { Avatar } from './index.jsx';
 
 const SEC = { MAIN: 'main', PROFILE: 'profile', LANGUAGE: 'language', ACCOUNT: 'account' };
@@ -169,7 +170,18 @@ export default function SettingsPanel({ onClose }) {
               <div className="flex flex-col gap-4">
                 <label className="text-[10px] font-black text-smoke-500 uppercase tracking-[0.2em]">{t('chooseAvatar')}</label>
                 <div className="bg-white/5 border border-white/5 rounded-3xl p-6">
-                  <AvatarMatrix selected={editAv} onSelect={setEditAv} />
+                  {/* Simplified Avatar Selection: Showing a limited subset of avatars (first 8) */}
+                  <div className="grid grid-cols-4 gap-4">
+                    {AGENT_AVATARS.slice(0, 8).map((agent) => (
+                      <AgentAvatarTile
+                        key={agent.id}
+                        agent={agent}
+                        size={44}
+                        selected={editAv === agent.id}
+                        onClick={() => setEditAv(agent.id)}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
 
