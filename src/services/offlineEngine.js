@@ -70,10 +70,10 @@ export async function startOfflineGame() {
   });
 }
 
-export function restartOfflineGame() {
+export async function restartOfflineGame() {
   const { restart } = useOfflineStore.getState();
   restart();
-  startOfflineGame();
+  await startOfflineGame();
 }
 
 export function resolveNightAndGoDawn() {
