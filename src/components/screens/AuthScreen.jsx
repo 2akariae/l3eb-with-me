@@ -61,16 +61,19 @@ export default function AuthScreen() {
     setError('');
     setLoading(true);
     try {
-      await signInWithRedirect(auth, provider);
+      await signInWithPopup(auth, provider);
     } catch (e) {
-      if (e.code === 'auth/unauthorized-domain') {
-        setError('Setup: add this site domain to Firebase Console → Authentication → Authorized Domains.');
-      } else if (e.code === 'auth/network-request-failed') {
-        setError('Network error. Check your connection.');
+      if (e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
+        try {
+          await signInWithRedirect(auth, provider);
+        } catch (redirError) {
+          setError(redirError.message);
+          setLoading(false);
+        }
       } else {
         setError(e.message);
+        setLoading(false);
       }
-      setLoading(false);
     }
   }
 

@@ -153,25 +153,27 @@ export default function SettingsPanel({ onClose }) {
             <motion.div key="profile"
               initial={{ x: 18, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 18, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="p-6 flex flex-col gap-5 max-h-[70vh] overflow-y-auto"
+              className="p-6 flex flex-col gap-6"
             >
-              <div className="flex flex-col gap-2">
-                <label className="text-[9px] font-black text-smoke-500 uppercase tracking-widest px-1">{t('profileName')}</label>
+              <div className="flex flex-col gap-3">
+                <label className="text-[10px] font-black text-smoke-500 uppercase tracking-widest">{t('profileName')}</label>
                 <input
-                  className="h-14 rounded-2xl bg-white/5 border border-white/10 px-5 text-white font-bold text-base placeholder-smoke-700 focus:outline-none focus:border-white/25 transition-all"
+                  className="h-16 rounded-2xl bg-white/5 border border-white/10 px-6 text-white font-bold text-lg placeholder-smoke-700 focus:outline-none focus:border-gold-500/50 transition-all"
                   value={editName} onChange={(e) => setEditName(e.target.value)} maxLength={28}
                   placeholder={isAr ? 'اسمك في اللعبة...' : 'Your game name...'}
                 />
               </div>
 
               <div className="flex flex-col gap-3">
-                <label className="text-[9px] font-black text-smoke-500 uppercase tracking-widest px-1">{t('chooseAvatar')}</label>
-                <AvatarMatrix selected={editAv} onSelect={setEditAv} />
+                <label className="text-[10px] font-black text-smoke-500 uppercase tracking-widest">{t('chooseAvatar')}</label>
+                <div className="p-4 rounded-3xl bg-white/5 border border-white/5">
+                  <AvatarMatrix selected={editAv} onSelect={setEditAv} />
+                </div>
               </div>
 
               <button onClick={savePro} disabled={editName.trim().length < 2}
-                className="w-full h-14 rounded-2xl font-black text-sm uppercase tracking-widest text-white flex items-center justify-center gap-2 transition-all disabled:opacity-30"
-                style={{ background: saved ? '#059669' : 'linear-gradient(135deg,#7c3aed,#6d28d9)', boxShadow: saved ? '0 0 20px rgba(5,150,105,0.35)' : 'none' }}>
+                className="w-full h-16 rounded-2xl font-black text-sm uppercase tracking-widest text-white flex items-center justify-center gap-2 transition-all disabled:opacity-30 hover:scale-[1.02] active:scale-[0.98]"
+                style={{ background: saved ? '#059669' : 'linear-gradient(135deg,#c9943a,#b4802c)', boxShadow: saved ? '0 0 20px rgba(5,150,105,0.35)' : 'none' }}>
                 {saved ? <><Check size={18} /> {isAr ? 'تم الحفظ' : 'Saved!'}</> : t('saveProfile')}
               </button>
             </motion.div>
