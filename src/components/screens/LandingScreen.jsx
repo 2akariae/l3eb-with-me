@@ -151,12 +151,14 @@ function PhotoPicker({ photo, onChange, t, language }) {
 // ── Main LandingScreen ─────────────────────────────────────────────────────────
 export default function LandingScreen({ user, tabPlayerId }) {
   const [tab,      setTab]      = useState(TABS.HOME);
-  const [name,     setName]     = useState(user?.displayName || '');
-  const [avatar,   setAvatar]   = useState('');
+  
+  const { setRoom, language, gameType, resetSession, profile } = useGameStore();
+  
+  const [name,     setName]     = useState(profile?.name || user?.displayName || '');
+  const [avatar,   setAvatar]   = useState(profile?.avatar || profile?.photo || '');
   const [roomCode, setRoomCode] = useState('');
   const [loading,  setLoading]  = useState(false);
 
-  const { setRoom, language, gameType, resetSession } = useGameStore();
   const t = useTranslation(language);
 
   useEffect(() => {
@@ -173,7 +175,7 @@ export default function LandingScreen({ user, tabPlayerId }) {
   function saveToProfile(nameVal, avatarVal) {
     try {
       const existing = JSON.parse(localStorage.getItem('mafia_profile') || '{}');
-      const updated  = { ...existing, name: nameVal, photo: avatarVal };
+      const updated  = { ...existing, name: nameVal, avatar: avatarVal, photo: avatarVal };
       localStorage.setItem('mafia_profile', JSON.stringify(updated));
     } catch { /* storage blocked — non-fatal */ }
   }
