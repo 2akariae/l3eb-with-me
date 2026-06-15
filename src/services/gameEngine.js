@@ -216,7 +216,7 @@ export async function startSpyGame(roomId) {
   if (pids.length < 3) throw new Error('Need at least 3 players for Spy game.');
 
   const spyId                 = pids[Math.floor(Math.random() * pids.length)];
-  const { word, category }    = await generateSpyWord();
+  const { word, hint }        = await generateSpyWord();
   const gamePath              = getGamePath(roomId, 'spy');
   const updates               = {};
 
@@ -229,7 +229,7 @@ export async function startSpyGame(roomId) {
     phase:          PHASES.ENVELOPE,
     round:          1,
     word,
-    category,
+    hint,
     spyId,
     timerStartedAt: serverTimestamp(),
     timerDuration:  10,

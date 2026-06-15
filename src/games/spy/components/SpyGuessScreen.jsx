@@ -88,10 +88,10 @@ export default function SpyGuessScreen({ user, playerId }) {
   const votedName  = votedOutId ? (players[votedOutId]?.name ?? '???') : '???';
 
   // Resolve bilingual word hint shown to Spy
-  const rawCategory  = gameState?.category;
-  const displayHint  = typeof rawCategory === 'object'
-    ? (rawCategory?.[language] ?? rawCategory?.en ?? '')
-    : (rawCategory ?? '');
+  const rawHint  = gameState?.hint;
+  const displayHint  = typeof rawHint === 'object'
+    ? (rawHint?.[language] ?? rawHint?.en ?? '')
+    : (rawHint ?? '');
 
   // ── Citizens waiting view ──────────────────────────────────────────────────
   // FIX (UX): BackButton removed — citizens must not be able to leave the room

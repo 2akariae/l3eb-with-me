@@ -28,9 +28,9 @@ export default function OfflineLobbyScreen({ onBackToMode }) {
     setInput(''); setError('');
   }
 
-  function handleStart() {
+  async function handleStart() {
     if (!canStart) { setError(`Need at least ${4 - count} more player(s)`); return; }
-    try { startOfflineGame(); } catch (e) { setError(e.message); }
+    try { await startOfflineGame(); } catch (e) { setError(e.message); }
   }
 
   return (

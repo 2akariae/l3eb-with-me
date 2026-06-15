@@ -28,8 +28,9 @@ const RESETTABLE = {
   players:         [],
   roles:           {},
   word:            null,
-  category:        null,
+  hint:            null,
   spyId:           null,
+  usedWords:       [], // Tracks used words to prevent repetition
   round:           0,
   envelopeIndex:   0,
   envelopeDone:    false,
@@ -59,7 +60,23 @@ export const useOfflineStore = create((set, get) => ({
   ...INITIAL,
 
   // Preserves gameType and language — so restarting Spy stays in Spy.
-  reset: () => set((s) => ({ ...RESETTABLE, gameType: s.gameType, language: s.language })),
+  reset: () => set((s) => ({ 
+    ...RESETTABLE, 
+    gameType: s.gameType, 
+    language: s.language, 
+    usedWords: s.usedWords 
+  })),
+
+  // Restart with SAME players
+  restart: () => set((s) => ({
+    ...RESETTABLE,
+    gameType: s.gameType,
+    language: s.language,
+    players: s.players,
+    usedWords: s.usedWords
+  })),
+
+  addUsedWord: (word) => set((s) => ({ usedWords: [...s.usedWords, word] })),
 
   setPhase:         (phase)  => set({ phase }),
   setGameType:      (gt)     => set({ gameType: gt }),

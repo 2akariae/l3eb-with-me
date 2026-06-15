@@ -13,13 +13,14 @@ async function fetchGeminiWord(apiKey) {
 Return ONLY valid JSON — no markdown, no code blocks, no explanation:
 {
   "word":     { "en": "Airport",  "ar": "\u0645\u0637\u0627\u0631"  },
-  "category": { "en": "Travel",   "ar": "\u0633\u0641\u0631"   }
+  "hint":     { "en": "Travel",   "ar": "\u0633\u0641\u0631"   }
 }
 Rules:
 - word: a common noun (place, object, concept). Exactly 1 word.
-- category: a SINGLE SHORT WORD or at most 2 words — the broad topic only.
-  Examples of GOOD categories: "Food", "Sports", "Nature", "Technology", "Health".
-  NEVER write a sentence or phrase as the category. It is a vague hint, not a description.
+- hint: a SINGLE SHORT WORD or at most 2 words — a vague clue that relates to the word but doesn't give it away easily.
+  Examples: if word is "Hospital", hint could be "Health" or "Place of care". 
+  If word is "Chef", hint could be "Kitchen" or "Creation".
+  NEVER write a sentence or phrase. It is a subtle hint.
 - Both fields must have English ("en") and Arabic ("ar") values.
 - Be creative and avoid repetition.`;
 
@@ -39,7 +40,7 @@ Rules:
   const raw     = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
   const cleaned = raw.replace(/```json|```/g, '').trim();
   const parsed  = JSON.parse(cleaned);
-  if (!parsed?.word?.en || !parsed?.category?.en) throw new Error('Bad Gemini response shape');
+  if (!parsed?.word?.en || !parsed?.hint?.en) throw new Error('Bad Gemini response shape');
   return parsed;
 }
 

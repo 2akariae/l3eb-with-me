@@ -7,9 +7,10 @@
 import { assignRoles } from '../constants/game.js';
 import { useOfflineStore, OFFLINE_PHASES } from '../store/offlineStore.js';
 import { getRandomWord } from '../constants/wordPack.js';
+import { generateSpyWord } from '../games/spy/hooks/useGeminiWords.js';
 
-export function startOfflineGame() {
-  const { players, gameType } = useOfflineStore.getState();
+export async function startOfflineGame() {
+  const { players, gameType, usedWords, addUsedWord } = useOfflineStore.getState();
   const isSpy      = gameType === 'spy';
   const minPlayers = isSpy ? 3 : 4;
 
@@ -22,15 +23,25 @@ export function startOfflineGame() {
 
   let roles    = {};
   let word     = null;
-  let category = null;
+  let hint     = null;
   let spyId    = null;
 
   if (isSpy) {
     spyId = ids[Math.floor(Math.random() * ids.length)];
     ids.forEach((id) => { roles[id] = id === spyId ? 'spy' : 'citizen'; });
-    const picked = getRandomWord();
-    word     = picked.word;     // { en, ar }
-    category = picked.category; // { en, ar }
+    
+    let picked = await generateSpyWord();
+    
+    // Prevent repetition logic
+    let attempts = 0;
+    while (usedWords.includes(picked.word.en) && attempts < 20) {
+      picked = await generateSpyWord();
+      attempts++;
+    }
+    addUsedWord(picked.word.en);
+
+    word     = picked.word; // { en, ar }
+    hint     = picked.hint; // { en, ar } (Renamed from category)
   } else {
     roles = assignRoles(ids, playerMap);
   }
@@ -54,9 +65,15 @@ export function startOfflineGame() {
     exileTarget:      null,
     detectiveResult:  null,
     word,
-    category,
+    hint,
     spyId,
   });
+}
+
+export function restartOfflineGame() {
+  const { restart } = useOfflineStore.getState();
+  restart();
+  startOfflineGame();
 }
 
 export function resolveNightAndGoDawn() {

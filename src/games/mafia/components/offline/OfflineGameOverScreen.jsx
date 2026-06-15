@@ -3,6 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { getRoleLabel } from '../../../../constants/game.js';
+import { restartOfflineGame } from '../../../../services/offlineEngine.js';
 import HauntedHouseBg from '../../../../components/game/HauntedHouseBg.jsx';
 
 const BADGES = {
@@ -110,14 +111,24 @@ export default function OfflineGameOverScreen({ onPlayAgain }) {
           })}
         </div>
 
-        {/* Play Again */}
-        <motion.button
-          initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.7 }}
-          whileTap={{ scale: 0.97 }} onClick={onPlayAgain}
-          className="w-full h-16 rounded-3xl font-black text-sm uppercase tracking-[0.2em] text-white mt-8"
-          style={{ background: 'linear-gradient(135deg,#7c3aed,#c026d3)', boxShadow: '0 0 30px rgba(124,58,237,0.35)' }}>
-          {t('playAgain')}
-        </motion.button>
+        {/* Play Again (New) */}
+        <div className="flex flex-col gap-3 mt-8">
+          <motion.button
+            initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.7 }}
+            whileTap={{ scale: 0.97 }} onClick={restartOfflineGame}
+            className="w-full h-16 rounded-3xl font-black text-sm uppercase tracking-[0.2em] text-white"
+            style={{ background: 'linear-gradient(135deg,#7c3aed,#c026d3)', boxShadow: '0 0 30px rgba(124,58,237,0.35)' }}>
+            {t('playAgain')}
+          </motion.button>
+
+          <motion.button
+            initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.8 }}
+            whileTap={{ scale: 0.97 }} onClick={onPlayAgain}
+            className="w-full h-14 rounded-2xl font-black text-xs uppercase tracking-[0.15em] text-smoke-400 border border-white/10"
+            style={{ background: 'rgba(255,255,255,0.03)' }}>
+            {t('backToHub')}
+          </motion.button>
+        </div>
       </div>
     </div>
   );

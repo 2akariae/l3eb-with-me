@@ -13,14 +13,14 @@ const SPY_CFG = {
   citizen: { glow: '#3b82f6', bg: 'linear-gradient(155deg,rgba(59,130,246,0.2) 0%,rgba(2,4,16,0.98) 100%)', border: 'rgba(59,130,246,0.5)' },
 };
 
-function SpyCard({ role, pressing, tiltX, tiltY, language, word, category }) {
+function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
   const cfg   = SPY_CFG[role];
   const isSpy = role === 'spy';
   const isAr  = language === 'ar';
 
   // Resolve bilingual objects
-  const displayWord     = typeof word     === 'object' ? (word?.[language]     ?? word?.en     ?? '') : (word ?? '');
-  const displayCategory = typeof category === 'object' ? (category?.[language] ?? category?.en ?? '') : (category ?? '');
+  const displayWord = typeof word === 'object' ? (word?.[language] ?? word?.en ?? '') : (word ?? '');
+  const displayHint = typeof hint === 'object' ? (hint?.[language] ?? hint?.en ?? '') : (hint ?? '');
 
   return (
     <div style={{ perspective: 1000, width: 220, height: 310 }}>
@@ -65,9 +65,9 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, category }) {
             {isSpy ? (
               <div className="text-emerald-400/80 text-xs font-bold leading-relaxed">
                 {isAr ? 'أنت لا تعرف الكلمة السرية.' : 'You do not know the secret word.'}
-                {displayCategory && (
+                {displayHint && (
                   <p className="text-white mt-2 font-bold">
-                    {isAr ? 'فئة الكلمة:' : 'Category:'} {displayCategory}
+                    {isAr ? 'تلميح الكلمة:' : 'Hint:'} {displayHint}
                   </p>
                 )}
               </div>
@@ -84,7 +84,7 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, category }) {
 }
 
 export default function OfflineSpyRevealScreen() {
-  const { players, envelopeIndex, nextEnvelope, language, roles, word, category, spyId } = useOfflineStore();
+  const { players, envelopeIndex, nextEnvelope, language, roles, word, hint, spyId } = useOfflineStore();
   const t      = useTranslation(language);
   const isAr   = language === 'ar';
 
@@ -147,7 +147,7 @@ export default function OfflineSpyRevealScreen() {
         <SpyCard
           role={role} pressing={pressing}
           tiltX={rawTiltX} tiltY={rawTiltY}
-          language={language} word={word} category={category}
+          language={language} word={word} hint={hint}
         />
       </div>
 

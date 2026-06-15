@@ -34,8 +34,8 @@ export default function SpyRevealScreen({ user, onExpire }) {
   const isSpy = myRole === 'spy';
 
   // Resolve bilingual game data
-  const displayWord     = typeof gameState?.word     === 'object' ? (gameState?.word?.[language]     ?? gameState?.word?.en     ?? '') : (gameState?.word ?? '');
-  const displayCategory = typeof gameState?.category === 'object' ? (gameState?.category?.[language] ?? gameState?.category?.en ?? '') : (gameState?.category ?? '');
+  const displayWord = typeof gameState?.word === 'object' ? (gameState?.word?.[language] ?? gameState?.word?.en ?? '') : (gameState?.word ?? '');
+  const displayHint = typeof gameState?.hint === 'object' ? (gameState?.hint?.[language] ?? gameState?.hint?.en ?? '') : (gameState?.hint ?? '');
 
   const SPY_CONFIG = {
     spy:     { glow: '#10b981', bg: 'linear-gradient(155deg,rgba(16,185,129,0.2) 0%,rgba(2,12,8,0.98) 100%)', border: 'rgba(16,185,129,0.5)' },
@@ -113,10 +113,10 @@ export default function SpyRevealScreen({ user, onExpire }) {
                     <p className="text-emerald-400/80 text-xs font-medium leading-relaxed">
                       {t('spyRoleDesc')}
                     </p>
-                    {displayCategory && (
+                    {displayHint && (
                       <div className="p-3 rounded-xl bg-black/40 border border-emerald-500/30">
-                        <p className="text-[10px] text-emerald-500 uppercase font-black tracking-widest mb-1">{t('strategicCategory')}</p>
-                        <p className="text-white font-bold text-sm">{displayCategory}</p>
+                        <p className="text-[10px] text-emerald-500 uppercase font-black tracking-widest mb-1">{t('wordHint')}</p>
+                        <p className="text-white font-bold text-sm">{displayHint}</p>
                       </div>
                     )}
                   </div>
@@ -124,9 +124,9 @@ export default function SpyRevealScreen({ user, onExpire }) {
                   <div className="space-y-4">
                     <p className="text-blue-400/80 text-xs font-medium leading-relaxed">{t('secretWordIs').toUpperCase()}:</p>
                     <p className="text-white text-3xl font-black tracking-wider uppercase drop-shadow-lg">{displayWord}</p>
-                    {displayCategory && (
+                    {displayHint && (
                       <p className="text-[10px] text-blue-500 uppercase font-black tracking-widest">
-                        {t('category').toUpperCase()}: {displayCategory}
+                        {t('wordHint').toUpperCase()}: {displayHint}
                       </p>
                     )}
                   </div>

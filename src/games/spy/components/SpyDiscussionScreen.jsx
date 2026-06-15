@@ -39,8 +39,8 @@ export default function SpyDiscussionScreen({ user, playerId }) {
   };
 
   // Resolve bilingual game data
-  const displayWord     = typeof gameState?.word     === 'object' ? (gameState?.word?.[language]     ?? gameState?.word?.en     ?? '') : (gameState?.word ?? '');
-  const displayCategory = typeof gameState?.category === 'object' ? (gameState?.category?.[language] ?? gameState?.category?.en ?? '') : (gameState?.category ?? '');
+  const displayWord = typeof gameState?.word === 'object' ? (gameState?.word?.[language] ?? gameState?.word?.en ?? '') : (gameState?.word ?? '');
+  const displayHint = typeof gameState?.hint === 'object' ? (gameState?.hint?.[language] ?? gameState?.hint?.en ?? '') : (gameState?.hint ?? '');
 
   const alivePlayers = Object.entries(players).filter(([, p]) => p.isAlive);
 
@@ -70,17 +70,17 @@ export default function SpyDiscussionScreen({ user, playerId }) {
             </div>
             <div>
               <p className="text-[9px] font-black uppercase tracking-widest opacity-50">
-                {isSpy ? t('strategicCategory').toUpperCase() : t('secretWordIs').toUpperCase()}
+                {isSpy ? t('wordHint').toUpperCase() : t('secretWordIs').toUpperCase()}
               </p>
               <p className="text-white font-black text-sm tracking-wide">
-                {isSpy ? displayCategory : displayWord}
+                {isSpy ? displayHint : displayWord}
               </p>
             </div>
           </div>
-          {!isSpy && displayCategory && (
+          {!isSpy && displayHint && (
             <div className="text-right">
-              <p className="text-[9px] font-black uppercase tracking-widest opacity-50">{t('category').toUpperCase()}</p>
-              <p className="text-blue-400 font-bold text-[10px]">{displayCategory}</p>
+              <p className="text-[9px] font-black uppercase tracking-widest opacity-50">{t('wordHint').toUpperCase()}</p>
+              <p className="text-blue-400 font-bold text-[10px]">{displayHint}</p>
             </div>
           )}
         </motion.div>
