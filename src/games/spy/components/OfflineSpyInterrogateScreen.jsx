@@ -10,7 +10,7 @@ import { ParallaxStars } from '../../../components/game/ParallaxStars.jsx';
 import { Ghost, Search, RefreshCcw, Eye, EyeOff } from 'lucide-react';
 
 export default function OfflineSpyInterrogateScreen() {
-  const { language, reset, word, players, spyId } = useOfflineStore();
+  const { language, restart, word, players, spyId } = useOfflineStore();
   const t    = useTranslation(language);
   const isAr = language === 'ar';
 
@@ -85,7 +85,7 @@ export default function OfflineSpyInterrogateScreen() {
         </button>
 
         <button
-          onClick={() => reset()}
+          onClick={() => restart()}
           className="h-16 rounded-2xl bg-emerald-600 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:bg-emerald-500 transition-all"
         >
           <RefreshCcw size={18} />

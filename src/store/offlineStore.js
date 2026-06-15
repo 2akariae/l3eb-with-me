@@ -60,11 +60,12 @@ const INITIAL = {
 export const useOfflineStore = create(persist((set, get) => ({
   ...INITIAL,
 
-  // Preserves gameType and language — so restarting Spy stays in Spy.
+  // Preserves gameType, language, and players — so restarting Spy stays in Spy and keeps names.
   reset: () => set((s) => ({ 
     ...RESETTABLE, 
     gameType: s.gameType, 
     language: s.language, 
+    players: s.players,
     usedWords: s.usedWords 
   })),
 
@@ -73,7 +74,7 @@ export const useOfflineStore = create(persist((set, get) => ({
     ...RESETTABLE,
     gameType: s.gameType,
     language: s.language,
-    players: s.players, // This is already being passed correctly in the previous version, but I'll ensure it remains.
+    players: s.players,
     usedWords: s.usedWords
   })),
 
