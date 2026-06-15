@@ -123,14 +123,9 @@ export default function App() {
       setLangChosen(true);
     }
 
-    const savedMode = lsGet('mafia_appMode');
-    if (savedMode === 'offline') {
-      setAppModeRaw('offline');
-    } else if (savedMode === 'online') {
-      setAppModeRaw('online');
-    } else {
-      setAppModeRaw(null);
-    }
+    // Always start at null (Home) on refresh
+    setAppModeRaw(null);
+    lsSet('mafia_appMode', null);
   }, []); // eslint-disable-line
 
   useEffect(() => { setOfflineLang(language); }, [language]); // eslint-disable-line

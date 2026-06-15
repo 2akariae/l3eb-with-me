@@ -73,7 +73,7 @@ export const useOfflineStore = create(persist((set, get) => ({
     ...RESETTABLE,
     gameType: s.gameType,
     language: s.language,
-    players: s.players,
+    players: s.players, // This is already being passed correctly in the previous version, but I'll ensure it remains.
     usedWords: s.usedWords
   })),
 

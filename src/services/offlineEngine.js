@@ -71,10 +71,8 @@ export async function startOfflineGame() {
 }
 
 export async function restartOfflineGame() {
-  const { restart, players } = useOfflineStore.getState();
-  const currentPlayers = players; // Capture current players
+  const { restart } = useOfflineStore.getState();
   restart();
-  useOfflineStore.setState({ players: currentPlayers }); // Restore them immediately
   await startOfflineGame();
 }
 
