@@ -209,10 +209,10 @@ export default function LobbyScreen({ user, playerId }) {
         />
       </div>
 
-      <div className="relative z-10 grid grid-cols-[auto,1fr,auto] items-center px-6 pt-safe pt-5 pb-4 border-b border-white/5 backdrop-blur-xl gap-4">
+      <div className="relative z-10 flex items-center justify-between px-6 pt-safe pt-5 pb-4 border-b border-white/5 backdrop-blur-xl">
         <BackButton onClick={handleLeave} />
 
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center">
           <p className="text-[9px] font-black uppercase tracking-[0.3em] mb-1"
             style={{ color: accentColor }}>{t('waitingRoom')}</p>
           <button onClick={handleShare} className="flex items-center gap-2 group justify-center">
@@ -221,7 +221,7 @@ export default function LobbyScreen({ user, playerId }) {
           </button>
         </div>
 
-        <div className="w-10" />
+        <div className="w-10"></div> {/* Spacer to balance BackButton */}
       </div>
 
       <AnimatePresence>
