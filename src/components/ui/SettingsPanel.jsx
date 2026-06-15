@@ -4,14 +4,58 @@
 //      All strings via t(). Accessible from every screen.
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, Globe, Check, ChevronRight, LogOut, UserPlus } from 'lucide-react';
+import { X, User, Globe, Check, ChevronRight, LogOut, UserPlus, Camera, ImageIcon } from 'lucide-react';
 import { signOut, auth } from '../../services/firebaseConfig.js';
 import { useGameStore } from '../../store/gameStore.js';
 import { useOfflineStore } from '../../store/offlineStore.js';
 import { useTranslation } from '../../constants/translations.js';
-import { AGENT_AVATARS } from '../../constants/game.js';
-import AvatarMatrix, { AgentAvatarTile } from './AvatarMatrix.jsx';
 import { Avatar } from './index.jsx';
+
+// ── Custom Profile Picture Picker ────────────────────────────────────────────
+function ProfilePicturePicker({ photo, onChange }) {
+  function handleFile(e) {
+    const file = e.target?.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const SIZE = 200;
+        const canvas = document.createElement('canvas');
+        canvas.width = SIZE;
+        canvas.height = SIZE;
+        const ctx = canvas.getContext('2d');
+        const src = Math.min(img.width, img.height);
+        const sx = (img.width - src) / 2;
+        const sy = (img.height - src) / 2;
+        ctx.drawImage(img, sx, sy, src, src, 0, 0, SIZE, SIZE);
+        onChange(canvas.toDataURL('image/jpeg', 0.8));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <div className="relative group">
+        <div className="w-32 h-32 rounded-3xl overflow-hidden border-4 border-white/5 shadow-2xl bg-white/5 transition-all group-hover:border-gold-500/30">
+          {photo ? (
+            <img src={photo} alt="Profile" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-smoke-600">
+              <User size={64} />
+            </div>
+          )}
+        </div>
+        <label className="absolute -bottom-2 -right-2 p-3 bg-gold-500 rounded-2xl cursor-pointer shadow-lg hover:scale-105 transition-transform">
+          <Camera size={20} className="text-black" />
+          <input type="file" className="hidden" accept="image/*" onChange={handleFile} />
+        </label>
+      </div>
+    </div>
+  );
+}
 
 const SEC = { MAIN: 'main', PROFILE: 'profile', LANGUAGE: 'language', ACCOUNT: 'account' };
 
@@ -24,14 +68,14 @@ export default function SettingsPanel({ onClose }) {
 
   const [sec,       setSec]       = useState(SEC.MAIN);
   const [editName,  setEditName]  = useState(profile?.name  ?? '');
-  const [editAv,    setEditAv]    = useState(profile?.avatar ?? '');
+  const [editPhoto, setEditPhoto] = useState(profile?.avatar || profile?.photo ?? '');
   const [saved,     setSaved]     = useState(false);
   const [loggingOut,setLoggingOut]= useState(false);
 
   function savePro() {
     const name = editName.trim();
-    if (name.length < 2) return;
-    setProfile({ name, avatar: editAv });
+    if (name.length < 1) return;
+    setProfile({ name, avatar: editPhoto, photo: editPhoto });
     setSaved(true);
     setTimeout(() => { setSaved(false); setSec(SEC.MAIN); }, 850);
   }
@@ -158,6 +202,8 @@ export default function SettingsPanel({ onClose }) {
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="p-8 flex flex-col gap-8"
             >
+              <ProfilePicturePicker photo={editPhoto} onChange={setEditPhoto} />
+
               <div className="flex flex-col gap-4">
                 <label className="text-[10px] font-black text-smoke-500 uppercase tracking-[0.2em]">{t('profileName')}</label>
                 <input
@@ -165,24 +211,6 @@ export default function SettingsPanel({ onClose }) {
                   value={editName} onChange={(e) => setEditName(e.target.value)} maxLength={20}
                   placeholder={isAr ? 'اسمك في اللعبة...' : 'Enter your name...'}
                 />
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <label className="text-[10px] font-black text-smoke-500 uppercase tracking-[0.2em]">{t('chooseAvatar')}</label>
-                <div className="bg-white/5 border border-white/5 rounded-3xl p-6">
-                  {/* Simplified Avatar Selection: Showing a limited subset of avatars (first 8) */}
-                  <div className="grid grid-cols-4 gap-4">
-                    {AGENT_AVATARS.slice(0, 8).map((agent) => (
-                      <AgentAvatarTile
-                        key={agent.id}
-                        agent={agent}
-                        size={44}
-                        selected={editAv === agent.id}
-                        onClick={() => setEditAv(agent.id)}
-                      />
-                    ))}
-                  </div>
-                </div>
               </div>
 
               <motion.button 
