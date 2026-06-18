@@ -25,6 +25,8 @@ services:
         type: SECRET        # set in DO dashboard — never in code
       - key: AGORA_APP_CERTIFICATE
         type: SECRET        # set in DO dashboard — never in code
+      - key: GEMINI_API_KEY
+        type: SECRET        # set in DO dashboard — server-side only, no VITE_ prefix
       # Firebase vars (VITE_ prefix needed for Vite build)
       - key: VITE_FIREBASE_API_KEY
         type: SECRET

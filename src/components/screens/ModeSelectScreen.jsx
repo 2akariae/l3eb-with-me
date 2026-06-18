@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useCallback } from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
+import { ArrowLeft, Ghost, Spade, Wifi, Smartphone } from 'lucide-react';
 import { useGameStore } from '../../store/gameStore.js';
 import { useOfflineStore } from '../../store/offlineStore.js';
 import { ParallaxStars } from '../game/ParallaxStars.jsx';
@@ -81,9 +82,10 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
       <motion.button
         initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1 }}
         onClick={onBack}
-        className="absolute top-8 left-8 z-20 px-4 py-2 rounded-2xl glass border border-white/10 text-smoke-400 text-[10px] font-black tracking-widest hover:text-white transition-all uppercase"
+        className="absolute top-8 left-8 z-20 flex items-center gap-2 px-4 py-2 rounded-2xl glass border border-white/10 text-smoke-400 text-[10px] font-black tracking-widest hover:text-white transition-all uppercase"
       >
-        {isAr ? '← العودة' : '← BACK'}
+        <ArrowLeft size={14} className={isAr ? 'rotate-180' : ''} />
+        {isAr ? 'العودة' : 'BACK'}
       </motion.button>
 
       <motion.div className="relative z-10 w-full max-w-sm px-6 flex flex-col items-center gap-10"
@@ -92,7 +94,7 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
         {/* Logo Section */}
         <motion.div variants={item} className="text-center">
           <motion.div 
-            className="text-7xl mb-6 select-none cursor-default"
+            className="mb-6 flex items-center justify-center select-none cursor-default"
             animate={{ 
               y: [0, -12, 0], 
               rotate: [0, 8, -8, 0],
@@ -101,7 +103,10 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
                 : ['drop-shadow(0 0 10px rgba(124,58,237,0.3))', 'drop-shadow(0 0 30px rgba(124,58,237,0.6))', 'drop-shadow(0 0 10px rgba(124,58,237,0.3))']
             }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}>
-            {isSpy ? '👻' : '♣'}
+            {isSpy
+              ? <Ghost size={72} strokeWidth={1.5} className="text-emerald-400" />
+              : <Spade size={72} strokeWidth={1.5} className="text-violet-400" />
+            }
           </motion.div>
           <h1 className="text-5xl font-black tracking-[0.2em] uppercase"
             style={{ 
@@ -129,8 +134,10 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
             gradient="linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(124,58,237,0.1) 100%)"
             border="rgba(124,58,237,0.3)"
           >
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-lg"
-              style={{ background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)' }}>🌐</div>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-lg"
+              style={{ background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)' }}>
+              <Wifi size={30} strokeWidth={1.75} className="text-blue-400" />
+            </div>
             <div className="text-left flex-1">
               <p className="text-white font-black text-xl tracking-tight">{t('onlineMode')}</p>
               <p className="text-smoke-400 text-xs mt-1 font-medium">{t('multiDevice')}</p>
@@ -148,8 +155,10 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
             gradient="linear-gradient(135deg, rgba(201,148,58,0.08) 0%, rgba(120,60,180,0.08) 100%)"
             border="rgba(201,148,58,0.3)"
           >
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-lg"
-              style={{ background: 'rgba(201,148,58,0.15)', border: '1px solid rgba(201,148,58,0.3)' }}>📱</div>
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-lg"
+              style={{ background: 'rgba(201,148,58,0.15)', border: '1px solid rgba(201,148,58,0.3)' }}>
+              <Smartphone size={30} strokeWidth={1.75} className="text-gold-400" />
+            </div>
             <div className="text-left flex-1">
               <p className="text-white font-black text-xl tracking-tight">{t('offlineMode')}</p>
               <p className="text-smoke-400 text-xs mt-1 font-medium">{t('oneDevice')}</p>

@@ -2,6 +2,7 @@
 // Full-screen cinematic overlay between phase changes.
 import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Moon, Sunrise, Sun, Scale, Crosshair, Spade, Radio, Target, Database } from 'lucide-react';
 import { PHASES } from '../../constants/game.js';
 import { useGameStore } from '../../store/gameStore.js';
 import { useTranslation } from '../../constants/translations.js';
@@ -40,42 +41,42 @@ export function PhaseTransitionOverlay({ phase, onDone }) {
   const configs = useMemo(() => ({
     mafia: {
       [PHASES.NIGHT]: {
-        icon:    '🌕',
+        Icon:    Moon,
         label:   t('night'),
         sub:     t('nightSub'),
         bg:      'radial-gradient(ellipse at center, rgba(43,20,80,0.97) 0%, rgba(3,2,10,0.99) 100%)',
         accent:  '#a855f7',
       },
       [PHASES.DAWN_SCROLL]: {
-        icon:    '🌅',
+        Icon:    Sunrise,
         label:   t('dawnBreak'),
         sub:     t('dawnSub'),
         bg:      'radial-gradient(ellipse at 50% 0%, rgba(200,100,10,0.96) 0%, rgba(3,2,10,0.99) 100%)',
         accent:  '#f59e0b',
       },
       [PHASES.DISCUSSION]: {
-        icon:    '☀️',
+        Icon:    Sun,
         label:   t('discussion'),
         sub:     t('discussionSub'),
         bg:      'radial-gradient(ellipse at center, rgba(40,30,10,0.97) 0%, rgba(3,2,10,0.99) 100%)',
         accent:  '#c9943a',
       },
       [PHASES.VOTING]: {
-        icon:    '⚖',
+        Icon:    Scale,
         label:   t('voting'),
         sub:     t('votingSub'),
         bg:      'radial-gradient(ellipse at center, rgba(100,10,10,0.97) 0%, rgba(3,2,10,0.99) 100%)',
         accent:  '#e02020',
       },
       [PHASES.EXECUTION]: {
-        icon:    '🔫',
+        Icon:    Crosshair,
         label:   t('execution'),
         sub:     t('executionSub'),
         bg:      'radial-gradient(ellipse at center, rgba(120,0,0,0.97) 0%, rgba(3,2,10,0.99) 100%)',
         accent:  '#f87171',
       },
       [PHASES.GAME_OVER]: {
-        icon:    '♣',
+        Icon:    Spade,
         label:   t('gameOver'),
         sub:     t('gameOverSub'),
         bg:      'radial-gradient(ellipse at center, rgba(30,20,60,0.97) 0%, rgba(3,2,10,0.99) 100%)',
@@ -84,21 +85,21 @@ export function PhaseTransitionOverlay({ phase, onDone }) {
     },
     spy: {
       [PHASES.DISCUSSION]: {
-        icon:    '📡',
+        Icon:    Radio,
         label:   t('operationalDebrief'),
         sub:     t('spyDiscussionSub'),
         bg:      'radial-gradient(ellipse at center, rgba(10,40,30,0.98) 0%, rgba(2,5,3,1) 100%)',
         accent:  '#10b981',
       },
       [PHASES.VOTING]: {
-        icon:    '🎯',
+        Icon:    Target,
         label:   t('terminationVote'),
         sub:     t('spyVotingSub'),
         bg:      'radial-gradient(ellipse at center, rgba(10,20,50,0.98) 0%, rgba(2,3,8,1) 100%)',
         accent:  '#3b82f6',
       },
       [PHASES.GAME_OVER]: {
-        icon:    '💾',
+        Icon:    Database,
         label:   t('gameOver'),
         sub:     t('spyGameOverSub'),
         bg:      'radial-gradient(ellipse at center, rgba(20,20,20,0.98) 0%, rgba(0,0,0,1) 100%)',
@@ -144,9 +145,10 @@ export function PhaseTransitionOverlay({ phase, onDone }) {
               initial={{ scale: 0.2, rotate: -30, opacity: 0 }}
               animate={{ scale: 1,   rotate: 0,   opacity: 1 }}
               transition={{ type: 'spring', damping: 10, delay: 0.1 }}
-              className="text-7xl filter drop-shadow-lg"
+              className="flex items-center justify-center"
+              style={{ filter: `drop-shadow(0 0 28px ${config.accent}90)` }}
             >
-              {config.icon}
+              <config.Icon size={72} strokeWidth={1.5} color={config.accent} />
             </motion.div>
 
             <motion.div

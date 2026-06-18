@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import React from 'react';
 import { motion } from 'framer-motion';
+import { ScrollText } from 'lucide-react';
 import { PHASES, getRoleLabel } from '../../constants/game.js';
 import { useGameStore } from '../../store/gameStore.js';
 
@@ -49,9 +50,9 @@ export function GameHUD({ phase, round, myRole }) {
           animate={{ opacity: 1, x: 0 }}
           whileTap={{ scale: 0.95 }}
           onClick={toggleHistory}
-          className="glass rounded-full px-3 py-1.5 border border-white/8 text-[10px] font-mono uppercase tracking-widest text-smoke-400 hover:text-white transition-colors"
+          className="glass rounded-full px-3 py-1.5 border border-white/8 text-[10px] font-mono uppercase tracking-widest text-smoke-400 hover:text-white transition-colors flex items-center gap-1.5"
         >
-          📜 Log
+          <ScrollText size={11} strokeWidth={2} /> Log
         </motion.button>
       )}
     </div>

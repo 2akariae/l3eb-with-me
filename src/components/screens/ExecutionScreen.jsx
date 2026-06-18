@@ -7,6 +7,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Scale, Sword, Cross, Search, Circle } from 'lucide-react';
 import { useGameStore } from '../../store/gameStore.js';
 import { nextRound } from '../../games/mafia/hooks/useMafiaEngine.js';
 import { Avatar, toast } from '../ui/index.jsx';
@@ -241,13 +242,12 @@ export default function ExecutionScreen() {
                   boxShadow:   '0 0 40px rgba(201,148,58,0.2)',
                 }}
               >
-                <motion.span
-                  className="text-6xl"
+                <motion.div
                   animate={{ rotate: [-4, 4, -4] }}
                   transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                 >
-                  ⚖
-                </motion.span>
+                  <Scale size={56} strokeWidth={1.5} className="text-gold-400" />
+                </motion.div>
               </div>
 
               <motion.p
@@ -347,9 +347,13 @@ export default function ExecutionScreen() {
                 }}
               >
                 <p className="text-smoke-400 text-xs uppercase tracking-widest font-mono">Was</p>
-                <span className="text-4xl drop-shadow-lg">
-                  {roleName === 'mafia' ? '⚔' : roleName === 'doctor' ? '✚' : roleName === 'sheikh' ? '◉' : '◯'}
-                </span>
+                {(() => {
+                  const RoleIcon = roleName === 'mafia' ? Sword
+                    : roleName === 'doctor' ? Cross
+                    : roleName === 'sheikh' ? Search
+                    : Circle;
+                  return <RoleIcon size={34} strokeWidth={1.75} className={`drop-shadow-lg ${meta.textClass}`} />;
+                })()}
                 <p className={`display text-2xl font-bold ${meta.textClass}`}>{getRoleLabel(roleName, language)}</p>
               </motion.div>
             )}

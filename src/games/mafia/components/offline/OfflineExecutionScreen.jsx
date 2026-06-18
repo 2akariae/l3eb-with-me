@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Sword, Cross, Search, User, Smile, CheckCircle2, Handshake } from 'lucide-react';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { executionToNextRound } from '../../../../services/offlineEngine.js';
 import { ROLE_META, getRoleLabel } from '../../../../constants/game.js';
@@ -25,9 +26,9 @@ export default function OfflineExecutionScreen() {
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
-  const roleEmoji = {
-    mafia: '⚔️', doctor: '✚', sheikh: '🔍', citizen: '👤',
-  }[lastExecutedRole] ?? '👤';
+  const RoleIcon = {
+    mafia: Sword, doctor: Cross, sheikh: Search, citizen: User,
+  }[lastExecutedRole] ?? User;
 
   return (
     <div className="screen overflow-hidden relative">
@@ -62,12 +63,15 @@ export default function OfflineExecutionScreen() {
                   borderColor: meta?.glowColor ?? 'rgba(255,255,255,0.2)',
                   boxShadow:  `0 0 40px ${meta?.glowColor ?? 'rgba(100,60,200,0.2)'}`,
                 }}>
-                <p className="text-3xl">{roleEmoji}</p>
+                <RoleIcon size={32} strokeWidth={1.75} className={meta?.textClass ?? 'text-white'} />
                 <p className={`text-2xl font-black tracking-[0.2em] ${meta?.textClass ?? 'text-white'}`}>
                   {getRoleLabel(lastExecutedRole, language).toUpperCase()}
                 </p>
-                <p className={`text-sm font-bold ${isMafia ? 'text-crimson-400' : 'text-emerald-400'}`}>
-                  {isMafia ? '😈 The Mafia loses one.' : '✓ The Town got it right!'}
+                <p className={`flex items-center gap-1.5 text-sm font-bold ${isMafia ? 'text-crimson-400' : 'text-emerald-400'}`}>
+                  {isMafia
+                    ? <><Smile size={15} strokeWidth={2} /> The Mafia loses one.</>
+                    : <><CheckCircle2 size={15} strokeWidth={2} /> The Town got it right!</>
+                  }
                 </p>
               </motion.div>
             )}
@@ -87,7 +91,7 @@ export default function OfflineExecutionScreen() {
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', damping: 12 }}
             className="text-center">
-            <p className="text-5xl mb-5">🤝</p>
+            <Handshake size={56} strokeWidth={1.5} className="text-white/80 mx-auto mb-5" />
             <h1 className="text-4xl font-black text-white">{t('noExile')}</h1>
             <p className="text-smoke-400 text-sm mt-3">{t('noExileDesc')}</p>
             <motion.div className="flex gap-2 justify-center mt-8"

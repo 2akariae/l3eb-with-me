@@ -10,7 +10,17 @@ import { motion } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore.js';
 import { Swords, Ghost } from 'lucide-react';
 import { useTranslation } from '../../constants/translations.js';
+import { getAllGames } from '../../registry/gameRegistry.js';
 import BackButton from '../ui/BackButton.jsx';
+
+// Presentation mapping — icon + gradient per game id. New games added to the
+// registry automatically render here with a sensible default until a custom
+// icon/style entry is added.
+const GAME_PRESENTATION = {
+  mafia: { icon: <Swords size={32} className="text-crimson-400" />, gradient: 'from-crimson-900/40 to-noir-950', border: 'border-crimson-600/30' },
+  spy:   { icon: <Ghost  size={32} className="text-emerald-400" />, gradient: 'from-emerald-900/40 to-noir-950', border: 'border-emerald-600/30' },
+};
+const DEFAULT_PRESENTATION = { icon: <Swords size={32} className="text-smoke-400" />, gradient: 'from-noir-900 to-noir-950', border: 'border-white/10' };
 
 export default function GameSelector({ onLangReset }) {
   const { setGameType, resetSession, language } = useGameStore();
@@ -34,24 +44,18 @@ export default function GameSelector({ onLangReset }) {
     }
   }
 
-  const games = [
-    {
-      id: 'mafia',
-      title: t('mafiaTitle'),
-      desc:  t('mafiaDesc'),
-      icon:  <Swords size={32} className="text-crimson-400" />,
-      gradient: 'from-crimson-900/40 to-noir-950',
-      border:   'border-crimson-600/30',
-    },
-    {
-      id: 'spy',
-      title: t('spyTitle'),
-      desc:  t('spyDesc'),
-      icon:  <Ghost size={32} className="text-emerald-400" />,
-      gradient: 'from-emerald-900/40 to-noir-950',
-      border:   'border-emerald-600/30',
-    },
-  ];
+  // Read from the registry — adding a 3rd/10th game requires zero edits here.
+  const games = getAllGames().map((g) => {
+    const presentation = GAME_PRESENTATION[g.id] ?? DEFAULT_PRESENTATION;
+    return {
+      id:       g.id,
+      title:    language === 'ar' ? g.labelAr : g.label,
+      desc:     language === 'ar' ? g.descriptionAr : g.description,
+      icon:     presentation.icon,
+      gradient: presentation.gradient,
+      border:   presentation.border,
+    };
+  });
 
   return (
     <div

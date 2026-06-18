@@ -1,6 +1,7 @@
 // ─── THE MAFIA — EnvelopeScreen.jsx (Cinematic Unified Design) ───────────────
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion';
+import { Mail } from 'lucide-react';
 import { useGameStore } from '../../store/gameStore.js';
 import { TimerRing } from '../ui/index.jsx';
 import { useTimer } from '../../hooks/useTimer.js';
@@ -71,9 +72,11 @@ function RoleCard({ role, revealed, tiltX, tiltY, t }) {
             <motion.div className="absolute inset-0 opacity-20"
               style={{ background:'linear-gradient(135deg,transparent 35%,rgba(255,255,255,0.55) 50%,transparent 65%)' }}
               animate={{ x:['-110%','110%'] }} transition={{ duration:1.6, repeat:Infinity, repeatDelay:3.5 }} />
-            <motion.div className="text-7xl select-none text-purple-300 opacity-60"
+            <motion.div className="text-purple-300 opacity-60"
               animate={{ scale:[1,1.05,1], rotate:[0,2,-2,0] }}
-              transition={{ duration:4.5, repeat:Infinity }}>✉</motion.div>
+              transition={{ duration:4.5, repeat:Infinity }}>
+              <Mail size={64} strokeWidth={1.25} />
+            </motion.div>
             <div className="w-12 h-px bg-white/15 rounded-full" />
             <p className="text-[11px] font-mono tracking-[0.3em] uppercase text-smoke-500">
               {t('tapToReveal')}

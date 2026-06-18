@@ -1,6 +1,7 @@
 // ── OfflineEnvelopeScreen — tap-and-hold reveal · 3D tilt · parallax ─────────
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion';
+import { Mail } from 'lucide-react';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { ROLE_META } from '../../../../constants/game.js';
 import { ParallaxStars } from '../../../../components/game/ParallaxStars.jsx';
@@ -66,10 +67,12 @@ function RoleCard({ role, pressing, tiltX, tiltY, isAr }) {
             <motion.div className="absolute inset-0 opacity-20"
               style={{ background:'linear-gradient(135deg,transparent 35%,rgba(255,255,255,0.55) 50%,transparent 65%)' }}
               animate={{ x:['-110%','110%'] }} transition={{ duration:1.6, repeat:Infinity, repeatDelay:3.5 }} />
-            {/* Club suit */}
-            <motion.div className="text-7xl select-none text-purple-300 opacity-60"
+            {/* Sealed envelope */}
+            <motion.div className="text-purple-300 opacity-60"
               animate={{ scale:[1,1.1,1], rotate:[0,4,-4,0] }}
-              transition={{ duration:4.5, repeat:Infinity }}>♣</motion.div>
+              transition={{ duration:4.5, repeat:Infinity }}>
+              <Mail size={64} strokeWidth={1.25} />
+            </motion.div>
             <div className="w-10 h-px bg-white/15 rounded-full" />
             <p className="text-[11px] font-mono tracking-[0.3em] uppercase text-smoke-500">
               HOLD TO REVEAL

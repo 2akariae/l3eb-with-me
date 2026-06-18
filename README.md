@@ -1,7 +1,6 @@
-# ♣ THE MAFIA
-> A cinematic, real-time social deduction game — built with React, Firebase, Framer Motion & Agora.
-
-**Live URL:** https://el-mafia3.vercel.app
+# ♣ L3EBWITHME
+> A cinematic, real-time social deduction game platform — built with React, Firebase, Framer Motion & Agora.
+> Hosts two isolated games today (The Mafia, The Spy), with a registry-based architecture for adding more.
 
 ---
 
@@ -16,7 +15,7 @@
 | Voice     | Agora RTC SDK NG                    |
 | State     | Zustand                             |
 | Icons     | Lucide React                        |
-| Deploy    | Vercel + Cloudflare (optional WAF)  |
+| Deploy    | DigitalOcean App Platform + Express (`server.js`) |
 
 ---
 
@@ -48,11 +47,14 @@ npm run dev
 # Opens at http://localhost:3000
 ```
 
-### 5. Deploy to Vercel
+### 5. Deploy (DigitalOcean App Platform)
 ```bash
 npm run build
-# Push to GitHub → Import project in Vercel
-# Add all VITE_* env vars in Vercel dashboard
+# server.js serves the dist/ build + /api/agoraToken + /api/gemini/word
+# Set these in App Platform → App Settings → Environment Variables:
+#   AGORA_APP_ID, AGORA_APP_CERTIFICATE, GEMINI_API_KEY (server-side only — no VITE_ prefix)
+#   Plus all VITE_FIREBASE_* and VITE_AGORA_APP_ID client vars below
+npm start
 ```
 
 ---
@@ -61,34 +63,58 @@ npm run build
 
 ```
 src/
-├── App.jsx                        # Root router + phase orchestration
-├── firebase.js                    # Firebase SDK init (env vars only)
-├── index.css                      # Tailwind + custom noir styles
-├── constants/
-│   └── game.js                    # Roles, phases, timing, assignments
-├── store/
-│   └── gameStore.js               # Zustand global state
+├── App.jsx                        # Top-level mode gates + shared chrome (HUD, chat, settings)
+├── router/
+│   ├── OnlineRouter.jsx            # Online phase → screen mapping (Mafia + Spy)
+│   └── OfflineRouter.jsx           # Offline phase → screen mapping
+├── registry/
+│   └── gameRegistry.js             # Single source of truth for all platform games
 ├── hooks/
-│   ├── useAgora.js                # Voice chat hook
-│   ├── useTimer.js                # Countdown with callback
-│   └── useTypewriter.js           # Character-by-character reveal
-├── utils/
-│   └── gameEngine.js              # All Firebase read/write operations
+│   ├── useFirebaseSubscriptions.js # gameState/players/role/roles/history listeners
+│   ├── useRoomPresence.js          # meta/kick watcher + Firebase presence
+│   ├── useGamePhaseEffects.js      # ambient audio + transition overlay triggers
+│   ├── useOnlineRouteInfo.js       # phase/myPlayerId selector for shared chrome
+│   ├── useAgora.js                 # Voice chat hook
+│   └── useTimer.js                 # Countdown with callback
+├── services/
+│   ├── gameEngine.js               # Online Firebase read/write ops (both games)
+│   ├── offlineEngine.js            # Pure offline state mutations, no network
+│   └── firebaseConfig.js           # Firebase SDK init (env vars only)
+├── store/
+│   ├── gameStore.js                # Zustand global state (online)
+│   └── offlineStore.js             # Zustand global state (offline, persisted)
+├── constants/
+│   ├── game.js                     # Roles, phases, timing, assignments
+│   ├── translations.js             # EN/AR UI strings
+│   └── wordPack.js                 # Local fallback word list for Spy
+├── games/
+│   ├── mafia/                      # Isolated Mafia game module
+│   │   ├── hooks/useMafiaEngine.js
+│   │   └── components/             # Online + offline screens
+│   └── spy/                        # Isolated Spy game module
+│       ├── hooks/useGeminiWords.js # Calls /api/gemini/word server proxy
+│       └── components/
 └── components/
-    ├── ui/                        # Avatar, TimerRing, Toast, Modal...
-    ├── game/                      # PhaseTransitionOverlay, GameHUD, PlayerCard
-    └── screens/
-        ├── AuthScreen.jsx         # Google + Guest sign-in
-        ├── LandingScreen.jsx      # Create / Join room
-        ├── LobbyScreen.jsx        # Waiting room + player list
-        ├── EnvelopeScreen.jsx     # 3D flip role reveal (10s)
-        ├── NightScreen.jsx        # Night actions (30s)
-        ├── DawnScrollScreen.jsx   # Scroll unroll + typewriter narrative
-        ├── DiscussionScreen.jsx   # Voice chat + skip votes (3min)
-        ├── VotingScreen.jsx       # Real-time vote tally (30s)
-        ├── ExecutionScreen.jsx    # Dramatic kill reveal
-        └── GameOverScreen.jsx     # Winner + full role reveal
+    ├── ui/                         # Avatar, TimerRing, Toast, SettingsPanel...
+    ├── game/                       # PhaseTransitionOverlay, GameHUD, FloatingPlayerList...
+    └── screens/                    # Shared screens used by both games
+        ├── AuthScreen.jsx          # Google + Guest sign-in
+        ├── LandingScreen.jsx       # Create / Join room
+        ├── LobbyScreen.jsx         # Waiting room + player list
+        ├── EnvelopeScreen.jsx      # 3D flip role reveal (10s)
+        ├── NightScreen.jsx         # Night actions (30s)
+        ├── DawnScrollScreen.jsx    # Scroll unroll + typewriter narrative
+        ├── DiscussionScreen.jsx    # Voice chat + skip votes (3min)
+        ├── VotingScreen.jsx        # Real-time vote tally (30s)
+        ├── ExecutionScreen.jsx     # Dramatic kill reveal
+        └── GameOverScreen.jsx      # Winner + full role reveal
+
+server.js                           # Express: serves dist/ + agoraToken + gemini/word proxy
 ```
+
+**Adding a new game:** register it in `registry/gameRegistry.js`, create a `src/games/<name>/` folder
+mirroring `mafia/` or `spy/`, and add its phases to the routers. No edits needed to `App.jsx`,
+`gameEngine.js`, or `GameSelector.jsx` — see `registry/gameRegistry.js` for details.
 
 ---
 
@@ -143,12 +169,17 @@ Auth → Landing → Lobby
 - ✅ `.gitignore` blocks `.env` and all variants
 - ✅ CSP headers block XSS and clickjacking
 - ✅ HSTS preload for HTTPS enforcement
-- ✅ `vercel.json` sets all security headers at CDN level
+- ✅ `server.js` applies CSP, HSTS, and other security headers via Express middleware
+  (the previous `_headers` file was a Netlify/Cloudflare-Pages/Vercel-only convention —
+  Express never read it, so those protections weren't actually active in production)
 
-### Agora
-- 🔒 For production, implement a token server using the provided `VITE_AGORA_CERTIFICATE`
-- The certificate **must never** be used client-side — it belongs only on your server
-- See: https://github.com/AgoraIO-Community/agora-token-service
+### Agora & Gemini
+- 🔒 The Agora token is generated server-side in `server.js` using `AGORA_APP_CERTIFICATE`
+  (no `VITE_` prefix — never reaches the client bundle)
+- 🔒 The Gemini word-generation key is likewise server-side only, as `GEMINI_API_KEY`
+  (see `server.js` → `POST /api/gemini/word`, called from `games/spy/hooks/useGeminiWords.js`)
+- The certificate/key **must never** be prefixed `VITE_` or referenced from client code —
+  doing so bundles the secret in plaintext into the production JS, visible via DevTools
 
 ---
 
@@ -158,7 +189,7 @@ Auth → Landing → Lobby
 2. Set SSL/TLS to **Full (strict)**
 3. Enable **WAF** → OWASP ruleset
 4. Enable **Bot Fight Mode**
-5. Add a Page Rule: `el-mafia3.vercel.app/*` → Cache Level: Bypass (for real-time data)
+5. Add a Page Rule: `your-domain.com/*` → Cache Level: Bypass (for real-time data)
 
 ---
 
@@ -178,6 +209,7 @@ All UI strings are in component files — extract them to a `constants/i18n.js` 
 
 ## 📋 Environment Variables
 
+### Client-side (Vite — `VITE_` prefix, safe to expose, set before `npm run build`)
 | Variable | Description |
 |---|---|
 | `VITE_FIREBASE_API_KEY` | Firebase Web API Key |
@@ -188,9 +220,15 @@ All UI strings are in component files — extract them to a `constants/i18n.js` 
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | FCM sender ID |
 | `VITE_FIREBASE_APP_ID` | Web app ID |
 | `VITE_FIREBASE_MEASUREMENT_ID` | Analytics (optional) |
-| `VITE_AGORA_APP_ID` | Agora App ID |
-| `VITE_AGORA_CERTIFICATE` | Agora cert (server-side only!) |
+| `VITE_AGORA_APP_ID` | Agora App ID (public half — safe client-side) |
 | `VITE_APP_URL` | Your deployment URL |
+
+### Server-side only (set in App Platform / host environment — NEVER prefix with `VITE_`)
+| Variable | Description |
+|---|---|
+| `AGORA_APP_CERTIFICATE` | Agora certificate — used by `server.js` to sign RTC tokens |
+| `GEMINI_API_KEY` | Gemini API key — used by `server.js` for Spy word generation |
+| `PORT` | Auto-set by most hosts (DigitalOcean App Platform sets this) |
 
 ---
 

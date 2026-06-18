@@ -1,6 +1,7 @@
 // ─── THE MAFIA — DawnScrollScreen.jsx (PREMIUM REFACTOR) ──────────────────────
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ShieldCheck, Search, Sun, Swords, Circle } from 'lucide-react';
 import { useGameStore } from '../../store/gameStore.js';
 import { advanceToDiscussion } from '../../games/mafia/hooks/useMafiaEngine.js';
 import { Avatar, toast } from '../ui/index.jsx';
@@ -171,7 +172,7 @@ export default function DawnScrollScreen({ user, playerId }) {
             className="flex flex-col items-center gap-3 rounded-2xl px-8 py-5"
             style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)' }}
           >
-            <span className="text-4xl">🛡</span>
+            <ShieldCheck size={36} strokeWidth={1.75} className="text-emerald-400" />
             <p className="text-emerald-300 font-black text-sm">{t('everyoneSurvived')}</p>
           </motion.div>
         )}
@@ -186,11 +187,16 @@ export default function DawnScrollScreen({ user, playerId }) {
               border:     `1px solid ${sheikResult.isMafia ? 'rgba(224,32,32,0.4)' : 'rgba(16,185,129,0.4)'}`,
             }}
           >
-            <p className="text-[10px] font-black text-smoke-400 uppercase tracking-widest mb-1">🔍 {t('yourInvestigation')}</p>
+            <p className="flex items-center justify-center gap-1.5 text-[10px] font-black text-smoke-400 uppercase tracking-widest mb-1">
+              <Search size={11} strokeWidth={2} /> {t('yourInvestigation')}
+            </p>
             <p className="text-white font-black">
               {sheikResult.checkedName} is{' '}
-              <span style={{ color: sheikResult.isMafia ? '#f87171' : '#34d399' }}>
-                {sheikResult.isMafia ? `⚔ ${t('mafia').toUpperCase()}` : `◯ ${t('isInnocent')}`}
+              <span className="inline-flex items-center gap-1" style={{ color: sheikResult.isMafia ? '#f87171' : '#34d399' }}>
+                {sheikResult.isMafia
+                  ? <><Swords size={13} strokeWidth={2} /> {t('mafia').toUpperCase()}</>
+                  : <><Circle size={11} strokeWidth={2} /> {t('isInnocent')}</>
+                }
               </span>
             </p>
           </motion.div>
@@ -213,7 +219,10 @@ export default function DawnScrollScreen({ user, playerId }) {
               boxShadow:  '0 0 28px rgba(201,148,58,0.3)',
             }}
           >
-            {advancing ? t('advancing') : `☀ ${t('beginDiscussion')}`}
+            {advancing
+              ? t('advancing')
+              : <span className="inline-flex items-center gap-2"><Sun size={15} strokeWidth={2} /> {t('beginDiscussion')}</span>
+            }
           </motion.button>
         )}
       </div>

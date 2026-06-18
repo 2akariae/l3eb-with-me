@@ -1,57 +1,46 @@
-// useGeminiWords.js — v10-fixed-b2
-// FIX: category prompt now requests a SINGLE SHORT WORD (1-2 words max)
-// instead of a long descriptive sentence shown to the Spy as their hint.
+// useGeminiWords.js — v11-fixed (security hardening)
+//
+// SECURITY FIX [CRITICAL]: Previously this module read
+// `import.meta.env.VITE_GEMINI_API_KEY` and called Google's Generative
+// Language API directly from the browser. Any env var prefixed VITE_ is
+// inlined into the production JS bundle by Vite at build time — meaning the
+// API key was shipped in plaintext to every client and visible to anyone via
+// DevTools → Sources → search for the key string, or by inspecting the
+// Network tab on any "Spy" round. An attacker could harvest the key and run
+// unlimited requests against the studio's Gemini quota/billing.
+//
+// FIX: The key now lives ONLY in the server process as `GEMINI_API_KEY`
+// (no VITE_ prefix — Vite will not bundle it). The actual Gemini call moved
+// to server.js → POST /api/gemini/word, which this module calls instead.
+// The exported `generateSpyWord()` interface is UNCHANGED so every existing
+// caller (gameEngine.js, offlineEngine.js) needs no changes.
+
 import { WORD_PACKS } from '../../../constants/wordPack.js';
 
 function getLocalWord() {
-  const flat = WORD_PACKS.flatMap(pack => pack.words);
+  const flat = WORD_PACKS.flatMap((pack) => pack.words);
   return flat[Math.floor(Math.random() * flat.length)];
 }
 
-async function fetchGeminiWord(apiKey) {
-  const prompt = `Generate ONE secret word for the party game "The Spy".
-Return ONLY valid JSON — no markdown, no code blocks, no explanation:
-{
-  "word":     { "en": "Airport",  "ar": "\u0645\u0637\u0627\u0631"  },
-  "hint":     { "en": "Travel",   "ar": "\u0633\u0641\u0631"   }
-}
-Rules:
-- word: a common noun (place, object, concept). Exactly 1 word.
-- hint: a SINGLE SHORT WORD or at most 2 words — a vague clue that relates to the word but doesn't give it away easily.
-- Both fields must have English ("en") and Arabic ("ar") values.
-- Be creative and avoid common words like "Hospital" or "Airport".`;
-
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-    {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 1.2, maxOutputTokens: 150 },
-      }),
-    }
-  );
+async function fetchWordFromProxy() {
+  const res = await fetch('/api/gemini/word', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
-    throw new Error(`Gemini ${res.status}: ${errData?.error?.message || 'Unknown Error'}`);
+    throw new Error(`Proxy ${res.status}: ${errData?.error || 'Unknown error'}`);
   }
-  const data    = await res.json();
-  const raw     = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-  const cleaned = raw.replace(/```json|```/g, '').trim();
-  const parsed  = JSON.parse(cleaned);
-  if (!parsed?.word?.en || !parsed?.hint?.en) throw new Error('Invalid Response Shape');
+  const parsed = await res.json();
+  if (!parsed?.word?.en || !parsed?.hint?.en) throw new Error('Invalid response shape');
   return parsed;
 }
 
 export async function generateSpyWord() {
-  const apiKey = import.meta.env?.VITE_GEMINI_API_KEY;
-  if (apiKey && apiKey !== 'YOUR_API_KEY_HERE') {
-    try {
-      return await fetchGeminiWord(apiKey);
-    } catch (e) {
-      console.warn(`[Gemini] Using local fallback: ${e.message}`);
-    }
+  try {
+    return await fetchWordFromProxy();
+  } catch (e) {
+    console.warn(`[Gemini proxy] Using local fallback: ${e.message}`);
+    return getLocalWord();
   }
-  return getLocalWord();
 }
