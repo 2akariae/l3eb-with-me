@@ -9,16 +9,24 @@ import { signOut, auth } from '../../services/firebaseConfig.js';
 import { useGameStore } from '../../store/gameStore.js';
 import { useOfflineStore } from '../../store/offlineStore.js';
 import { useTranslation } from '../../constants/translations.js';
-import { Avatar } from './index.jsx';
+import { Avatar, toast } from './index.jsx';
 
 // ── Custom Profile Picture Picker ────────────────────────────────────────────
-function ProfilePicturePicker({ photo, onChange }) {
+function ProfilePicturePicker({ photo, onChange, language }) {
   function handleFile(e) {
     const file = e.target?.files?.[0];
     if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast(language === 'ar' ? 'الصورة كبيرة جداً (الحد الأقصى 5 ميجابايت)' : 'Image too large (max 5MB)', 'error');
+      return;
+    }
+
     const reader = new FileReader();
+    reader.onerror = () => toast(language === 'ar' ? 'فشل قراءة الملف' : 'Failed to read file', 'error');
     reader.onload = (ev) => {
       const img = new Image();
+      img.onerror = () => toast(language === 'ar' ? 'فشل تحميل الصورة' : 'Failed to load image', 'error');
       img.onload = () => {
         const SIZE = 200;
         const canvas = document.createElement('canvas');
@@ -29,7 +37,12 @@ function ProfilePicturePicker({ photo, onChange }) {
         const sx = (img.width - src) / 2;
         const sy = (img.height - src) / 2;
         ctx.drawImage(img, sx, sy, src, src, 0, 0, SIZE, SIZE);
-        onChange(canvas.toDataURL('image/jpeg', 0.8));
+        try {
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          onChange(dataUrl);
+        } catch (err) {
+          toast(language === 'ar' ? 'فشل معالجة الصورة' : 'Failed to process image', 'error');
+        }
       };
       img.src = ev.target.result;
     };
@@ -202,7 +215,7 @@ export default function SettingsPanel({ onClose }) {
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="p-8 flex flex-col gap-8"
             >
-              <ProfilePicturePicker photo={editPhoto} onChange={setEditPhoto} />
+              <ProfilePicturePicker photo={editPhoto} onChange={setEditPhoto} language={language} />
 
               <div className="flex flex-col gap-4">
                 <label className="text-[10px] font-black text-smoke-500 uppercase tracking-[0.2em]">{t('profileName')}</label>
@@ -282,8 +295,7 @@ export default function SettingsPanel({ onClose }) {
                 </p>
               </div>
 
-              {/* Sign in with different account */}
-              <button onClick={async () => { await signOut(auth); resetSession(); onClose(); }}
+              <button onClick={async () => { await signOut(auth); clearRoom(); onClose(); }}
                 className="flex items-center gap-3 w-full h-14 px-5 rounded-2xl bg-white/5 border border-white/8 hover:border-white/20 transition-all text-white font-bold text-sm">
                 <UserPlus size={18} className="text-blue-400" />
                 {isAr ? 'إضافة حساب آخر' : 'Switch Account'}

@@ -108,16 +108,20 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
               : <Spade size={72} strokeWidth={1.5} className="text-violet-400" />
             }
           </motion.div>
-          <h1 className="text-5xl font-black tracking-[0.2em] uppercase"
+          <motion.h1 
+            className="text-5xl font-black tracking-[0.2em] uppercase"
             style={{ 
               fontFamily: 'Playfair Display, serif', 
               background: isSpy ? 'linear-gradient(180deg, #fff 0%, #10b981 100%)' : 'linear-gradient(180deg, #fff 0%, #c9943a 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               filter: isSpy ? 'drop-shadow(0 0 20px rgba(16,185,129,0.3))' : 'drop-shadow(0 0 20px rgba(201,148,58,0.3))'
-            }}>
+            }}
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          >
             {isSpy ? t('spyTitle') : t('mafiaTitle')}
-          </h1>
+          </motion.h1>
           <p className="text-smoke-500 text-[10px] tracking-[0.5em] mt-4 uppercase font-black opacity-60">
             {isSpy ? t('spyDesc') : t('mafiaDesc')}
           </p>

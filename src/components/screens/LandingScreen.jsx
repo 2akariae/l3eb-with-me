@@ -56,8 +56,15 @@ function TiltTitle({ t, gameType }) {
             : 'drop-shadow(0 0 40px rgba(201,148,58,0.25))',
           transform: 'translateZ(50px)',
         }}
-        animate={{ opacity: [0.9, 1, 0.9] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        animate={{ 
+          opacity: [0.9, 1, 0.9],
+          y: [0, -10, 0]
+        }}
+        transition={{ 
+          duration: 4, 
+          repeat: Infinity, 
+          ease: 'easeInOut' 
+        }}
       >
         {isSpy ? t('spyTitle') : t('mafiaTitle')}
       </motion.h1>
@@ -83,9 +90,18 @@ function PhotoPicker({ photo, onChange, t, language }) {
   const handleFile = useCallback((e) => {
     const file = e.target?.files?.[0];
     if (!file) return;
+
+    // SECURITY / PERF: Limit initial file size to 5MB to prevent mobile crashes
+    if (file.size > 5 * 1024 * 1024) {
+      toast(language === 'ar' ? 'الصورة كبيرة جداً (الحد الأقصى 5 ميجابايت)' : 'Image too large (max 5MB)', 'error');
+      return;
+    }
+
     const reader = new FileReader();
+    reader.onerror = () => toast(language === 'ar' ? 'فشل قراءة الملف' : 'Failed to read file', 'error');
     reader.onload = (ev) => {
       const img = new Image();
+      img.onerror = () => toast(language === 'ar' ? 'فشل تحميل الصورة' : 'Failed to load image', 'error');
       img.onload = () => {
         const SIZE   = 160;
         const canvas = document.createElement('canvas');
@@ -96,12 +112,17 @@ function PhotoPicker({ photo, onChange, t, language }) {
         const sx  = (img.width  - src) / 2;
         const sy  = (img.height - src) / 2;
         ctx.drawImage(img, sx, sy, src, src, 0, 0, SIZE, SIZE);
-        onChange(canvas.toDataURL('image/jpeg', 0.72));
+        try {
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
+          onChange(dataUrl);
+        } catch (err) {
+          toast(language === 'ar' ? 'فشل معالجة الصورة' : 'Failed to process image', 'error');
+        }
       };
       img.src = ev.target.result;
     };
     reader.readAsDataURL(file);
-  }, [onChange]);
+  }, [onChange, language]);
 
   const isAr = language === 'ar';
 
