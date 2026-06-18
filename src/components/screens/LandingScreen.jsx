@@ -1,9 +1,4 @@
-// ─── THE MAFIA — LandingScreen.jsx (v10-fixed) ────────────────────────────────
-// BUG FIXED (P3 × 3): PhotoPicker component used emoji characters as interactive
-//   UI elements — '👤' as a photo placeholder, '📷' and '🖼' as button labels.
-//   Replaced with Lucide vector icons (User, Camera, ImageIcon) per the
-//   Anti-Emoji Policy.
-
+// ─── THE MAFIA — LandingScreen.jsx (v11 — cinematic motion overhaul) ──────────
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion';
 import { signOut, auth as firebaseAuth } from '../../services/firebaseConfig.js';
@@ -15,17 +10,19 @@ import { toast, Spinner } from '../ui/index.jsx';
 import { useTranslation } from '../../constants/translations.js';
 import { ParallaxStars } from '../game/ParallaxStars.jsx';
 import BackButton from '../ui/BackButton.jsx';
-// FIX (P3): Lucide icons replace emoji in PhotoPicker
 import { User, Camera, ImageIcon } from 'lucide-react';
 
 const TABS = { HOME: 'home', CREATE: 'create', JOIN: 'join' };
 
-// ── Interactive Tilt Title ────────────────────────────────────────────────────
+// ── Interactive Tilt Title (Advanced) ──────────────────────────────────────────
 function TiltTitle({ t, gameType }) {
-  const x = useSpring(0, { stiffness: 100, damping: 30 });
-  const y = useSpring(0, { stiffness: 100, damping: 30 });
-  const rotateX = useTransform(y, [-0.5, 0.5], [15, -15]);
-  const rotateY = useTransform(x, [-0.5, 0.5], [-15, 15]);
+  const x = useSpring(0, { stiffness: 120, damping: 24 });
+  const y = useSpring(0, { stiffness: 120, damping: 24 });
+  
+  const rotateX = useTransform(y, [-0.5, 0.5], [12, -12]);
+  const rotateY = useTransform(x, [-0.5, 0.5], [-12, 12]);
+  const translateX = useTransform(x, [-0.5, 0.5], [-15, 15]);
+  const translateY = useTransform(y, [-0.5, 0.5], [-10, 10]);
 
   const onMove = (e) => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -39,39 +36,46 @@ function TiltTitle({ t, gameType }) {
   return (
     <motion.div
       onMouseMove={onMove} onMouseLeave={onLeave}
-      style={{ rotateX, rotateY, perspective: 1000, transformStyle: 'preserve-3d' }}
-      className="text-center relative py-10 cursor-default"
+      style={{ rotateX, rotateY, perspective: 1200, transformStyle: 'preserve-3d' }}
+      className="text-center relative py-12 cursor-default"
     >
-      <motion.h1
-        className="display font-black tracking-[0.2em] uppercase select-none"
-        style={{
-          fontSize: 'clamp(2.2rem, 10vw, 4rem)',
-          background: isSpy
-            ? 'linear-gradient(180deg, #ffffff 0%, #10b981 100%)'
-            : 'linear-gradient(180deg, #ffffff 0%, #c9943a 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          filter: isSpy
-            ? 'drop-shadow(0 0 40px rgba(16,185,129,0.25))'
-            : 'drop-shadow(0 0 40px rgba(201,148,58,0.25))',
-          transform: 'translateZ(50px)',
-        }}
-        animate={{ 
-          opacity: [0.9, 1, 0.9],
-          y: [0, -10, 0]
-        }}
-        transition={{ 
-          duration: 4, 
-          repeat: Infinity, 
-          ease: 'easeInOut' 
-        }}
+      <motion.div style={{ x: translateX, y: translateY, transformStyle: 'preserve-3d' }}>
+        <motion.h1
+          className="display font-black tracking-[0.25em] uppercase select-none aberration"
+          style={{
+            fontSize: 'clamp(2.5rem, 12vw, 4.5rem)',
+            background: isSpy
+              ? 'linear-gradient(180deg, #ffffff 0%, #10b981 100%)'
+              : 'linear-gradient(180deg, #ffffff 0%, #c9943a 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            filter: isSpy
+              ? 'drop-shadow(0 0 50px rgba(16,185,129,0.3))'
+              : 'drop-shadow(0 0 50px rgba(201,148,58,0.3))',
+            transform: 'translateZ(80px)',
+          }}
+          animate={{ 
+            opacity: [0.95, 1, 0.95],
+            scale: [1, 1.02, 1]
+          }}
+          transition={{ 
+            duration: 5, 
+            repeat: Infinity, 
+            ease: 'easeInOut' 
+          }}
+        >
+          {isSpy ? t('spyTitle') : t('mafiaTitle')}
+        </motion.h1>
+      </motion.div>
+      
+      <motion.p 
+        className="text-gold-500/60 text-[10px] uppercase tracking-[0.8em] mt-6 font-black bloom"
+        style={{ transform: 'translateZ(40px)' }}
+        animate={{ opacity: [0.4, 0.8, 0.4] }}
+        transition={{ duration: 3, repeat: Infinity }}
       >
-        {isSpy ? t('spyTitle') : t('mafiaTitle')}
-      </motion.h1>
-      <p className="text-gold-500/50 text-[10px] uppercase tracking-[0.6em] mt-4 font-black"
-        style={{ transform: 'translateZ(30px)' }}>
         {t('welcome')}
-      </p>
+      </motion.p>
     </motion.div>
   );
 }
@@ -91,78 +95,84 @@ function PhotoPicker({ photo, onChange, t, language }) {
     const file = e.target?.files?.[0];
     if (!file) return;
 
-    // SECURITY / PERF: Limit initial file size to 5MB to prevent mobile crashes
     if (file.size > 5 * 1024 * 1024) {
       toast(language === 'ar' ? 'الصورة كبيرة جداً (الحد الأقصى 5 ميجابايت)' : 'Image too large (max 5MB)', 'error');
       return;
     }
 
-    const reader = new FileReader();
-    reader.onerror = () => toast(language === 'ar' ? 'فشل قراءة الملف' : 'Failed to read file', 'error');
-    reader.onload = (ev) => {
-      const img = new Image();
-      img.onerror = () => toast(language === 'ar' ? 'فشل تحميل الصورة' : 'Failed to load image', 'error');
-      img.onload = () => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    
+    img.onload = async () => {
+      try {
+        if ('decode' in img) await img.decode();
+        
         const SIZE   = 160;
         const canvas = document.createElement('canvas');
         canvas.width  = SIZE;
         canvas.height = SIZE;
         const ctx = canvas.getContext('2d');
+        
         const src = Math.min(img.width, img.height);
         const sx  = (img.width  - src) / 2;
         const sy  = (img.height - src) / 2;
+        
         ctx.drawImage(img, sx, sy, src, src, 0, 0, SIZE, SIZE);
-        try {
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
-          onChange(dataUrl);
-        } catch (err) {
-          toast(language === 'ar' ? 'فشل معالجة الصورة' : 'Failed to process image', 'error');
-        }
-      };
-      img.src = ev.target.result;
+        
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        onChange(dataUrl);
+      } catch (err) {
+        console.error('Image processing failed:', err);
+        toast(language === 'ar' ? 'فشل معالجة الصورة' : 'Image processing failed', 'error');
+      } finally {
+        URL.revokeObjectURL(url);
+      }
     };
-    reader.readAsDataURL(file);
+
+    img.onerror = () => {
+      console.error('Image loading failed');
+      toast(language === 'ar' ? 'فشل تحميل الصورة' : 'Image loading failed', 'error');
+      URL.revokeObjectURL(url);
+    };
+
+    img.src = url;
   }, [onChange, language]);
 
-  const isAr = language === 'ar';
-
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-6">
       <motion.div
+        whileHover={{ scale: 1.05, borderColor: 'rgba(201,148,58,0.5)' }}
         whileTap={{ scale: 0.95 }}
         onClick={() => openPicker(false)}
-        className="w-28 h-28 rounded-[2rem] overflow-hidden border-2 cursor-pointer transition-all duration-300 flex items-center justify-center relative shadow-2xl"
+        className="w-32 h-32 rounded-[2.5rem] overflow-hidden border-2 cursor-pointer transition-all duration-500 flex items-center justify-center relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-noir-800/30 backdrop-blur-xl"
         style={{
-          borderColor: photo ? 'rgba(201,148,58,0.8)' : 'rgba(255,255,255,0.1)',
-          background:  photo ? 'transparent' : 'rgba(255,255,255,0.03)',
+          borderColor: photo ? 'var(--gold-500)' : 'rgba(255,255,255,0.08)',
         }}
       >
         {photo ? (
           <img src={photo} alt="You" className="w-full h-full object-cover" />
         ) : (
-          // FIX (P3): replaced '👤' emoji with Lucide User icon
-          <div className="flex flex-col items-center gap-1 text-smoke-600">
-            <User size={40} className="opacity-40" />
-          </div>
+          <User size={48} className="text-white opacity-20" />
         )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
+          <span className="text-[8px] font-black uppercase tracking-widest text-white">{t('changePhoto')}</span>
+        </div>
       </motion.div>
 
-      <div className="flex gap-3">
-        {/* FIX (P3): replaced '📷' emoji with Lucide Camera icon */}
+      <div className="flex gap-4">
         <button
           onClick={() => openPicker(true)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[9px] font-black tracking-widest glass border border-white/5 text-smoke-400 hover:text-white transition-all uppercase min-h-[44px]"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[9px] font-black tracking-widest glass border border-white/5 text-smoke-400 hover:text-white hover:bg-white/5 transition-all uppercase min-h-[44px]"
         >
-          <Camera size={12} />
-          {isAr ? 'كاميرا' : 'Camera'}
+          <Camera size={14} />
+          {language === 'ar' ? 'كاميرا' : 'Camera'}
         </button>
-        {/* FIX (P3): replaced '🖼' emoji with Lucide ImageIcon */}
         <button
           onClick={() => openPicker(false)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[9px] font-black tracking-widest glass border border-white/5 text-smoke-400 hover:text-white transition-all uppercase min-h-[44px]"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[9px] font-black tracking-widest glass border border-white/5 text-smoke-400 hover:text-white hover:bg-white/5 transition-all uppercase min-h-[44px]"
         >
-          <ImageIcon size={12} />
-          {isAr ? 'معرض' : 'Gallery'}
+          <ImageIcon size={14} />
+          {language === 'ar' ? 'معرض' : 'Gallery'}
         </button>
       </div>
     </div>
@@ -172,15 +182,14 @@ function PhotoPicker({ photo, onChange, t, language }) {
 // ── Main LandingScreen ─────────────────────────────────────────────────────────
 export default function LandingScreen({ user, tabPlayerId }) {
   const [tab,      setTab]      = useState(TABS.HOME);
-  
   const { setRoom, language, gameType, resetSession, profile } = useGameStore();
-  
   const [name,     setName]     = useState(profile?.name || user?.displayName || '');
   const [avatar,   setAvatar]   = useState(profile?.avatar || profile?.photo || '');
   const [roomCode, setRoomCode] = useState('');
   const [loading,  setLoading]  = useState(false);
 
   const t = useTranslation(language);
+  const isRTL = language === 'ar';
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -192,13 +201,12 @@ export default function LandingScreen({ user, tabPlayerId }) {
     }
   }, []);
 
-  // Persist name + avatar to profile so next visit pre-populates the fields
   function saveToProfile(nameVal, avatarVal) {
     try {
       const existing = JSON.parse(localStorage.getItem('mafia_profile') || '{}');
       const updated  = { ...existing, name: nameVal, avatar: avatarVal, photo: avatarVal };
       localStorage.setItem('mafia_profile', JSON.stringify(updated));
-    } catch { /* storage blocked — non-fatal */ }
+    } catch { /* storage blocked */ }
   }
 
   async function handleCreate() {
@@ -233,24 +241,44 @@ export default function LandingScreen({ user, tabPlayerId }) {
     finally { setLoading(false); }
   }
 
-  const slide = {
-    enter:  { opacity: 0, y: 20 },
-    center: { opacity: 1, y: 0 },
-    exit:   { opacity: 0, y: -20 },
+  const containerVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, y: 0,
+      transition: { 
+        duration: 0.8, 
+        ease: [0.19, 1, 0.22, 1],
+        staggerChildren: 0.12
+      }
+    },
+    exit: { 
+      opacity: 0, y: -30,
+      transition: { duration: 0.5, ease: 'easeInOut' }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.19, 1, 0.22, 1] } }
   };
 
   return (
     <div className="screen bg-noir-950 overflow-hidden items-center justify-center">
 
-      {/* Background */}
+      {/* Atmospheric Background */}
       <div className="absolute inset-0 pointer-events-none">
-        <ParallaxStars count={100} />
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-40"
+        <ParallaxStars count={120} />
+        <motion.div
+          animate={{ 
+            scale: [1, 1.1, 1],
+            opacity: [0.3, 0.45, 0.3]
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] rounded-full blur-[120px]"
           style={{
             background: gameType === 'spy'
-              ? 'radial-gradient(ellipse, rgba(16,185,129,0.15) 0%, transparent 70%)'
-              : 'radial-gradient(ellipse, rgba(80,40,160,0.15) 0%, transparent 70%)',
+              ? 'radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(140,40,250,0.1) 0%, transparent 70%)',
           }}
         />
       </div>
@@ -261,60 +289,64 @@ export default function LandingScreen({ user, tabPlayerId }) {
         <AnimatePresence mode="wait">
 
           {tab === TABS.HOME && (
-            <motion.div key="home" variants={slide} initial="enter" animate="center" exit="exit"
-              transition={{ type: 'spring', damping: 25 }} className="w-full max-w-sm flex flex-col items-center gap-14">
+            <motion.div key="home" variants={containerVariants} initial="hidden" animate="visible" exit="exit"
+              className="w-full max-w-sm flex flex-col items-center gap-16">
 
               <TiltTitle t={t} gameType={gameType} />
 
-              <div className="w-full flex flex-col gap-5">
+              <div className="w-full flex flex-col gap-6">
                 <motion.button
-                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.03, y: -4 }} whileTap={{ scale: 0.97 }}
                   onClick={() => setTab(TABS.JOIN)}
-                  className="h-20 rounded-[2rem] bg-white text-black font-black text-xl flex items-center justify-center shadow-[0_20px_50px_rgba(255,255,255,0.12)] tracking-tight">
+                  className="h-20 rounded-[2.5rem] bg-white text-black font-black text-xl flex items-center justify-center shadow-[0_25px_60px_rgba(255,255,255,0.15)] tracking-tight overflow-hidden relative group">
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   {t('joinRoom')}
                 </motion.button>
                 <motion.button
-                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.03, y: -4, background: 'rgba(255,255,255,0.08)' }} whileTap={{ scale: 0.97 }}
                   onClick={() => setTab(TABS.CREATE)}
-                  className="h-20 rounded-[2rem] glass border border-white/10 text-white font-black text-xl flex items-center justify-center tracking-tight shadow-2xl">
+                  className="h-20 rounded-[2.5rem] glass border border-white/10 text-white font-black text-xl flex items-center justify-center tracking-tight shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
                   {t('createRoom')}
                 </motion.button>
               </div>
 
-              <div className="flex gap-8 text-smoke-600 text-[9px] font-black uppercase tracking-[0.3em] opacity-50">
-                <span>4-20 Players</span><span>●</span><span>Voice Enabled</span>
-              </div>
+              <motion.div variants={itemVariants} className="flex gap-10 text-smoke-600 text-[10px] font-black uppercase tracking-[0.4em] opacity-40 bloom">
+                <span>4-20 Players</span><span>●</span><span>Voice HD</span>
+              </motion.div>
             </motion.div>
           )}
 
           {(tab === TABS.CREATE || tab === TABS.JOIN) && (
-            <motion.div key={tab} variants={slide} initial="enter" animate="center" exit="exit"
-              className="w-full max-w-sm flex flex-col gap-6">
+            <motion.div key={tab} variants={containerVariants} initial="hidden" animate="visible" exit="exit"
+              className="w-full max-w-sm flex flex-col gap-8">
 
-              <button
+              <motion.button
+                variants={itemVariants}
                 onClick={() => setTab(TABS.HOME)}
-                className="text-smoke-500 text-[10px] font-black tracking-widest hover:text-white flex items-center gap-3 transition-all min-h-[44px]"
+                className="text-smoke-500 text-[11px] font-black tracking-widest hover:text-white flex items-center gap-4 transition-all min-h-[44px] group"
               >
+                <span className="w-6 h-px bg-smoke-700 group-hover:w-10 group-hover:bg-white transition-all" />
                 <span>{t('backToHome').toUpperCase()}</span>
-              </button>
+              </motion.button>
 
-              <div className="bg-noir-900/60 rounded-[3rem] p-10 border border-white/5 backdrop-blur-3xl shadow-2xl relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
+              <motion.div variants={itemVariants} className="bg-noir-900/60 rounded-[3.5rem] p-12 border border-white/5 backdrop-blur-3xl shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] to-transparent pointer-events-none" />
 
-                <div className="mb-10 text-center">
-                  <h3 className="display text-3xl font-black text-white tracking-tight">
+                <div className="mb-12 text-center">
+                  <h3 className="display text-4xl font-black text-white tracking-tight aberration">
                     {tab === TABS.CREATE ? t('createRoom') : t('joinRoom')}
                   </h3>
                 </div>
 
-                <div className="flex flex-col gap-8 relative z-10">
-                  {/* FIX: pass language prop so PhotoPicker can localise button text */}
+                <div className="flex flex-col gap-10 relative z-10">
                   <PhotoPicker photo={avatar} onChange={setAvatar} t={t} language={language} />
 
-                  <div className="space-y-3">
-                    <label className="text-[9px] font-black text-smoke-600 uppercase tracking-[0.2em] px-2">{t('enterName')}</label>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black text-smoke-600 uppercase tracking-[0.3em] px-4 bloom">{t('enterName')}</label>
                     <input
-                      className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 text-white font-bold focus:border-gold-500/50 outline-none transition-all shadow-inner text-center"
+                      className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-8 text-white font-bold focus:border-gold-500/50 outline-none transition-all shadow-inner text-center text-lg"
                       placeholder="..."
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -323,10 +355,10 @@ export default function LandingScreen({ user, tabPlayerId }) {
                   </div>
 
                   {tab === TABS.JOIN && (
-                    <div className="space-y-3">
-                      <label className="text-[9px] font-black text-smoke-600 uppercase tracking-[0.2em] px-2">{t('roomCode')}</label>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black text-smoke-600 uppercase tracking-[0.3em] px-4 bloom">{t('roomCode')}</label>
                       <input
-                        className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-6 text-white font-black text-3xl text-center tracking-[0.4em] focus:border-gold-500/50 outline-none transition-all uppercase shadow-inner"
+                        className="w-full h-16 bg-white/5 border border-white/10 rounded-2xl px-8 text-white font-black text-4xl text-center tracking-[0.5em] focus:border-gold-500/50 outline-none transition-all uppercase shadow-inner"
                         placeholder="XXXXXX"
                         value={roomCode}
                         onChange={(e) => setRoomCode(e.target.value.toUpperCase().slice(0, 6))}
@@ -335,17 +367,19 @@ export default function LandingScreen({ user, tabPlayerId }) {
                   )}
 
                   <motion.button
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={tab === TABS.CREATE ? handleCreate : handleJoin}
                     disabled={loading}
-                    className="h-20 rounded-[2rem] bg-gold-500 text-black font-black text-xl mt-4 shadow-[0_15px_40px_rgba(201,148,58,0.25)] transition-all"
+                    className="h-20 rounded-[2.5rem] bg-gold-500 text-noir-950 font-black text-xl mt-6 shadow-[0_20px_50px_rgba(201,148,58,0.3)] transition-all hover:bg-gold-400"
                   >
                     {loading
-                      ? <Spinner size={24} />
+                      ? <Spinner size={28} color="black" />
                       : tab === TABS.CREATE ? t('createRoom') : t('joinRoom')}
                   </motion.button>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -353,3 +387,4 @@ export default function LandingScreen({ user, tabPlayerId }) {
     </div>
   );
 }
+

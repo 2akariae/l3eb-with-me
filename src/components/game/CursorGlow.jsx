@@ -4,26 +4,41 @@ import { useEffect, useRef } from 'react';
 
 export function CursorGlow() {
   const elRef = useRef(null);
+  const coreRef = useRef(null);
 
   useEffect(() => {
     const el = elRef.current;
-    if (!el) return;
+    const core = coreRef.current;
+    if (!el || !core) return;
 
     // Start offscreen
-    el.style.left = '-400px';
-    el.style.top  = '-400px';
+    el.style.left = '-600px';
+    el.style.top  = '-600px';
+    core.style.left = '-600px';
+    core.style.top  = '-600px';
 
     let rafId = null;
-    let targetX = -400, targetY = -400;
-    let currentX = -400, currentY = -400;
+    let targetX = -600, targetY = -600;
+    let curX = -600, curY = -600;
+    let coreX = -600, coreY = -600;
 
     function lerp(a, b, t) { return a + (b - a) * t; }
 
     function animate() {
-      currentX = lerp(currentX, targetX, 0.12);
-      currentY = lerp(currentY, targetY, 0.12);
-      el.style.left = `${currentX}px`;
-      el.style.top  = `${currentY}px`;
+      // Large glow has more lag (0.06)
+      curX = lerp(curX, targetX, 0.06);
+      curY = lerp(curY, targetY, 0.06);
+      
+      // Core has less lag (0.15)
+      coreX = lerp(coreX, targetX, 0.15);
+      coreY = lerp(coreY, targetY, 0.15);
+
+      el.style.left = `${curX}px`;
+      el.style.top  = `${curY}px`;
+      
+      core.style.left = `${coreX}px`;
+      core.style.top  = `${coreY}px`;
+
       rafId = requestAnimationFrame(animate);
     }
 
@@ -44,21 +59,44 @@ export function CursorGlow() {
   }, []);
 
   return (
-    <div
-      ref={elRef}
-      aria-hidden="true"
-      style={{
-        position:      'fixed',
-        width:          560,
-        height:         560,
-        borderRadius:  '50%',
-        pointerEvents: 'none',
-        zIndex:         9990,
-        transform:     'translate(-50%, -50%)',
-        background:    'radial-gradient(circle, rgba(110,28,215,0.13) 0%, rgba(80,10,170,0.07) 38%, transparent 72%)',
-        mixBlendMode:  'screen',
-        willChange:    'left, top',
-      }}
-    />
+    <>
+      {/* Outer Atmosphere */}
+      <div
+        ref={elRef}
+        aria-hidden="true"
+        style={{
+          position:      'fixed',
+          width:          600,
+          height:         600,
+          borderRadius:  '50%',
+          pointerEvents: 'none',
+          zIndex:         9990,
+          transform:     'translate(-50%, -50%)',
+          background:    'radial-gradient(circle, rgba(110,28,215,0.08) 0%, rgba(80,10,170,0.04) 40%, transparent 70%)',
+          mixBlendMode:  'screen',
+          willChange:    'left, top',
+          filter:        'blur(40px)',
+        }}
+      />
+      {/* Dynamic Core */}
+      <div
+        ref={coreRef}
+        aria-hidden="true"
+        style={{
+          position:      'fixed',
+          width:          120,
+          height:         120,
+          borderRadius:  '50%',
+          pointerEvents: 'none',
+          zIndex:         9991,
+          transform:     'translate(-50%, -50%)',
+          background:    'radial-gradient(circle, rgba(201,148,58,0.12) 0%, rgba(224,32,32,0.06) 50%, transparent 100%)',
+          mixBlendMode:  'plus-lighter',
+          willChange:    'left, top',
+          filter:        'blur(10px)',
+        }}
+      />
+    </>
   );
 }
+

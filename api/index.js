@@ -141,7 +141,17 @@ repeating the same category twice in a row.`;
 
     const data  = await upstream.json();
     const raw   = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-    const clean = raw.replace(/```json|```/g, '').trim();
+
+    // Robust JSON extraction: find the first { and last }
+    let clean = raw;
+    const start = raw.indexOf('{');
+    const end   = raw.lastIndexOf('}');
+    if (start !== -1 && end !== -1 && end > start) {
+      clean = raw.substring(start, end + 1);
+    } else {
+      clean = raw.replace(/```json|```/g, '').trim();
+    }
+
     const parsed = JSON.parse(clean);
 
     if (!parsed?.word?.en || !parsed?.hint?.en) {

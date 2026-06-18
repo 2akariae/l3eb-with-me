@@ -1,26 +1,33 @@
-// ─── THE PLATFORM — GameSelector.jsx (v10-fixed) ──────────────────────────────
-// BUG FIXED (P2): BackButton previously called window.location.reload() to
-//   return to language selection. This was a lossy hard reload that flushed all
-//   Zustand state, aborted any pending Firebase listener cleanup, and caused a
-//   visible full-page flash. Fixed by accepting an `onLangReset` callback prop
-//   from App.jsx which performs a clean in-memory state transition instead.
-
+// ─── THE PLATFORM — GameSelector.jsx (v11 — cinematic refresh) ──────────────
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore.js';
-import { Swords, Ghost } from 'lucide-react';
+import { Swords, Ghost, Globe, ShieldAlert } from 'lucide-react';
 import { useTranslation } from '../../constants/translations.js';
 import { getAllGames } from '../../registry/gameRegistry.js';
 import BackButton from '../ui/BackButton.jsx';
+import { ParallaxStars } from '../game/ParallaxStars.jsx';
 
-// Presentation mapping — icon + gradient per game id. New games added to the
-// registry automatically render here with a sensible default until a custom
-// icon/style entry is added.
 const GAME_PRESENTATION = {
-  mafia: { icon: <Swords size={32} className="text-crimson-400" />, gradient: 'from-crimson-900/40 to-noir-950', border: 'border-crimson-600/30' },
-  spy:   { icon: <Ghost  size={32} className="text-emerald-400" />, gradient: 'from-emerald-900/40 to-noir-950', border: 'border-emerald-600/30' },
+  mafia: { 
+    icon: <Swords size={36} className="text-white" />, 
+    accent: '#e02020',
+    gradient: 'from-crimson-900/40 to-noir-950', 
+    border: 'border-crimson-600/30' 
+  },
+  spy: { 
+    icon: <Ghost size={36} className="text-white" />, 
+    accent: '#10b981',
+    gradient: 'from-emerald-900/40 to-noir-950', 
+    border: 'border-emerald-600/30' 
+  },
 };
-const DEFAULT_PRESENTATION = { icon: <Swords size={32} className="text-smoke-400" />, gradient: 'from-noir-900 to-noir-950', border: 'border-white/10' };
+const DEFAULT_PRESENTATION = { 
+  icon: <ShieldAlert size={36} className="text-white" />, 
+  accent: '#c9943a',
+  gradient: 'from-noir-900 to-noir-950', 
+  border: 'border-white/10' 
+};
 
 export default function GameSelector({ onLangReset }) {
   const { setGameType, resetSession, language } = useGameStore();
@@ -32,9 +39,6 @@ export default function GameSelector({ onLangReset }) {
     setGameType(gameId);
   }
 
-  // FIX (P2): use the prop callback for clean state-based navigation.
-  // Falls back to a best-effort reload only if the prop is somehow absent
-  // (e.g. during testing or if the component is rendered outside App.jsx).
   function handleBack() {
     if (typeof onLangReset === 'function') {
       onLangReset();
@@ -44,7 +48,6 @@ export default function GameSelector({ onLangReset }) {
     }
   }
 
-  // Read from the registry — adding a 3rd/10th game requires zero edits here.
   const games = getAllGames().map((g) => {
     const presentation = GAME_PRESENTATION[g.id] ?? DEFAULT_PRESENTATION;
     return {
@@ -52,69 +55,89 @@ export default function GameSelector({ onLangReset }) {
       title:    language === 'ar' ? g.labelAr : g.label,
       desc:     language === 'ar' ? g.descriptionAr : g.description,
       icon:     presentation.icon,
+      accent:   presentation.accent,
       gradient: presentation.gradient,
       border:   presentation.border,
     };
   });
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.15 } }
+  };
+
+  const item = {
+    hidden: { opacity: 0, scale: 0.9, y: 20 },
+    show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.8, ease: [0.19, 1, 0.22, 1] } }
+  };
+
   return (
-    <div
-      className="screen bg-noir-950 flex flex-col items-center justify-center p-6 gap-10"
-      dir={isRTL ? 'rtl' : 'ltr'}
-    >
+    <div className="screen bg-noir-950 flex flex-col items-center justify-center p-6 gap-12 overflow-hidden" dir={isRTL ? 'rtl' : 'ltr'}>
+      <ParallaxStars count={100} />
+      
       <BackButton onClick={handleBack} />
 
       <motion.div
-        initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-        className="text-center"
+        initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+        className="text-center relative z-10"
       >
-        <h1 className="display text-4xl font-black tracking-[0.2em] text-white uppercase">
+        <h1 className="display text-5xl font-black tracking-[0.25em] text-white uppercase aberration">
           {t('gameHub')}
         </h1>
-        <p className="text-gold-500/50 text-[10px] uppercase tracking-[0.5em] mt-3 font-black">
+        <p className="text-gold-500/60 text-[10px] uppercase tracking-[0.8em] mt-5 font-black bloom">
           {t('selectExperience')}
         </p>
       </motion.div>
 
-      <div className="w-full max-w-sm flex flex-col gap-6">
-        {games.map((game, i) => (
+      <motion.div 
+        variants={container} initial="hidden" animate="show"
+        className="w-full max-w-sm flex flex-col gap-6 relative z-10"
+      >
+        {games.map((game) => (
           <motion.button
             key={game.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.15 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            variants={item}
+            whileHover={{ scale: 1.03, y: -5 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => handleSelectGame(game.id)}
-            className={`relative w-full h-40 rounded-[2.5rem] overflow-hidden border ${game.border} group`}
+            className={`relative w-full h-44 rounded-[3rem] overflow-hidden border ${game.border} group shadow-2xl bg-noir-900/40 backdrop-blur-xl`}
           >
-            <div className={`absolute inset-0 bg-gradient-to-br ${game.gradient}`} />
+            <div className={`absolute inset-0 bg-gradient-to-br ${game.gradient} opacity-40 group-hover:opacity-60 transition-opacity`} />
+            
+            {/* dynamic background glow */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700"
+              style={{ background: `radial-gradient(circle at center, ${game.accent}, transparent 70%)` }} />
 
-            <motion.div
-              className="absolute inset-0 pointer-events-none opacity-20"
-              style={{ background: 'linear-gradient(135deg,transparent 30%,rgba(255,255,255,0.4) 50%,transparent 70%)' }}
-              animate={{ x: ['-100%', '100%'] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-            />
-
-            <div className="relative z-10 flex flex-col items-center justify-center h-full gap-3 p-6">
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform duration-500">
+            <div className="relative z-10 flex flex-col items-center justify-center h-full gap-5 p-8">
+              <motion.div 
+                className="p-5 rounded-3xl bg-white/5 border border-white/10 group-hover:border-white/20 transition-colors shadow-inner"
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              >
                 {game.icon}
-              </div>
+              </motion.div>
               <div className="text-center">
-                <h3 className="display text-2xl font-black text-white tracking-tight uppercase">
+                <h3 className="display text-3xl font-black text-white tracking-tight uppercase aberration">
                   {game.title}
                 </h3>
-                <p className="text-smoke-400 text-xs font-medium opacity-60">{game.desc}</p>
+                <p className="text-smoke-400 text-xs font-bold opacity-60 mt-1 uppercase tracking-widest">{game.desc}</p>
               </div>
             </div>
+            
+            {/* shimmer effect */}
+            <div className="absolute inset-0 pointer-events-none shimmer opacity-[0.03]" />
           </motion.button>
         ))}
-      </div>
+      </motion.div>
 
-      <div className="flex gap-8 text-smoke-600 text-[9px] font-black uppercase tracking-[0.3em] opacity-40">
+      <motion.div 
+        initial={{ opacity: 0 }} animate={{ opacity: 0.4 }} transition={{ delay: 1.5 }}
+        className="flex gap-10 text-smoke-600 text-[10px] font-black uppercase tracking-[0.4em] bloom"
+      >
         <span>{t('chooseGame')}</span>
-      </div>
+      </motion.div>
     </div>
   );
 }
+
