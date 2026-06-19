@@ -95,3 +95,12 @@ registerGame({
   descriptionAr: 'ابحث عن الجاسوس بينكم',
   minPlayers:    3,
 });
+
+registerGame({
+  id:            'detective',
+  label:         'The Detective',
+  labelAr:       'المحقق',
+  description:   'Solve the mystery',
+  descriptionAr: 'حل اللغز',
+  minPlayers:    4,
+});

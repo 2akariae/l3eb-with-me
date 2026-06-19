@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore.js';
-import { Swords, Ghost, Globe, ShieldAlert } from 'lucide-react';
+import { Swords, Ghost, Globe, ShieldAlert, Search } from 'lucide-react';
 import { useTranslation } from '../../constants/translations.js';
 import { getAllGames } from '../../registry/gameRegistry.js';
 import BackButton from '../ui/BackButton.jsx';
@@ -20,6 +20,12 @@ const GAME_PRESENTATION = {
     accent: '#10b981',
     gradient: 'from-emerald-900/40 to-noir-950', 
     border: 'border-emerald-600/30' 
+  },
+  detective: { 
+    icon: <Search size={36} className="text-white" />, 
+    accent: '#3b82f6',
+    gradient: 'from-blue-900/40 to-noir-950', 
+    border: 'border-blue-600/30' 
   },
 };
 const DEFAULT_PRESENTATION = { 
