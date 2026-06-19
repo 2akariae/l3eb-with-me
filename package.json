@@ -14,14 +14,15 @@
     "agora-rtc-sdk-ng": "^4.20.2",
     "agora-token": "^2.0.5",
     "clsx": "^2.1.1",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
     "firebase": "^10.12.2",
     "framer-motion": "^11.2.10",
+    "immer": "^11.1.8",
     "lucide-react": "^0.383.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zustand": "^4.5.2",
-    "express": "^4.19.2",
-    "express-rate-limit": "^7.4.0"
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
