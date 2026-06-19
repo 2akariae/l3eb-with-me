@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useCallback } from 'react';
 import { motion, useSpring, useTransform } from 'framer-motion';
-import { ArrowLeft, Ghost, Spade, Wifi, Smartphone, Globe, UserCheck } from 'lucide-react';
+import { ArrowLeft, Ghost, Spade, Wifi, Smartphone, Globe, UserCheck, Search } from 'lucide-react';
 import { useGameStore } from '../../store/gameStore.js';
 import { useOfflineStore } from '../../store/offlineStore.js';
 import { ParallaxStars } from '../game/ParallaxStars.jsx';
@@ -36,7 +36,6 @@ function TiltButton({ onClick, children, className, accentColor }) {
       style={{ rotateX, rotateY, perspective: 1200, transformStyle: 'preserve-3d' }}
       className={`relative w-full rounded-[2.5rem] overflow-hidden group h-36 ${className}`}
     >
-      {/* Background with dynamic glow */}
       <div className="absolute inset-0 bg-noir-900/40 backdrop-blur-2xl border border-white/5 group-hover:border-white/10 transition-colors" />
       <motion.div 
         className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity"
@@ -45,7 +44,6 @@ function TiltButton({ onClick, children, className, accentColor }) {
         }}
       />
       
-      {/* Animated Border */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -65,48 +63,84 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
   const isSpy    = gameType === 'spy';
   const isDetective = gameType === 'detective';
 
-  // ... inside return ...
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.12, duration: 0.8 } }
+  };
   
-  // Title Section
-  <motion.div variants={item} className="text-center">
-    <motion.div 
-      className="mb-8 flex items-center justify-center select-none"
-      animate={{ 
-        y: [0, -15, 0],
-        filter: isSpy 
-          ? 'drop-shadow(0 0 30px rgba(16,185,129,0.4))'
-          : isDetective
-          ? 'drop-shadow(0 0 30px rgba(59,130,246,0.4))'
-          : 'drop-shadow(0 0 30px rgba(140,40,250,0.4))'
-      }}
-      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}>
-      {isSpy
-        ? <Globe size={80} strokeWidth={1.2} className="text-emerald-400/80" />
-        : isDetective
-        ? <Search size={80} strokeWidth={1.2} className="text-blue-400/80" />
-        : <UserCheck size={80} strokeWidth={1.2} className="text-violet-400/80" />
-      }
-    </motion.div>
-    
-    <h1 className="display text-5xl font-black tracking-[0.2em] uppercase aberration"
-      style={{ 
-        background: isSpy 
-          ? 'linear-gradient(180deg, #fff 0%, #10b981 100%)' 
-          : isDetective 
-          ? 'linear-gradient(180deg, #fff 0%, #3b82f6 100%)'
-          : 'linear-gradient(180deg, #fff 0%, #c9943a 100%)',
-        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-      }}
-    >
-      {isSpy ? t('spyTitle') : isDetective ? 'The Detective' : t('mafiaTitle')}
-    </h1>
-    <p className="text-gold-500/60 text-[10px] tracking-[0.6em] mt-4 uppercase font-black bloom">
-      {t('selectMode')}
-    </p>
-  </motion.div>
-  // ... rest of ModeSelectScreen ...
+  const item = {
+    hidden: { y: 30, opacity: 0, scale: 0.95 },
+    show: { y: 0, opacity: 1, scale: 1, transition: { duration: 0.8, ease: [0.19, 1, 0.22, 1] } }
+  };
 
-        {/* Modes Grid */}
+  return (
+    <div className="screen bg-noir-950 flex items-center justify-center overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
+      <div className="absolute inset-0 pointer-events-none">
+        <ParallaxStars count={120} />
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[100px]"
+          style={{ 
+            background: isSpy 
+              ? 'radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%)' 
+              : isDetective
+              ? 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(140,40,250,0.08) 0%, transparent 70%)' 
+          }} 
+        />
+      </div>
+
+      <motion.button
+        initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1 }}
+        onClick={onBack}
+        className="absolute top-10 left-10 z-20 flex items-center gap-4 px-6 py-3 rounded-2xl glass border border-white/10 text-smoke-400 text-[11px] font-black tracking-widest hover:text-white transition-all uppercase group"
+      >
+        <ArrowLeft size={16} className={`transition-transform group-hover:-translate-x-1 ${isAr ? 'rotate-180 group-hover:translate-x-1' : ''}`} />
+        <span>{t('back').toUpperCase()}</span>
+      </motion.button>
+
+      <motion.div 
+        className="relative z-10 w-full max-w-sm px-6 flex flex-col items-center gap-14"
+        variants={container} initial="hidden" animate="show"
+      >
+        <motion.div variants={item} className="text-center">
+          <motion.div 
+            className="mb-8 flex items-center justify-center select-none"
+            animate={{ 
+              y: [0, -15, 0],
+              filter: isSpy 
+                ? 'drop-shadow(0 0 30px rgba(16,185,129,0.4))'
+                : isDetective
+                ? 'drop-shadow(0 0 30px rgba(59,130,246,0.4))'
+                : 'drop-shadow(0 0 30px rgba(140,40,250,0.4))'
+            }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}>
+            {isSpy
+              ? <Globe size={80} strokeWidth={1.2} className="text-emerald-400/80" />
+              : isDetective
+              ? <Search size={80} strokeWidth={1.2} className="text-blue-400/80" />
+              : <UserCheck size={80} strokeWidth={1.2} className="text-violet-400/80" />
+            }
+          </motion.div>
+          
+          <h1 className="display text-5xl font-black tracking-[0.2em] uppercase aberration"
+            style={{ 
+              background: isSpy 
+                ? 'linear-gradient(180deg, #fff 0%, #10b981 100%)' 
+                : isDetective 
+                ? 'linear-gradient(180deg, #fff 0%, #3b82f6 100%)'
+                : 'linear-gradient(180deg, #fff 0%, #c9943a 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}
+          >
+            {isSpy ? t('spyTitle') : isDetective ? 'The Detective' : t('mafiaTitle')}
+          </h1>
+          <p className="text-gold-500/60 text-[10px] tracking-[0.6em] mt-4 uppercase font-black bloom">
+            {t('selectMode')}
+          </p>
+        </motion.div>
+
         <div className="w-full flex flex-col gap-6">
           <motion.div variants={item}>
             <TiltButton onClick={onOnline} accentColor="#3b82f6">
@@ -148,4 +182,3 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
     </div>
   );
 }
-
