@@ -32,6 +32,7 @@ function TiltTitle({ t, gameType }) {
   const onLeave = () => { x.set(0); y.set(0); };
 
   const isSpy = gameType === 'spy';
+  const isDetective = gameType === 'detective';
 
   return (
     <motion.div
@@ -46,11 +47,15 @@ function TiltTitle({ t, gameType }) {
             fontSize: 'clamp(2.5rem, 12vw, 4.5rem)',
             background: isSpy
               ? 'linear-gradient(180deg, #ffffff 0%, #10b981 100%)'
+              : isDetective
+              ? 'linear-gradient(180deg, #ffffff 0%, #3b82f6 100%)'
               : 'linear-gradient(180deg, #ffffff 0%, #c9943a 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             filter: isSpy
               ? 'drop-shadow(0 0 50px rgba(16,185,129,0.3))'
+              : isDetective
+              ? 'drop-shadow(0 0 50px rgba(59,130,246,0.3))'
               : 'drop-shadow(0 0 50px rgba(201,148,58,0.3))',
             transform: 'translateZ(80px)',
           }}
@@ -64,7 +69,7 @@ function TiltTitle({ t, gameType }) {
             ease: 'easeInOut' 
           }}
         >
-          {isSpy ? t('spyTitle') : t('mafiaTitle')}
+          {isSpy ? t('spyTitle') : isDetective ? 'The Detective' : t('mafiaTitle')}
         </motion.h1>
       </motion.div>
       
@@ -278,6 +283,8 @@ export default function LandingScreen({ user, tabPlayerId }) {
           style={{
             background: gameType === 'spy'
               ? 'radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)'
+              : gameType === 'detective'
+              ? 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)'
               : 'radial-gradient(circle, rgba(140,40,250,0.1) 0%, transparent 70%)',
           }}
         />
@@ -387,4 +394,3 @@ export default function LandingScreen({ user, tabPlayerId }) {
     </div>
   );
 }
-
