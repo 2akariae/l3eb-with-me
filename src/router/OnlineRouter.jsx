@@ -31,6 +31,7 @@ import SpyRevealScreen     from '../games/spy/components/SpyRevealScreen.jsx';
 import SpyDiscussionScreen from '../games/spy/components/SpyDiscussionScreen.jsx';
 import SpyVotingScreen     from '../games/spy/components/SpyVotingScreen.jsx';
 import SpyGuessScreen      from '../games/spy/components/SpyGuessScreen.jsx';
+import DetectiveRoutes     from '../games/detective/routes/DetectiveRoutes.jsx';
 
 /**
  * @param {Object} props
@@ -45,6 +46,8 @@ export default function OnlineRouter({ authReady, tabPlayerId }) {
   if (!authReady) return null;
   if (!user)      return <AuthScreen key="auth" />;
   if (!roomId)    return <LandingScreen key="landing" user={user} tabPlayerId={tabPlayerId} />;
+
+  if (gameType === 'detective') return <DetectiveRoutes />;
 
   if (gameType === 'spy') {
     switch (phase) {
