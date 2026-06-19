@@ -1,7 +1,7 @@
 // src/games/detective/components/lobby/PlayerSlot.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Avatar } from '../../../components/ui/index.jsx';
+import { Avatar } from '../../../../components/ui/index.jsx';
 import { DetectiveIcon } from '../shared/DetectiveSVGRegistry.jsx';
 
 export function PlayerSlot({ player, isHost, isMe }) {
