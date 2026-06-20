@@ -3,7 +3,7 @@
 // This file is the single source of truth for all game options, roles, phases, and timings.
 
 export const WEAPONS = [
-  { id: 'w1', name: 'Poison Vial',       svgKey: 'weapon_poison'   },
+  { id: 'w1', name: 'Poison Vial V2',       svgKey: 'weapon_poison'   },
   { id: 'w2', name: 'Wire Garrote',      svgKey: 'weapon_garrote'  },
   { id: 'w3', name: 'Silenced Pistol',   svgKey: 'weapon_pistol'   },
   { id: 'w4', name: 'Carbon Blade',      svgKey: 'weapon_blade'    },
