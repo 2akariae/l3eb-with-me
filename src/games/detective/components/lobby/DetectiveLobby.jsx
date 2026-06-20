@@ -8,7 +8,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGameStore } from '../../../../../store/gameStore.js';
+import { useGameStore } from '../../../../store/gameStore.js';
 import { useDetectiveStore } from '../../store/detectiveStore.js';
 import { useDetectiveRoom } from '../../hooks/useDetectiveRoom.js';
 import { PlayerSlot } from './PlayerSlot.jsx';
