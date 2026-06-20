@@ -1,15 +1,11 @@
 // ─── L3EBWITHME PLATFORM — router/OnlineRouter.jsx ────────────────────────────
-// Extracted from App.jsx's `renderOnlineScreen()` — previously a plain
-// function called during render (not a React component), which meant React
-// could never key/diff its returned tree independently of the parent.
-// As a *real* component, AnimatePresence in App.jsx can key off it cleanly
-// and React can skip reconciling the rest of the shell when only the phase
-// changes.
+// BUG FIX: `if (gameType === 'detective') return <DetectiveRoutes />;` was
+//   passing ZERO props to DetectiveRoutes. The detective sub-router needs
+//   user, roomId, and tabPlayerId so DetectiveLobby (and future phases) can
+//   pull identity without reaching into the platform gameStore directly.
+//   Now passes { user, roomId, playerId: myPlayerId } as props.
 //
-// This file owns ONLY phase→screen mapping for online mode. It has no
-// Firebase subscriptions, no audio logic, no presence logic — those live in
-// dedicated hooks (useFirebaseSubscriptions, useRoomPresence,
-// useGamePhaseEffects) called once from App.jsx.
+// NOTE: No other routing logic changed. Mafia and Spy flows are untouched.
 
 import React from 'react';
 import { useGameStore } from '../store/gameStore.js';
@@ -47,7 +43,19 @@ export default function OnlineRouter({ authReady, tabPlayerId }) {
   if (!user)      return <AuthScreen key="auth" />;
   if (!roomId)    return <LandingScreen key="landing" user={user} tabPlayerId={tabPlayerId} />;
 
-  if (gameType === 'detective') return <DetectiveRoutes />;
+  // ── Detective: pass identity props so the sub-router doesn't need to
+  //   re-read them from gameStore (keeps detective logic isolated).
+  if (gameType === 'detective') {
+    return (
+      <DetectiveRoutes
+        key="detective-routes"
+        user={user}
+        roomId={roomId}
+        playerId={myPlayerId}
+        isHost={isHost}
+      />
+    );
+  }
 
   if (gameType === 'spy') {
     switch (phase) {
