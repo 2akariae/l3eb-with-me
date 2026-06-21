@@ -39,7 +39,7 @@ export function useGamePhaseEffects(phase, gameType) {
       if (phase === PHASES.NIGHT) startMafiaAmbient();
       else if (phase === PHASES.DISCUSSION || phase === PHASES.VOTING) stopAmbient();
     }
-    if (gameType === 'spy' && phase === PHASES.DISCUSSION) startSpyAmbient();
+    // if (gameType === 'spy' && phase === PHASES.DISCUSSION) startSpyAmbient(); // Audio disabled for performance
     if (phase === PHASES.GAME_OVER || phase === PHASES.LOBBY) stopAmbient();
     prevPhaseRef.current = phase;
   }, [phase, gameType]);

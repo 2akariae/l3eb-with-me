@@ -59,11 +59,11 @@ export default function SpyVotingScreen({ user, playerId }) {
   const totalVotes   = Object.keys(votes ?? {}).length;
 
   return (
-    <div className="screen bg-noir-950 glass-panel flex flex-col overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
+    <div className="screen bg-zinc-950 flex flex-col overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
       <GameBackground />
 
       {/* Header */}
-      <div className="px-6 pt-safe pt-16 pb-6 border-b border-white/5 bg-black/40 backdrop-blur-2xl">
+      <div className="px-6 pt-safe pt-16 pb-6 border-b border-white/5 bg-zinc-950/90">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -81,7 +81,7 @@ export default function SpyVotingScreen({ user, playerId }) {
       </div>
 
       {/* Vote progress bar */}
-      <div className="px-6 py-4 bg-black/20">
+      <div className="px-6 py-4 bg-zinc-950/90">
         <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-smoke-500 mb-2">
           <span>{totalVotes} / {alivePlayers.length} {t('voted')}</span>
           <span className="text-emerald-500">
@@ -90,9 +90,10 @@ export default function SpyVotingScreen({ user, playerId }) {
         </div>
         <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+            className="h-full bg-emerald-500"
             initial={{ width: 0 }}
             animate={{ width: `${(totalVotes / (alivePlayers.length || 1)) * 100}%` }}
+            transition={{ type: "tween", duration: 0.1, ease: "linear" }}
           />
         </div>
       </div>
@@ -105,13 +106,12 @@ export default function SpyVotingScreen({ user, playerId }) {
             return (
               <motion.button
                 key={uid}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                transition={{ type: "tween", duration: 0.1, ease: "linear" }}
                 onClick={() => handleVote(uid)}
                 disabled={!!myVote || uid === playerId}
                 className={`relative h-20 rounded-[2rem] flex items-center px-6 border-2 transition-all ${
                   myVote === uid
-                    ? 'bg-emerald-500/20 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
+                    ? 'bg-emerald-500/20 border-emerald-500'
                     : uid === playerId
                     ? 'bg-white/5 border-white/5 opacity-50 grayscale'
                     : 'bg-white/5 border-white/10 hover:bg-white/[0.08]'
@@ -129,7 +129,7 @@ export default function SpyVotingScreen({ user, playerId }) {
                 {voteCount > 0 && (
                   <div className="flex gap-1">
                     {Array.from({ length: voteCount }).map((_, vi) => (
-                      <div key={vi} className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <div key={vi} className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     ))}
                   </div>
                 )}
@@ -141,10 +141,9 @@ export default function SpyVotingScreen({ user, playerId }) {
 
       {/* Host resolve footer */}
       {isHost && (
-        <div className="px-6 pb-safe pb-6 pt-4 border-t border-white/5 bg-black/40 backdrop-blur-xl">
+        <div className="px-6 pb-safe pb-6 pt-4 border-t border-white/5 bg-zinc-950/90">
           <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.95 }}
+            transition={{ type: "tween", duration: 0.1, ease: "linear" }}
             onClick={async () => { if (isHost) await resolveSpyVoting(roomId); }}
             className="w-full h-14 rounded-[2rem] text-smoke-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors"
             style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}

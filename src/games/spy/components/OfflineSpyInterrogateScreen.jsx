@@ -20,17 +20,17 @@ export default function OfflineSpyInterrogateScreen() {
   const displayWord = typeof word === 'object' ? (word?.[language] ?? word?.en ?? '?') : (word ?? '?');
 
   return (
-    <div className="screen bg-noir-950 glass-panel overflow-hidden items-center justify-center flex flex-col p-8 text-center"
+    <div className="screen bg-zinc-950 overflow-hidden items-center justify-center flex flex-col p-8 text-center"
       dir={isAr ? 'rtl' : 'ltr'}>
       <GameBackground />
 
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', damping: 15 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         className="relative z-10 mb-8"
       >
-        <div className="w-24 h-24 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-6 mx-auto shadow-[0_0_50px_rgba(16,185,129,0.2)]">
+        <div className="w-24 h-24 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-6 mx-auto">
           <Search size={48} className="text-emerald-500" />
         </div>
 
@@ -46,8 +46,9 @@ export default function OfflineSpyInterrogateScreen() {
 
       {/* Mission Rules */}
       <motion.div
-        initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}
-        className="relative z-10 w-full max-w-sm p-6 rounded-[2.5rem] border border-white/10 bg-white/5 backdrop-blur-xl mb-8"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
+        className="relative z-10 w-full max-w-sm p-6 rounded-[2.5rem] border border-white/10 bg-zinc-950 mb-8"
       >
         <p className="text-smoke-400 text-xs font-mono tracking-widest uppercase mb-4">
           {isAr ? 'قواعد المهمة' : 'MISSION RULES'}
@@ -70,15 +71,15 @@ export default function OfflineSpyInterrogateScreen() {
 
       {/* Reveal / Play Again */}
       <motion.div
-        initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         className="relative z-10 flex flex-col w-full max-w-xs gap-4"
       >
         {/* Reveal the Spy toggle */}
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          transition={{ type: "tween", duration: 0.1, ease: "linear" }}
           onClick={() => setRevealed((v) => !v)}
-          className="h-16 rounded-2xl bg-white/10 border border-white/20 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 transition-all hover:bg-white/15"
+          className="h-16 rounded-2xl bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 transition-all hover:bg-white/10"
         >
           {revealed ? <EyeOff size={18} /> : <Ghost size={18} />}
           {revealed
@@ -87,10 +88,9 @@ export default function OfflineSpyInterrogateScreen() {
         </motion.button>
 
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          transition={{ type: "tween", duration: 0.1, ease: "linear" }}
           onClick={() => restart()}
-          className="h-16 rounded-2xl bg-emerald-600 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:bg-emerald-500 transition-all"
+          className="h-16 rounded-2xl bg-emerald-600 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-emerald-500 transition-all"
         >
           <RefreshCcw size={18} />
           {isAr ? 'لعبة جديدة' : 'PLAY AGAIN'}

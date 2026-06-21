@@ -9,8 +9,8 @@ import { GameBackground } from "@/components/game/GameBackground.jsx";
 import { Ghost, Shield, Terminal } from 'lucide-react';
 
 const SPY_CFG = {
-  spy:     { glow: '#10b981', bg: 'linear-gradient(155deg,rgba(16,185,129,0.2) 0%,rgba(2,12,8,0.98) 100%)', border: 'rgba(16,185,129,0.5)' },
-  citizen: { glow: '#3b82f6', bg: 'linear-gradient(155deg,rgba(59,130,246,0.2) 0%,rgba(2,4,16,0.98) 100%)', border: 'rgba(59,130,246,0.5)' },
+  spy:     { glow: '#10b981', bg: 'bg-zinc-900', border: 'border-emerald-500/40' },
+  citizen: { glow: '#3b82f6', bg: 'bg-zinc-900', border: 'border-blue-500/40' },
 };
 
 function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
@@ -26,19 +26,18 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
     <div style={{ perspective: 1000, width: 220, height: 310 }}>
       <motion.div
         style={{ width: '100%', height: '100%', transformStyle: 'preserve-3d', rotateX: tiltX, rotateY: tiltY }}
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut' }}
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
       >
         <motion.div
           style={{ width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
           animate={{ rotateY: pressing ? 180 : 0 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         >
           {/* FRONT */}
           <div style={{
             position: 'absolute', inset: 0, backfaceVisibility: 'hidden',
-            background: 'linear-gradient(155deg,rgba(20,40,30,0.4) 0%,rgba(2,5,3,0.97) 100%)',
-            border: '1px solid rgba(16,185,129,0.35)', borderRadius: 28,
+            background: '#18181b',
+            border: '1px solid #27272a', borderRadius: 28,
           }} className="flex flex-col items-center justify-center gap-5 overflow-hidden select-none">
             <Terminal size={40} className="text-emerald-500 opacity-60" />
             <p className="text-[11px] font-mono tracking-[0.3em] uppercase text-smoke-500">
@@ -49,8 +48,7 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
           {/* BACK */}
           <div style={{
             position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)',
-            background: cfg.bg, border: `1.5px solid ${cfg.border}`,
-            boxShadow: `0 0 55px ${cfg.glow}55, inset 0 0 28px ${cfg.glow}14`,
+            background: '#18181b', border: `1.5px solid ${cfg.border}`,
             borderRadius: 28,
           }} className="flex flex-col items-center justify-center gap-5 relative overflow-hidden select-none p-6 text-center">
             <div style={{ color: cfg.glow }}>
@@ -121,15 +119,16 @@ export default function OfflineSpyRevealScreen() {
     <motion.div
       key={envelopeIndex}
       ref={containerRef}
-      className="screen bg-noir-950 glass-panel overflow-hidden items-center justify-center flex flex-col"
+      className="screen bg-zinc-950 overflow-hidden items-center justify-center flex flex-col"
       style={{ userSelect: 'none' }}
-      initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }} transition={{ type: "tween", duration: 0.1, ease: "linear" }}
       onPointerMove={onPointerMove} onPointerLeave={onPointerLeave}
     >
       <GameBackground />
 
-      <motion.div initial={{ y: -18, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         className="relative z-10 text-center mb-7">
         <p className="text-smoke-500 text-[11px] tracking-[0.38em] uppercase font-mono">{t('passPhoneTo')}</p>
         <h1 className="text-4xl font-black text-white tracking-wider mt-1.5"
@@ -152,18 +151,17 @@ export default function OfflineSpyRevealScreen() {
       </div>
 
       <motion.p key={pressing ? 'rel' : 'tap'}
-        initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         className="relative z-10 mt-6 text-smoke-500 text-xs tracking-[0.28em] font-mono">
         {pressing ? t('releaseToHide') : t('tapHoldReveal')}
       </motion.p>
 
-      <motion.button initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         onClick={handleNext}
-        className="relative z-10 mt-7 h-14 px-10 rounded-2xl font-black text-sm uppercase tracking-[0.18em] text-white overflow-hidden"
-        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.14)' }}>
+        className="relative z-10 mt-7 h-14 px-10 rounded-2xl font-black text-sm uppercase tracking-[0.18em] text-white"
+        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
         <span className="relative z-10">
           {isLast
             ? (isAr ? 'ابدأ اللعبة' : 'START GAME')

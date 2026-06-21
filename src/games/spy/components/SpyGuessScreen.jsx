@@ -57,7 +57,7 @@ export default function SpyGuessScreen({ user, playerId }) {
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+    visible: { y: 0, opacity: 1, transition: { type: 'tween', duration: 0.1, ease: 'linear' } }
   };
 
   if (!isSpy) {
@@ -67,9 +67,9 @@ export default function SpyGuessScreen({ user, playerId }) {
         <motion.div
           animate={{ scale: [1, 1.04, 1], opacity: [0.7, 1, 0.7] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="w-24 h-24 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-8 mx-auto backdrop-blur-md"
+          className="w-24 h-24 rounded-3xl bg-zinc-900 border border-emerald-500/30 flex items-center justify-center mb-8 mx-auto"
         >
-          <ShieldAlert size={48} className="text-emerald-500 drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+          <ShieldAlert size={48} className="text-emerald-500" />
         </motion.div>
         <h1 className="text-3xl font-black text-white uppercase tracking-[0.2em] mb-3">
           {isAr ? 'الجاسوس يخمّن...' : 'THE SPY IS GUESSING...'}

@@ -16,10 +16,10 @@ function GlitchText({ text, className }) {
       <span className="relative z-10">{text}</span>
       <motion.span className="absolute inset-0 text-emerald-500 z-0 opacity-50"
         animate={{ x: [-2, 2, -2], opacity: [0.5, 0.8, 0.5] }}
-        transition={{ duration: 0.1, repeat: Infinity }}>{text}</motion.span>
+        transition={{ duration: 0.1, repeat: Infinity, ease: "linear" }}>{text}</motion.span>
       <motion.span className="absolute inset-0 text-blue-500 z-0 opacity-50"
         animate={{ x: [2, -2, 2], opacity: [0.5, 0.8, 0.5] }}
-        transition={{ duration: 0.1, repeat: Infinity, delay: 0.05 }}>{text}</motion.span>
+        transition={{ duration: 0.1, repeat: Infinity, delay: 0.05, ease: "linear" }}>{text}</motion.span>
     </div>
   );
 }
@@ -38,22 +38,14 @@ export default function SpyRevealScreen({ user, onExpire }) {
   const displayHint = typeof gameState?.hint === 'object' ? (gameState?.hint?.[language] ?? gameState?.hint?.en ?? '') : (gameState?.hint ?? '');
 
   const SPY_CONFIG = {
-    spy:     { glow: '#10b981', bg: 'linear-gradient(155deg,rgba(16,185,129,0.2) 0%,rgba(2,12,8,0.98) 100%)', border: 'rgba(16,185,129,0.5)' },
-    citizen: { glow: '#3b82f6', bg: 'linear-gradient(155deg,rgba(59,130,246,0.2) 0%,rgba(2,4,16,0.98) 100%)', border: 'rgba(59,130,246,0.5)' },
+    spy:     { glow: '#10b981', bg: 'bg-zinc-900', border: 'border-emerald-500/40' },
+    citizen: { glow: '#3b82f6', bg: 'bg-zinc-900', border: 'border-blue-500/40' },
   };
   const cfg = SPY_CONFIG[isSpy ? 'spy' : 'citizen'];
 
-  const x = useSpring(0, { stiffness: 100, damping: 20 });
-  const y = useSpring(0, { stiffness: 100, damping: 20 });
-  const rotateX = useTransform(y, [-0.5, 0.5], [15, -15]);
-  const rotateY = useTransform(x, [-0.5, 0.5], [-15, 15]);
-
-  const onMove  = (e) => { const r = e.currentTarget.getBoundingClientRect(); x.set((e.clientX - r.left) / r.width - 0.5); y.set((e.clientY - r.top) / r.height - 0.5); };
-  const onLeave = () => { x.set(0); y.set(0); };
-
   const { clearRoom } = useGameStore();
   return (
-    <div className="screen bg-noir-950 overflow-hidden flex flex-col items-center justify-center p-6 gap-10">
+    <div className="screen bg-zinc-950 overflow-hidden flex flex-col items-center justify-center p-6 gap-10">
       <BackButton onClick={clearRoom} />
       <div className="absolute inset-0 opacity-10 pointer-events-none"
         style={{ backgroundImage: 'radial-gradient(circle, #333 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
@@ -62,7 +54,9 @@ export default function SpyRevealScreen({ user, onExpire }) {
         <TimerRing remaining={remaining} total={10} size={60} color={isSpy ? '#10b981' : '#3b82f6'} />
       </div>
 
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
+        className="text-center">
         <div className="flex items-center justify-center gap-2 mb-2">
           <Terminal size={14} className="text-emerald-500" />
           <p className="text-emerald-500/60 text-[10px] font-black uppercase tracking-[0.3em] font-mono">{t('decryptionInit')}</p>
@@ -73,29 +67,27 @@ export default function SpyRevealScreen({ user, onExpire }) {
       </motion.div>
 
       <motion.div
-        onMouseMove={onMove} onMouseLeave={onLeave}
-        style={{ rotateX, rotateY, perspective: 1000, transformStyle: 'preserve-3d' }}
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         onClick={() => setRevealed(true)}
         className="relative w-64 h-96 cursor-pointer"
       >
         <AnimatePresence mode="wait">
           {!revealed ? (
             <motion.div key="hidden"
-              initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.1 }}
-              className="w-full h-full rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-6 backdrop-blur-xl shadow-2xl">
-              <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                <HelpCircle size={40} className="text-smoke-500 animate-pulse" />
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              transition={{ type: "tween", duration: 0.1, ease: "linear" }}
+              className="w-full h-full rounded-[2.5rem] bg-zinc-900 border border-white/10 flex flex-col items-center justify-center gap-6">
+              <div className="w-20 h-20 rounded-full bg-black/40 border border-white/10 flex items-center justify-center">
+                <HelpCircle size={40} className="text-smoke-500" />
               </div>
               <p className="text-smoke-500 text-[11px] font-black tracking-[0.3em] font-mono">{t('tapToDecrypt')}</p>
             </motion.div>
           ) : (
             <motion.div key="revealed"
-              initial={{ opacity: 0, scale: 1.1, rotateY: 90 }} animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-              className="w-full h-full rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center gap-6 shadow-2xl border-2"
-              style={{ background: cfg.bg, borderColor: cfg.border, boxShadow: `0 0 40px ${cfg.glow}33` }}>
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              transition={{ type: "tween", duration: 0.1, ease: "linear" }}
+              className={`w-full h-full rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center gap-6 border-2 ${cfg.bg} ${cfg.border}`}>
               <motion.div
-                animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 4, repeat: Infinity }}
                 className="p-6 rounded-3xl bg-black/40 border border-white/10"
                 style={{ color: cfg.glow }}>
                 {isSpy ? <Ghost size={50} /> : <Shield size={50} />}
@@ -123,7 +115,7 @@ export default function SpyRevealScreen({ user, onExpire }) {
                 ) : (
                   <div className="space-y-4">
                     <p className="text-blue-400/80 text-xs font-medium leading-relaxed">{t('secretWordIs').toUpperCase()}:</p>
-                    <p className="text-white text-3xl font-black tracking-wider uppercase drop-shadow-lg">{displayWord}</p>
+                    <p className="text-white text-3xl font-black tracking-wider uppercase">{displayWord}</p>
                     {displayHint && (
                       <p className="text-[10px] text-blue-500 uppercase font-black tracking-widest">
                         {t('wordHint').toUpperCase()}: {displayHint}
@@ -137,7 +129,8 @@ export default function SpyRevealScreen({ user, onExpire }) {
         </AnimatePresence>
       </motion.div>
 
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         className="text-smoke-600 text-[10px] font-black uppercase tracking-[0.2em] font-mono text-center">
         {revealed ? t('maintainSilence') : t('tapToDecrypt')}
       </motion.p>
