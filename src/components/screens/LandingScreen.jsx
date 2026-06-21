@@ -8,7 +8,7 @@ import { createRoom, joinRoom, submitJoinRequest } from '../../games/mafia/hooks
 import { useGameStore } from '../../store/gameStore.js';
 import { toast, Spinner } from '../ui/index.jsx';
 import { useTranslation } from '../../constants/translations.js';
-import { ParallaxStars } from '../game/ParallaxStars.jsx';
+import { GameBackground } from '../game/GameBackground.jsx';
 import BackButton from '../ui/BackButton.jsx';
 import { User, Camera, ImageIcon } from 'lucide-react';
 
