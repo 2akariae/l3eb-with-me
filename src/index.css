@@ -60,6 +60,7 @@
     overflow-wrap: anywhere;
     word-break: break-word;
   }
+}
 
 @layer components {
   /* ── Screen container ──────────────────────────────────────────────────── */
