@@ -268,36 +268,20 @@ export default function LandingScreen({ user, tabPlayerId }) {
   };
 
   return (
-    <div className="screen bg-noir-950 overflow-hidden items-center justify-center">
+    <div className="min-h-[100dvh] bg-noir-950 flex flex-col justify-between overflow-y-auto scroll-smooth p-6">
 
       {/* Atmospheric Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <ParallaxStars count={120} />
-        <motion.div
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.45, 0.3]
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] rounded-full blur-[120px]"
-          style={{
-            background: gameType === 'spy'
-              ? 'radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)'
-              : gameType === 'detective'
-              ? 'radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)'
-              : 'radial-gradient(circle, rgba(140,40,250,0.1) 0%, transparent 70%)',
-          }}
-        />
+      <div className="fixed inset-0 pointer-events-none">
+        <GameBackground count={150} />
       </div>
 
-      <BackButton onClick={() => resetSession()} />
-
-      <div className="relative z-10 w-full flex flex-col items-center justify-center px-6">
+      <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center">
+        <BackButton onClick={() => resetSession()} />
         <AnimatePresence mode="wait">
 
           {tab === TABS.HOME && (
             <motion.div key="home" variants={containerVariants} initial="hidden" animate="visible" exit="exit"
-              className="w-full max-w-sm flex flex-col items-center gap-16">
+              className="w-full max-w-sm flex flex-col items-center gap-16 py-10">
 
               <TiltTitle t={t} gameType={gameType} />
 
@@ -327,7 +311,7 @@ export default function LandingScreen({ user, tabPlayerId }) {
 
           {(tab === TABS.CREATE || tab === TABS.JOIN) && (
             <motion.div key={tab} variants={containerVariants} initial="hidden" animate="visible" exit="exit"
-              className="w-full max-w-sm flex flex-col gap-8">
+              className="w-full max-w-sm flex flex-col gap-8 py-10">
 
               <motion.button
                 variants={itemVariants}
@@ -338,16 +322,16 @@ export default function LandingScreen({ user, tabPlayerId }) {
                 <span>{t('backToHome').toUpperCase()}</span>
               </motion.button>
 
-              <motion.div variants={itemVariants} className="bg-noir-900/60 rounded-[3.5rem] p-12 border border-white/5 backdrop-blur-3xl shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
+              <motion.div variants={itemVariants} className="bg-noir-900/60 rounded-[3.5rem] p-10 border border-white/5 backdrop-blur-3xl shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] to-transparent pointer-events-none" />
 
-                <div className="mb-12 text-center">
+                <div className="mb-10 text-center">
                   <h3 className="display text-4xl font-black text-white tracking-tight aberration">
                     {tab === TABS.CREATE ? t('createRoom') : t('joinRoom')}
                   </h3>
                 </div>
 
-                <div className="flex flex-col gap-10 relative z-10">
+                <div className="flex flex-col gap-8 relative z-10">
                   <PhotoPicker photo={avatar} onChange={setAvatar} t={t} language={language} />
 
                   <div className="space-y-4">
@@ -379,7 +363,7 @@ export default function LandingScreen({ user, tabPlayerId }) {
                     whileTap={{ scale: 0.98 }}
                     onClick={tab === TABS.CREATE ? handleCreate : handleJoin}
                     disabled={loading}
-                    className="h-20 rounded-[2.5rem] bg-gold-500 text-noir-950 font-black text-xl mt-6 shadow-[0_20px_50px_rgba(201,148,58,0.3)] transition-all hover:bg-gold-400"
+                    className="h-20 rounded-[2.5rem] bg-gold-500 text-noir-950 font-black text-xl mt-4 shadow-[0_20px_50px_rgba(201,148,58,0.3)] transition-all hover:bg-gold-400"
                   >
                     {loading
                       ? <Spinner size={28} color="black" />

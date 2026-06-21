@@ -20,6 +20,11 @@ export function GameBackground({ count = 100, paused = false }) {
             from { transform: translateY(0); }
             to { transform: translateY(-50%); }
           }
+          @keyframes pulseVignette {
+            0% { opacity: 0.8; }
+            50% { opacity: 0.6; }
+            100% { opacity: 0.8; }
+          }
           .star-layer {
             position: absolute;
             top: 0;
@@ -57,7 +62,7 @@ export function GameBackground({ count = 100, paused = false }) {
 
       {/* Cinematic Vignette */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#020c08] opacity-80" />
-      <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.8)]" />
+      <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.8)] animate-[pulseVignette_4s_ease-in-out_infinite]" />
     </div>
   );
 }
