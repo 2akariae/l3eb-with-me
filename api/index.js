@@ -118,7 +118,8 @@ Return ONLY valid JSON — no markdown, no code fences, no explanation:
 {"word":{"en":"Airport","ar":"مطار"},"hint":{"en":"Travel","ar":"سفر"}}
 Rules: word must be a common, concrete noun (one word). hint must be 1-2
 vague words that don't give the word away. Be creative and varied — avoid
-repeating the same category twice in a row.`;
+repeating the same category twice in a row. Select words that are part of 
+a rich theme to make it challenging for the spy to guess.`;
 
   try {
     const upstream = await fetch(

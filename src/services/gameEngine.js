@@ -703,7 +703,8 @@ export async function submitSpyGuess(roomId, word) {
     ? Object.values(gs.word).filter(Boolean)
     : [gs.word].filter(Boolean);
 
-  const isCorrect = secretVariants.some((v) => fuzzyMatch(word, v));
+  const normalizedGuess = normalize(word);
+  const isCorrect = secretVariants.some((v) => normalizedGuess === normalize(v));
 
   const updates = {};
   updates[`${gamePath}/gameState/phase`]    = PHASES.GAME_OVER;
