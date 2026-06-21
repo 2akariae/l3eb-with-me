@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { getRoleLabel } from '../../../../constants/game.js';
 import { restartOfflineGame } from '../../../../services/offlineEngine.js';
-import { GameBackground } from '../../../../components/game/GameBackground.jsx';
+import { GameBackground } from '../../../components/game/GameBackground.jsx';
 
 const BADGES = {
   mafia:   { label: { en: 'Mafia',    ar: 'مافيا'    }, color: '#e02020', bg: 'rgba(224,32,32,0.15)' },

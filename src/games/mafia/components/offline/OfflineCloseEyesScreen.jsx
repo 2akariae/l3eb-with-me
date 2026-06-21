@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { closeEyesToNight } from '../../../../services/offlineEngine.js';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
-import { GameBackground } from '../../../../components/game/GameBackground.jsx';
+import { GameBackground } from '../../../components/game/GameBackground.jsx';
 
 export default function OfflineCloseEyesScreen() {
   const { language } = useOfflineStore();

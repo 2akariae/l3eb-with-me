@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { startOfflineGame, genPlayerId } from '../../../../services/offlineEngine.js';
 import { getMafiaCount } from '../../../../constants/game.js';
-import { GameBackground } from '../../../../components/game/GameBackground.jsx';
+import { GameBackground } from '../../../components/game/GameBackground.jsx';
 
 export default function OfflineLobbyScreen({ onBackToMode }) {
   const { players, setPlayers, reset, language, gameType } = useOfflineStore();

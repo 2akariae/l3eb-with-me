@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion'
 import { Mail } from 'lucide-react';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { ROLE_META } from '../../../../constants/game.js';
-import { GameBackground } from '../../../../components/game/GameBackground.jsx';
+import { GameBackground } from '../../../components/game/GameBackground.jsx';
 
 /* ── Role display config ─────────────────────────────────────────────────── */
 const ROLE_CONFIG = {
