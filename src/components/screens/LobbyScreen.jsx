@@ -56,9 +56,17 @@ function RoundTable({ players, myPlayerId, isHost, onKick, t, accentColor }) {
 
   return (
     <motion.div 
-      style={{ rotateX, rotateY, x: translateX, y: translateY, perspective: 1200, transformStyle: 'preserve-3d' }}
+      style={{ 
+        rotateX, 
+        rotateY, 
+        x: translateX, 
+        y: translateY, 
+        perspective: 1200, 
+        transformStyle: 'preserve-3d',
+        width: tableR * 2 + 150, 
+        height: tableR * 2 + 150 
+      }}
       className="relative flex-shrink-0 flex items-center justify-center select-none touch-none" 
-      style={{ width: tableR * 2 + 150, height: tableR * 2 + 150 }}
     >
       {/* ── Interactive Neon Rings (CSS Accelerated) ── */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

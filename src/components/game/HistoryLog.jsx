@@ -10,8 +10,7 @@ export const HistoryLog = React.memo(() => {
   return (
     <AnimatePresence>
       <motion.div
-// ... (rest of the file) ...
-
+        initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[60] flex items-center justify-center px-6 py-12"
@@ -74,4 +73,4 @@ export const HistoryLog = React.memo(() => {
       </motion.div>
     </AnimatePresence>
   );
-}
+});
