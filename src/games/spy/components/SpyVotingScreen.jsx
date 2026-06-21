@@ -25,7 +25,7 @@ import { TimerRing, Avatar, toast } from '../../../components/ui/index.jsx';
 import { useTimer } from '../../../hooks/useTimer.js';
 import { Gavel } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
-import { GameBackground } from '../../../components/game/GameBackground.jsx';
+import { GameBackground } from "@/components/game/GameBackground.jsx";
 
 export default function SpyVotingScreen({ user, playerId }) {
   const { roomId, isHost, players, myRole, gameState, language, votes, setVotes } = useGameStore();

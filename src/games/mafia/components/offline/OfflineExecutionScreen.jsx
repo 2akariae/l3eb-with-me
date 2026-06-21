@@ -4,7 +4,7 @@ import { Sword, Cross, Search, User, Smile, CheckCircle2, Handshake } from 'luci
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { executionToNextRound } from '../../../../services/offlineEngine.js';
 import { ROLE_META, getRoleLabel } from '../../../../constants/game.js';
-import { GameBackground } from '../../../components/game/GameBackground.jsx';
+import { GameBackground } from "@/components/game/GameBackground.jsx";
 
 export default function OfflineExecutionScreen() {
   const { players, lastExecuted, lastExecutedRole, language } = useOfflineStore();

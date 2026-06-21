@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { dawnToDiscussion } from '../../../../services/offlineEngine.js';
 import { useTypewriter } from '../../../../hooks/useTypewriter.js';
-import { GameBackground } from '../../../components/game/GameBackground.jsx';
+import { GameBackground } from "@/components/game/GameBackground.jsx";
 
 function TypeLine({ text, onDone }) {
   const { displayed, done } = useTypewriter(text, 32, onDone);

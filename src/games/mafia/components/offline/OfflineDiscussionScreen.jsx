@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Pause, Play } from 'lucide-react';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { startVoting } from '../../../../services/offlineEngine.js';
-import { GameBackground } from '../../../components/game/GameBackground.jsx';
+import { GameBackground } from "@/components/game/GameBackground.jsx";
 
 
 function pad(n) { return String(n).padStart(2, '0'); }

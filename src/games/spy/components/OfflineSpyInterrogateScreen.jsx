@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOfflineStore } from '../../../store/offlineStore.js';
 import { useTranslation } from '../../../constants/translations.js';
-import { GameBackground } from '../../../components/game/GameBackground.jsx';
+import { GameBackground } from "@/components/game/GameBackground.jsx";
 import { Ghost, Search, RefreshCcw, Eye, EyeOff } from 'lucide-react';
 
 export default function OfflineSpyInterrogateScreen() {

@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { useOfflineStore } from '../../../store/offlineStore.js';
 import { useTranslation } from '../../../constants/translations.js';
-import { GameBackground } from '../../../components/game/GameBackground.jsx';
+import { GameBackground } from "@/components/game/GameBackground.jsx";
 import { Ghost, Shield, Terminal } from 'lucide-react';
 
 const SPY_CFG = {
