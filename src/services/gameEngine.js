@@ -14,7 +14,7 @@
 // BUG FIXED (P2): resolveVoting(roomId) ignored its gameType argument because
 //   the signature only accepted one parameter. The function now accepts
 //   resolveVoting(roomId, gameType = 'mafia') and passes it to getGamePath.
-
+// ... (top lines)
 import {
   db, ref, set, get, push, update, remove,
   onValue, onDisconnect, serverTimestamp,
@@ -23,8 +23,24 @@ import { set as dbSet } from 'firebase/database';
 import { assignRoles, getAlphaMafia, PHASES, PHASE_TIMING } from '../constants/game.js';
 import { generateSpyWord } from '../games/spy/hooks/useGeminiWords.js';
 
+// ── Simple debounce utility ──────────────────────────────────────────────────
+function debounce(func, wait) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
+
+// ── Optimized setter ─────────────────────────────────────────────────────────
+export const debouncedUpdatePlayerSettings = debounce(async (roomId, playerId, settings) => {
+  await update(ref(db, `rooms/${roomId}/players/${playerId}/settings`), settings);
+}, 1000);
+
 // ── Path helper ───────────────────────────────────────────────────────────────
 function getGamePath(roomId, gameType) {
+// ...
+
   return `rooms/${roomId}/${gameType || 'mafia'}`;
 }
 

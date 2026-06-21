@@ -1,29 +1,28 @@
 import React from 'react';
 
 /**
- * GameBackground - High-performance hardware-accelerated parallax background.
- * Uses GPU-accelerated CSS animations (`translateY`, `will-change: transform`, `contain: strict`).
+ * GameBackground - Ultra-high performance hardware-accelerated starfield.
+ * Isolated from layout engine via contain: strict.
+ * Animated purely via compositor-thread transforms.
  */
-export function GameBackground({ count = 100, paused = false }) {
-  // Generate random star data based on count
-  const starsFar = React.useMemo(() => generateStars(Math.floor(count * 0.6)), [count]);
-  const starsNear = React.useMemo(() => generateStars(Math.floor(count * 0.4)), [count]);
-
-  const starPatternFar = generateStarPattern(starsFar, 200);
-  const starPatternNear = generateStarPattern(starsNear, 300);
+export function GameBackground({ count = 80 }) {
+  const starsFar = React.useMemo(() => generateStars(Math.floor(count * 0.6), 2), [count]);
+  const starsNear = React.useMemo(() => generateStars(Math.floor(count * 0.4), 3), [count]);
 
   return (
-    <div className={`absolute inset-0 z-[-1] overflow-hidden bg-[#020c08] pointer-events-none contain-strict ${paused ? 'paused' : ''}`}>
+    <div 
+      className="fixed inset-0 z-[-10] overflow-hidden bg-[#03020a] pointer-events-none"
+      style={{ contain: 'strict' }}
+    >
       <style>
         {`
-          @keyframes parallaxVertical {
-            from { transform: translateY(0); }
-            to { transform: translateY(-50%); }
+          @keyframes matrix-float {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(0, -50%, 0); }
           }
-          @keyframes pulseVignette {
-            0% { opacity: 0.8; }
-            50% { opacity: 0.6; }
-            100% { opacity: 0.8; }
+          @keyframes star-pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
           }
           .star-layer {
             position: absolute;
@@ -32,51 +31,53 @@ export function GameBackground({ count = 100, paused = false }) {
             width: 100%;
             height: 200%;
             will-change: transform;
-            pointer-events: none;
-          }
-          .paused .star-layer {
-            animation-play-state: paused;
+            background-repeat: repeat;
           }
         `}
       </style>
-      
-      {/* Far layer */}
+
+      {/* Far Matrix */}
       <div 
-        className="star-layer opacity-40"
+        className="star-layer"
         style={{
-          backgroundImage: starPatternFar,
-          backgroundSize: '200px 200px',
-          animation: 'parallaxVertical 60s linear infinite',
-        }}
-      />
-      
-      {/* Near layer */}
-      <div 
-        className="star-layer opacity-60"
-        style={{
-          backgroundImage: starPatternNear,
+          backgroundImage: starsFar,
           backgroundSize: '300px 300px',
-          animation: 'parallaxVertical 30s linear infinite',
+          animation: 'matrix-float 120s linear infinite',
         }}
       />
 
-      {/* Cinematic Vignette */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#020c08] opacity-80" />
-      <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.8)] animate-[pulseVignette_4s_ease-in-out_infinite]" />
+      {/* Near Matrix */}
+      <div 
+        className="star-layer"
+        style={{
+          backgroundImage: starsNear,
+          backgroundSize: '450px 450px',
+          animation: 'matrix-float 60s linear infinite',
+        }}
+      />
+
+      {/* Radial Depth Gradient */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(3,2,10,0.8)_80%)]" />
+      
+      {/* Dynamic Glows */}
+      <div className="absolute -top-[20%] -left-[20%] w-[80%] h-[80%] rounded-full bg-blue-900/10 blur-[120px] animate-pulse" />
+      <div className="absolute -bottom-[20%] -right-[20%] w-[80%] h-[80%] rounded-full bg-purple-900/10 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
     </div>
   );
 }
 
-function generateStars(n) {
-  return Array.from({ length: n }, () => ({
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    r: Math.random() * 1.5 + 0.5,
-    o: Math.random() * 0.5 + 0.2
+function generateStars(n, maxR) {
+  const size = 400;
+  const stars = Array.from({ length: n }, () => ({
+    x: Math.random() * size,
+    y: Math.random() * size,
+    r: Math.random() * maxR + 0.5,
+    o: Math.random() * 0.6 + 0.2
   }));
-}
 
-function generateStarPattern(stars, size) {
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' viewBox='0 0 ${size} ${size}'>${stars.map(s => `<circle cx='${s.x / 100 * size}' cy='${s.y / 100 * size}' r='${s.r}' fill='white' opacity='${s.o}'/>`).join('')}</svg>`;
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' viewBox='0 0 ${size} ${size}'>
+    ${stars.map(s => `<circle cx='${s.x}' cy='${s.y}' r='${s.r}' fill='white' opacity='${s.o}'/>`).join('')}
+  </svg>`;
+  
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 }

@@ -6,32 +6,9 @@ import { useDetectiveRoom } from '../../hooks/useDetectiveRoom.js';
 import { PlayerSlot } from './PlayerSlot.jsx';
 import { advanceGamePhase } from '../../utils/detectiveFirebase.js';
 import { PHASES, PHASE_DURATIONS_MS } from '../../constants/detectiveConstants.js';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 
 const MIN_PLAYERS = 4;
-
-// ── Background Particle System ────────────────────────────────────────────────
-function LobbyBackground() {
-  return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#03020a]">
-      {/* Deep Space Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0f1d] via-[#03020a] to-[#03020a]" />
-      
-      {/* Scanline Overlay */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(0deg, transparent 50%, rgba(255,255,255,1) 50%)', backgroundSize: '100% 4px' }} />
-
-      {/* Glowing Nebula Pulse */}
-      <motion.div
-        animate={{ 
-          opacity: [0.1, 0.25, 0.1],
-          scale: [1, 1.1, 1]
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute -top-[20%] -left-[20%] w-[140%] h-[140%] rounded-full bg-[radial-gradient(circle_at_center,_rgba(59,158,255,0.08)_0%,_transparent_70%)] blur-3xl"
-        style={{ willChange: 'transform' }}
-      />
-    </div>
-  );
-}
 
 // ── Next-Gen Radar Animation ──────────────────────────────────────────────────
 function RadarPulse() {
@@ -94,11 +71,11 @@ export function DetectiveLobby({ user, roomId, playerId, isHost }) {
   }
 
   return (
-    <div className="flex flex-col min-h-[100dvh] relative text-white">
-      <LobbyBackground />
+    <div className="flex flex-col min-h-[100dvh] relative text-white select-none touch-none">
+      <GameBackground count={120} />
 
       {/* ── Header ────────────────────────────────────────── */}
-      <div className="z-10 flex items-center justify-between px-8 py-6">
+      <div className="z-10 flex items-center justify-between px-8 py-6 border-b border-white/5 backdrop-blur-xl">
         <div className="flex flex-col gap-1">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-400/70">Waiting Room</span>
           {roomId && <ShareButton roomId={roomId} />}
@@ -130,7 +107,7 @@ export function DetectiveLobby({ user, roomId, playerId, isHost }) {
               <motion.div key={p.uid} variants={{ hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0 } }}>
                 <motion.div 
                   whileHover={{ scale: 1.05, borderColor: 'rgba(59,130,246,0.3)', backgroundColor: 'rgba(255,255,255,0.06)' }}
-                  className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 transition-all shadow-md"
+                  className="bg-zinc-900/40 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 transition-all shadow-2xl"
                 >
                   <PlayerSlot player={p} isHost={p.uid === players[0]?.uid} isMe={p.uid === myUid} />
                 </motion.div>
@@ -141,7 +118,7 @@ export function DetectiveLobby({ user, roomId, playerId, isHost }) {
       </div>
 
       {/* ── Footer / CTA ────────────────────────────────────────── */}
-      <div className="z-10 p-8 flex flex-col items-center">
+      <div className="z-10 p-8 flex flex-col items-center bg-black/20 backdrop-blur-md">
         {isHost ? (
           <motion.button
             whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(59,130,246,0.3)' }}

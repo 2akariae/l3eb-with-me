@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore.js';
 
-export function HistoryLog() {
+export const HistoryLog = React.memo(() => {
   const { history, historyOpen, toggleHistory } = useGameStore();
 
   if (!historyOpen) return null;
@@ -10,7 +10,8 @@ export function HistoryLog() {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0 }}
+// ... (rest of the file) ...
+
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[60] flex items-center justify-center px-6 py-12"
