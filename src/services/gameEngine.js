@@ -304,12 +304,14 @@ export async function advanceToNight(roomId, gameType = 'mafia') {
   await remove(ref(db, `${gamePath}/nightActions`));
 }
 
-export async function advanceToDiscussion(roomId, gameType = 'mafia', duration = 180) {
+export async function advanceToDiscussion(roomId, gameType = 'mafia', duration = null) {
+  // Spy discussion = 150s (enough to discuss without dragging),  Mafia = 180s
+  const resolvedDuration = duration ?? (gameType === 'spy' ? 150 : 180);
   const gamePath = getGamePath(roomId, gameType);
   await update(ref(db, `${gamePath}/gameState`), {
     phase:          PHASES.DISCUSSION,
     timerStartedAt: serverTimestamp(),
-    timerDuration:  duration,
+    timerDuration:  resolvedDuration,
   });
   await remove(ref(db, `${gamePath}/skipVotes`));
 }

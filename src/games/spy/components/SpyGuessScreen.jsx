@@ -30,17 +30,58 @@ export default function SpyGuessScreen({ user, playerId }) {
   
   const choices = useMemo(() => {
     if (!activeWord) return [];
-    const pack = WORD_PACKS.find(p => p.words.some(w => w.word.en === activeWord.en));
-    if (!pack) return [];
-    
-    const correct = pack.words.find(w => w.word.en === activeWord.en);
-    const others = pack.words.filter(w => w.word.en !== activeWord.en);
-    
-    // Pick 5 random incorrect
-    const shuffledOthers = [...others].sort(() => 0.5 - Math.random());
-    const distractors = shuffledOthers.slice(0, 5);
-    
-    return [correct, ...distractors].sort(() => 0.5 - Math.random());
+
+    // Flatten all words from all packs into one searchable pool
+    const allWords = WORD_PACKS.flatMap(p => p.words);
+
+    // Find the correct answer entry
+    const correct = allWords.find(w => w.word.en === activeWord.en);
+    if (!correct) return [];
+
+    const correctHintEn = (correct.hint?.en ?? '').toLowerCase().trim();
+
+    // Candidates = everything that is NOT the secret word
+    const candidates = allWords.filter(w => w.word.en !== activeWord.en);
+
+    // Tier 1: exact same hint (most confusing — same theme)
+    const tier1 = candidates.filter(
+      w => (w.hint?.en ?? '').toLowerCase().trim() === correctHintEn
+    );
+
+    // Tier 2: words whose hint partially overlaps (at least one shared token)
+    const hintTokens = correctHintEn.split(/\s+/).filter(Boolean);
+    const tier2 = candidates.filter(w => {
+      const wHint = (w.hint?.en ?? '').toLowerCase();
+      return !tier1.includes(w) && hintTokens.some(tok => wHint.includes(tok));
+    });
+
+    // Tier 3: same category/pack as the secret word (fallback)
+    const correctPack = WORD_PACKS.find(p => p.words.some(w => w.word.en === activeWord.en));
+    const tier3 = correctPack
+      ? correctPack.words.filter(
+          w => w.word.en !== activeWord.en && !tier1.includes(w) && !tier2.includes(w)
+        )
+      : [];
+
+    // Tier 4: remaining words (last resort)
+    const tier4 = candidates.filter(
+      w => !tier1.includes(w) && !tier2.includes(w) && !tier3.includes(w)
+    );
+
+    // Build distractor pool: prefer tier1, then tier2, then tier3, then tier4
+    const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+
+    const pool = [
+      ...shuffle(tier1),
+      ...shuffle(tier2),
+      ...shuffle(tier3),
+      ...shuffle(tier4),
+    ];
+
+    const distractors = pool.slice(0, 5);
+
+    // Return 1 correct + 5 distractors, shuffled
+    return shuffle([correct, ...distractors]);
   }, [activeWord]);
 
   // Container variants for staggered reveal

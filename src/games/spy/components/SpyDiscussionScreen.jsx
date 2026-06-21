@@ -55,7 +55,7 @@ export default function SpyDiscussionScreen({ user, playerId }) {
             </h1>
           </div>
           <div className="relative">
-            <TimerRing remaining={remaining} total={90} size={48} color={isSpy ? '#10b981' : '#a855f7'} strokeWidth={3} />
+            <TimerRing remaining={remaining} total={150} size={48} color={isSpy ? '#10b981' : '#a855f7'} strokeWidth={3} />
           </div>
         </div>
 
