@@ -268,14 +268,17 @@ export default function LandingScreen({ user, tabPlayerId }) {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-noir-950 flex flex-col justify-between overflow-y-auto scroll-smooth p-6">
+    <div 
+      className="min-h-[100dvh] bg-noir-950 flex flex-col overflow-y-auto scroll-smooth p-6 pb-20"
+      style={{ WebkitOverflowScrolling: 'touch' }}
+    >
 
       {/* Atmospheric Background */}
       <div className="fixed inset-0 pointer-events-none">
         <GameBackground count={150} />
       </div>
 
-      <div className="relative z-10 w-full flex-1 flex flex-col items-center justify-center">
+      <div className="relative z-10 w-full flex flex-col items-center justify-center min-h-full">
         <BackButton onClick={() => resetSession()} />
         <AnimatePresence mode="wait">
 

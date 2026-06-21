@@ -88,14 +88,17 @@ export default function AuthScreen() {
   const isAr = language === 'ar';
 
   return (
-    <div className="screen bg-noir-950 flex flex-col items-center justify-center p-8 overflow-hidden"
-      dir={isAr ? 'rtl' : 'ltr'}>
+    <div 
+      className="min-h-[100dvh] bg-noir-950 flex flex-col items-center p-8 overflow-y-auto pb-20"
+      dir={isAr ? 'rtl' : 'ltr'}
+      style={{ WebkitOverflowScrolling: 'touch' }}
+    >
       <div className="absolute inset-0 pointer-events-none">
         <ParallaxStars count={80} />
         <div className="absolute inset-0"
           style={{ background:'radial-gradient(ellipse at 50% 40%, rgba(80,40,160,0.12) 0%, transparent 70%)' }} />
       </div>
-      <div className="relative z-10 w-full max-w-sm flex flex-col items-center gap-10">
+      <div className="relative z-10 w-full max-w-sm flex flex-col items-center gap-10 min-h-full justify-center">
         <motion.div initial={{ opacity:0, y:-20 }} animate={{ opacity:1, y:0 }} className="text-center">
           <h1 className="display text-4xl font-black tracking-[0.2em] text-white uppercase mb-3">
             l3eb<span className="text-gold-500">.</span>
