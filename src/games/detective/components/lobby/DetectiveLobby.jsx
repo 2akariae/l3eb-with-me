@@ -121,7 +121,7 @@ export function DetectiveLobby({ user, roomId, playerId, isHost }) {
     >
       {/* ── Header: Room Code + Share ──────────────────────────────────── */}
       <div
-        className="relative z-10 flex items-center justify-between px-8 py-5"
+        className="relative z-10 flex items-center justify-between px-8 py-5 shrink-0"
         style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
       >
         {/* Left: back placeholder (same width as right) */}
@@ -171,17 +171,17 @@ export function DetectiveLobby({ user, roomId, playerId, isHost }) {
       </div>
 
       {/* ── Body: title + table ───────────────────────────────────────── */}
-      <div className="flex flex-col items-center justify-center flex-1 p-6">
+      <div className="flex flex-col items-center flex-1 p-6 overflow-y-auto min-h-0 scroll-smooth">
 
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-10"
+          className="text-center mb-10 shrink-0"
         >
           <h1
-            className="text-5xl font-black uppercase tracking-[0.2em] text-white"
+            className="text-5xl font-black uppercase tracking-[0.2em] text-white break-words"
             style={{ fontFamily: "'Cinzel', serif" }}
           >
             The Detective
@@ -252,7 +252,7 @@ export function DetectiveLobby({ user, roomId, playerId, isHost }) {
 
         {/* Mobile Grid */}
         {count > 0 && (
-          <div className="md:hidden grid grid-cols-2 gap-5 w-full max-w-xs mb-10">
+          <div className="md:hidden grid grid-cols-2 gap-5 w-full max-w-xs mb-10 shrink-0">
             <AnimatePresence>
               {players.map((p, i) => (
                 <motion.div
@@ -278,13 +278,15 @@ export function DetectiveLobby({ user, roomId, playerId, isHost }) {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.4 }}
-            className="text-white text-sm uppercase tracking-widest font-bold mb-10"
+            className="text-white text-sm uppercase tracking-widest font-bold mb-10 shrink-0"
           >
             Waiting for players to join…
           </motion.p>
         )}
+      </div>
 
-        {/* Start Button — host only */}
+      {/* Start Button — host only */}
+      <div className="p-6 shrink-0 flex flex-col items-center">
         {isHost && (
           <motion.button
             initial={{ opacity: 0, y: 20 }}

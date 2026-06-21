@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { startOfflineGame, genPlayerId } from '../../../../services/offlineEngine.js';
 import { getMafiaCount } from '../../../../constants/game.js';
-import { ParallaxStars } from '../../../../components/game/ParallaxStars.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 
 export default function OfflineLobbyScreen({ onBackToMode }) {
   const { players, setPlayers, reset, language, gameType } = useOfflineStore();
@@ -34,22 +34,23 @@ export default function OfflineLobbyScreen({ onBackToMode }) {
   }
 
   return (
-    <div className="screen bg-noir-950 overflow-hidden">
-      <ParallaxStars count={90} />
+    <div className="screen flex flex-col min-h-[100dvh] overflow-hidden">
+      <GameBackground />
 
       {/* Back */}
       <motion.button initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }}
         onClick={() => { reset(); onBackToMode(); }}
-        className="absolute top-4 left-4 z-20 px-4 py-2 rounded-xl border border-white/10 text-smoke-400 text-xs font-black uppercase tracking-widest"
-        style={{ background: 'rgba(255,255,255,0.04)' }}>
+        className="absolute top-4 left-4 z-20 px-4 py-2 rounded-xl border border-white/10 text-smoke-400 text-xs font-black uppercase tracking-widest glass-panel"
+        >
         {t('back')}
       </motion.button>
 
-      <div className="relative z-10 flex flex-col items-center w-full max-w-sm mx-auto px-6 pt-20 pb-8 gap-5 h-full overflow-y-auto">
+      <div className="relative z-10 flex flex-col items-center w-full max-w-sm mx-auto px-6 pt-20 pb-8 gap-5 h-full overflow-y-auto scroll-smooth">
 
         {/* Title */}
-        <motion.div initial={{ y: -16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center">
-          <h1 className="text-4xl font-black tracking-widest text-white uppercase"
+        <motion.div initial={{ y: -16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-center shrink-0">
+          <h1 className="text-4xl font-black tracking-widest text-white uppercase break-words"
             style={{ fontFamily: 'Playfair Display, serif', color: isSpy ? '#10b981' : '#e8c060' }}>
             {isSpy ? t('spyTitle') : t('mafiaTitle')}
           </h1>
@@ -59,7 +60,7 @@ export default function OfflineLobbyScreen({ onBackToMode }) {
         {/* Role breakdown badge */}
         {count >= minPlayers && (
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-            className="flex gap-4 px-5 py-2.5 rounded-2xl border border-white/8 text-xs font-bold"
+            className="flex gap-4 px-5 py-2.5 rounded-2xl border border-white/8 text-xs font-bold shrink-0"
             style={{ background: 'rgba(255,255,255,0.04)' }}>
             {isSpy ? (
               <>
@@ -80,7 +81,7 @@ export default function OfflineLobbyScreen({ onBackToMode }) {
         )}
 
         {/* Input */}
-        <div className="w-full flex gap-2">
+        <div className="w-full flex gap-2 shrink-0">
           <input
             className="flex-1 h-14 rounded-2xl bg-white/5 border border-white/10 px-5 text-white font-bold placeholder-smoke-600 focus:outline-none focus:border-purple-500/50 transition-all"
             placeholder={t('addPlayer')} value={input} maxLength={20}
@@ -95,33 +96,31 @@ export default function OfflineLobbyScreen({ onBackToMode }) {
         <AnimatePresence>
           {error && (
             <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="text-crimson-400 text-xs font-bold">{error}</motion.p>
+              className="text-crimson-400 text-xs font-bold shrink-0">{error}</motion.p>
           )}
         </AnimatePresence>
 
         {/* Player list */}
-        <div className="w-full flex flex-col gap-2">
+        <div className="w-full flex-1 flex flex-col gap-2 overflow-y-auto min-h-0">
           <AnimatePresence>
             {players.map((p, i) => (
               <motion.div key={p.id} layout
                 initial={{ x: -16, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
                 exit={{ x: 16, opacity: 0, height: 0 }}
-                className="flex items-center gap-3 h-14 px-5 rounded-2xl border border-white/8"
+                className="flex items-center gap-3 h-14 px-5 rounded-2xl border border-white/8 shrink-0"
                 style={{ background: 'rgba(255,255,255,0.04)' }}>
-                <span className="w-6 h-6 rounded-full bg-white/8 flex items-center justify-center text-xs font-black text-smoke-400">{i + 1}</span>
-                <span className="flex-1 font-bold text-white">{p.name}</span>
+                <span className="w-6 h-6 rounded-full bg-white/8 flex items-center justify-center text-xs font-black text-smoke-400 shrink-0">{i + 1}</span>
+                <span className="flex-1 font-bold text-white text-wrap-anywhere">{p.name}</span>
                 <motion.button whileTap={{ scale: 0.85 }} onClick={() => setPlayers(players.filter((x) => x.id !== p.id))}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-crimson-400 hover:bg-crimson-500/15 text-xl">×</motion.button>
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-crimson-400 hover:bg-crimson-500/15 text-xl shrink-0">×</motion.button>
               </motion.div>
             ))}
           </AnimatePresence>
         </div>
 
-        <div className="flex-1 min-h-4" />
-
         {/* Begin */}
         <motion.button whileTap={{ scale: 0.97 }} onClick={handleStart} disabled={!canStart}
-          className="w-full h-16 rounded-3xl font-black text-sm uppercase tracking-[0.2em] text-white relative overflow-hidden"
+          className="w-full h-16 rounded-3xl font-black text-sm uppercase tracking-[0.2em] text-white relative overflow-hidden shrink-0"
           style={canStart ? {
             background: isSpy ? 'linear-gradient(135deg,#059669,#10b981)' : 'linear-gradient(135deg,#7c3aed,#c026d3)',
             boxShadow: isSpy ? '0 0 40px rgba(16,185,129,0.4)' : '0 0 40px rgba(124,58,237,0.4)',

@@ -4,7 +4,7 @@ import { Sword, Cross, Search, User, Smile, CheckCircle2, Handshake } from 'luci
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { executionToNextRound } from '../../../../services/offlineEngine.js';
 import { ROLE_META, getRoleLabel } from '../../../../constants/game.js';
-import HauntedHouseBg from '../../../../components/game/HauntedHouseBg.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 
 export default function OfflineExecutionScreen() {
   const { players, lastExecuted, lastExecutedRole, language } = useOfflineStore();
@@ -32,7 +32,7 @@ export default function OfflineExecutionScreen() {
 
   return (
     <div className="screen overflow-hidden relative">
-      <HauntedHouseBg isNight={false} />
+      <GameBackground />
       <div className="absolute inset-0 bg-black/50 z-0" />
       <div className="absolute inset-0 z-1"
         style={{ background: 'radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.7) 100%)' }} />

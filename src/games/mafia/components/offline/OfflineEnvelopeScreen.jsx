@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion'
 import { Mail } from 'lucide-react';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { ROLE_META } from '../../../../constants/game.js';
-import { ParallaxStars } from '../../../../components/game/ParallaxStars.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 
 /* ── Role display config ─────────────────────────────────────────────────── */
 const ROLE_CONFIG = {
@@ -188,7 +188,7 @@ export default function OfflineEnvelopeScreen() {
       >
         {/* ── Parallax stars (move OPPOSITE to cursor = depth) ─────── */}
         <motion.div className="absolute inset-0" style={{ x:parallaxX, y:parallaxY }}>
-          <ParallaxStars count={80} />
+          <GameBackground count={80} />
         </motion.div>
 
         {/* ── Role colour nebula ───────────────────────────────────── */}

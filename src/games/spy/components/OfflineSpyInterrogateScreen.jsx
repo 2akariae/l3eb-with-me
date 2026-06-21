@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOfflineStore } from '../../../store/offlineStore.js';
 import { useTranslation } from '../../../constants/translations.js';
-import { ParallaxStars } from '../../../components/game/ParallaxStars.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 import { Ghost, Search, RefreshCcw, Eye, EyeOff } from 'lucide-react';
 
 export default function OfflineSpyInterrogateScreen() {
@@ -20,9 +20,9 @@ export default function OfflineSpyInterrogateScreen() {
   const displayWord = typeof word === 'object' ? (word?.[language] ?? word?.en ?? '?') : (word ?? '?');
 
   return (
-    <div className="screen bg-noir-950 overflow-hidden items-center justify-center flex flex-col p-8 text-center"
+    <div className="screen bg-noir-950 glass-panel overflow-hidden items-center justify-center flex flex-col p-8 text-center"
       dir={isAr ? 'rtl' : 'ltr'}>
-      <ParallaxStars count={120} />
+      <GameBackground />
 
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
@@ -74,7 +74,9 @@ export default function OfflineSpyInterrogateScreen() {
         className="relative z-10 flex flex-col w-full max-w-xs gap-4"
       >
         {/* Reveal the Spy toggle */}
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setRevealed((v) => !v)}
           className="h-16 rounded-2xl bg-white/10 border border-white/20 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 transition-all hover:bg-white/15"
         >
@@ -82,16 +84,19 @@ export default function OfflineSpyInterrogateScreen() {
           {revealed
             ? (isAr ? `الجاسوس: ${spyName} — الكلمة: ${displayWord}` : `SPY: ${spyName} · WORD: ${displayWord}`)
             : (isAr ? 'كشف الجاسوس والكلمة' : 'REVEAL SPY & WORD')}
-        </button>
+        </motion.button>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => restart()}
           className="h-16 rounded-2xl bg-emerald-600 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:bg-emerald-500 transition-all"
         >
           <RefreshCcw size={18} />
           {isAr ? 'لعبة جديدة' : 'PLAY AGAIN'}
-        </button>
+        </motion.button>
       </motion.div>
     </div>
   );
 }
+

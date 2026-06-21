@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { confirmExile } from '../../../../services/offlineEngine.js';
-import HauntedHouseBg from '../../../../components/game/HauntedHouseBg.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 
 export default function OfflineVotingScreen() {
   const { players, alivePlayers, round, language } = useOfflineStore();
@@ -27,8 +27,8 @@ export default function OfflineVotingScreen() {
   }
 
   return (
-    <div className="screen overflow-hidden relative">
-      <HauntedHouseBg isNight={false} />
+    <div className="screen overflow-hidden relative glass-panel">
+      <GameBackground />
       <div className="absolute inset-0 bg-black/40 pointer-events-none" />
 
       <div className="relative z-10 flex flex-col h-full px-6 pointer-events-auto">
@@ -49,7 +49,9 @@ export default function OfflineVotingScreen() {
           {alive.map((p) => {
             const isSel = selected === p.id;
             return (
-              <motion.button key={p.id} whileTap={{ scale: 0.97 }}
+              <motion.button key={p.id} 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => !locking && setSelected(isSel ? null : p.id)}
                 className="relative w-full h-16 rounded-2xl flex items-center justify-center font-black text-base tracking-widest overflow-hidden"
                 style={{
@@ -71,7 +73,10 @@ export default function OfflineVotingScreen() {
           })}
 
           {/* Skip */}
-          <motion.button whileTap={{ scale: 0.97 }} onClick={handleSkip} disabled={locking}
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }} 
+            onClick={handleSkip} disabled={locking}
             className="w-full h-14 rounded-2xl font-black text-sm tracking-widest text-smoke-500 mt-1"
             style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
             {t('skipNobody')}
@@ -83,7 +88,10 @@ export default function OfflineVotingScreen() {
           {selected && !locking && (
             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 10, opacity: 0 }}
               className="py-5">
-              <motion.button whileTap={{ scale: 0.97 }} onClick={() => handleExile(selected)}
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }} 
+                onClick={() => handleExile(selected)}
                 className="w-full h-16 rounded-3xl font-black text-sm uppercase tracking-[0.2em] text-white"
                 style={{ background: 'linear-gradient(135deg,#7c3aed,#c026d3)', boxShadow: '0 0 30px rgba(124,58,237,0.4)' }}>
                 {t('exileBtn')} {players.find((p) => p.id === selected)?.name?.toUpperCase()}
@@ -96,3 +104,4 @@ export default function OfflineVotingScreen() {
     </div>
   );
 }
+

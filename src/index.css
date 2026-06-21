@@ -25,8 +25,9 @@
 
   html, body, #root {
     height: 100%;
-    height: 100dvh;
-    overflow: hidden;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
     background: var(--noir-950);
   }
 
@@ -36,6 +37,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     cursor: default;
+    /* Ensure no CSS reset blocks natural touch scrolling */
+    touch-action: pan-y;
   }
 
   ::selection {
@@ -44,11 +47,19 @@
   }
 
   /* Custom scrollbar */
-  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(201,148,58,0.3); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,148,58,0.3); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(201,148,58,0.6); }
-}
+
+  .scroll-smooth {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .text-wrap-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 
 @layer components {
   /* ── Screen container ──────────────────────────────────────────────────── */
@@ -90,6 +101,21 @@
     backdrop-filter: blur(var(--glass-blur));
     border: 1px solid rgba(201, 148, 58, 0.2);
     box-shadow: 0 8px 32px 0 rgba(201, 148, 58, 0.1);
+  }
+
+  .glass-panel {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background-color: rgba(15, 15, 20, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .neon-glow-green {
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  }
+
+  .neon-glow-green-strong {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
   }
 
   /* ── Typography ─────────────────────────────────────────────────────────── */

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { dawnToDiscussion } from '../../../../services/offlineEngine.js';
 import { useTypewriter } from '../../../../hooks/useTypewriter.js';
-import HauntedHouseBg from '../../../../components/game/HauntedHouseBg.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 
 function TypeLine({ text, onDone }) {
   const { displayed, done } = useTypewriter(text, 32, onDone);
@@ -36,7 +36,7 @@ export default function OfflineDawnScreen() {
 
   return (
     <div className="screen overflow-hidden relative">
-      <HauntedHouseBg isNight={false} />
+      <GameBackground />
       <div className="absolute inset-0 bg-black/30 z-0" />
 
       <div className="relative z-10 flex flex-col h-full px-8 py-14">

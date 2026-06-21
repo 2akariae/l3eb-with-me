@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { getRoleLabel } from '../../../../constants/game.js';
 import { restartOfflineGame } from '../../../../services/offlineEngine.js';
-import HauntedHouseBg from '../../../../components/game/HauntedHouseBg.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 
 const BADGES = {
   mafia:   { label: { en: 'Mafia',    ar: 'مافيا'    }, color: '#e02020', bg: 'rgba(224,32,32,0.15)' },
@@ -46,7 +46,7 @@ export default function OfflineGameOverScreen({ onPlayAgain }) {
 
   return (
     <div className="screen overflow-hidden relative">
-      <HauntedHouseBg isNight={isMafiaWin} />
+      <GameBackground />
 
       {/* Winner color overlay */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.3 }} className="absolute inset-0 z-0"

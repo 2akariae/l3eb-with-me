@@ -25,7 +25,7 @@ import { TimerRing, Avatar, toast } from '../../../components/ui/index.jsx';
 import { useTimer } from '../../../hooks/useTimer.js';
 import { Gavel } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
-import { SpyBackground } from '../../../components/game/SpyBackground.jsx';
+import { GameBackground } from '../../../components/game/GameBackground.jsx';
 
 export default function SpyVotingScreen({ user, playerId }) {
   const { roomId, isHost, players, myRole, gameState, language, votes, setVotes } = useGameStore();
@@ -59,8 +59,8 @@ export default function SpyVotingScreen({ user, playerId }) {
   const totalVotes   = Object.keys(votes ?? {}).length;
 
   return (
-    <div className="screen bg-noir-950 flex flex-col overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
-      <SpyBackground />
+    <div className="screen bg-noir-950 glass-panel flex flex-col overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
+      <GameBackground />
 
       {/* Header */}
       <div className="px-6 pt-safe pt-16 pb-6 border-b border-white/5 bg-black/40 backdrop-blur-2xl">
@@ -105,6 +105,7 @@ export default function SpyVotingScreen({ user, playerId }) {
             return (
               <motion.button
                 key={uid}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleVote(uid)}
                 disabled={!!myVote || uid === playerId}
@@ -141,15 +142,18 @@ export default function SpyVotingScreen({ user, playerId }) {
       {/* Host resolve footer */}
       {isHost && (
         <div className="px-6 pb-safe pb-6 pt-4 border-t border-white/5 bg-black/40 backdrop-blur-xl">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.95 }}
             onClick={async () => { if (isHost) await resolveSpyVoting(roomId); }}
             className="w-full h-14 rounded-[2rem] text-smoke-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors"
             style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
           >
             {isAr ? 'إنهاء التصويت' : 'CLOSE VOTE'}
-          </button>
+          </motion.button>
         </div>
       )}
     </div>
   );
 }
+

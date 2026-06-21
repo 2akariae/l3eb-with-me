@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { useOfflineStore } from '../../../store/offlineStore.js';
 import { useTranslation } from '../../../constants/translations.js';
-import { ParallaxStars } from '../../../components/game/ParallaxStars.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 import { Ghost, Shield, Terminal } from 'lucide-react';
 
 const SPY_CFG = {
@@ -121,13 +121,13 @@ export default function OfflineSpyRevealScreen() {
     <motion.div
       key={envelopeIndex}
       ref={containerRef}
-      className="screen bg-noir-950 overflow-hidden items-center justify-center flex flex-col"
+      className="screen bg-noir-950 glass-panel overflow-hidden items-center justify-center flex flex-col"
       style={{ userSelect: 'none' }}
       initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.35 }}
       onPointerMove={onPointerMove} onPointerLeave={onPointerLeave}
     >
-      <ParallaxStars count={80} />
+      <GameBackground />
 
       <motion.div initial={{ y: -18, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         className="relative z-10 text-center mb-7">
@@ -159,7 +159,9 @@ export default function OfflineSpyRevealScreen() {
 
       <motion.button initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.4 }}
-        whileTap={{ scale: 0.96 }} onClick={handleNext}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleNext}
         className="relative z-10 mt-7 h-14 px-10 rounded-2xl font-black text-sm uppercase tracking-[0.18em] text-white overflow-hidden"
         style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.14)' }}>
         <span className="relative z-10">
@@ -171,3 +173,4 @@ export default function OfflineSpyRevealScreen() {
     </motion.div>
   );
 }
+

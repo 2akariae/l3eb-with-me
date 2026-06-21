@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { closeEyesToNight } from '../../../../services/offlineEngine.js';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
-import HauntedHouseBg from '../../../../components/game/HauntedHouseBg.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 
 export default function OfflineCloseEyesScreen() {
   const { language } = useOfflineStore();
@@ -16,7 +16,7 @@ export default function OfflineCloseEyesScreen() {
 
   return (
     <div className="screen overflow-hidden relative">
-      <HauntedHouseBg isNight />
+      <GameBackground />
 
       {/* Dark vignette */}
       <motion.div className="absolute inset-0 z-1 bg-black"

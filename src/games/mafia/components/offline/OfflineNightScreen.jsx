@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useOfflineStore } from '../../../../store/offlineStore.js';
 import { useTranslation } from '../../../../constants/translations.js';
 import { resolveNightAndGoDawn } from '../../../../services/offlineEngine.js';
-import HauntedHouseBg from '../../../../components/game/HauntedHouseBg.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 import { Check, AlertTriangle } from 'lucide-react';
 
 const STEPS = [
@@ -83,7 +83,7 @@ export default function OfflineNightScreen() {
 
   return (
     <div className="screen overflow-hidden relative" dir={isAr?'rtl':'ltr'}>
-      <HauntedHouseBg isNight />
+      <GameBackground />
       <div className="absolute inset-0 bg-black/42 z-0" />
       <div className="relative z-10 flex flex-col h-full">
         <div className="px-6 pt-6 pb-3 text-center">

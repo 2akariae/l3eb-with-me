@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Pause, Play } from 'lucide-react';
 import { useOfflineStore, useOfflineLang } from '../../../../store/offlineStore.js';
 import { startVoting } from '../../../../services/offlineEngine.js';
-import HauntedHouseBg from '../../../../components/game/HauntedHouseBg.jsx';
+import { GameBackground } from '../../../../components/game/GameBackground.jsx';
 
 
 function pad(n) { return String(n).padStart(2, '0'); }
@@ -91,7 +91,7 @@ export default function OfflineDiscussionScreen() {
 
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
-        <HauntedHouseBg isNight={false} />
+        <GameBackground />
         <div className="absolute inset-0"
           style={{ background: 'linear-gradient(to bottom,rgba(3,2,10,0.5) 0%,rgba(3,2,10,0.1) 35%,rgba(3,2,10,0.72) 100%)' }} />
       </div>
