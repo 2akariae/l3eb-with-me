@@ -303,7 +303,7 @@ export async function advanceToVoting(roomId, gameType = 'mafia') {
   await update(ref(db, `${gamePath}/gameState`), {
     phase:          PHASES.VOTING,
     timerStartedAt: serverTimestamp(),
-    timerDuration:  PHASE_TIMING.voting,
+    timerDuration:  gameType === 'spy' ? 10 : PHASE_TIMING.voting,
   });
   await remove(ref(db, `${gamePath}/votes`));
   await remove(ref(db, `${gamePath}/skipVotes`));
@@ -631,7 +631,7 @@ export async function resolveSpyVoting(roomId) {
   if (mostVotedId === spyId) {
     updates[`${gamePath}/gameState/phase`]          = PHASES.SPY_GUESS;
     updates[`${gamePath}/gameState/timerStartedAt`] = serverTimestamp();
-    updates[`${gamePath}/gameState/timerDuration`]  = 60;
+    updates[`${gamePath}/gameState/timerDuration`]  = 30;
   } else {
     updates[`${gamePath}/gameState/phase`]  = PHASES.GAME_OVER;
     updates[`${gamePath}/gameState/winner`] = 'spy';

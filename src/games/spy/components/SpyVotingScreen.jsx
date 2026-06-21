@@ -25,6 +25,7 @@ import { TimerRing, Avatar, toast } from '../../../components/ui/index.jsx';
 import { useTimer } from '../../../hooks/useTimer.js';
 import { Gavel } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
+import { SpyBackground } from '../../../components/game/SpyBackground.jsx';
 
 export default function SpyVotingScreen({ user, playerId }) {
   const { roomId, isHost, players, myRole, gameState, language, votes, setVotes } = useGameStore();
@@ -59,9 +60,10 @@ export default function SpyVotingScreen({ user, playerId }) {
 
   return (
     <div className="screen bg-noir-950 flex flex-col overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
+      <SpyBackground />
 
       {/* Header */}
-      <div className="px-6 pt-safe pt-6 pb-6 border-b border-white/5 bg-black/40 backdrop-blur-2xl">
+      <div className="px-6 pt-safe pt-16 pb-6 border-b border-white/5 bg-black/40 backdrop-blur-2xl">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -74,7 +76,7 @@ export default function SpyVotingScreen({ user, playerId }) {
               {t('identifyAnomalies')}
             </p>
           </div>
-          <TimerRing remaining={remaining} total={60} size={54} color="#10b981" />
+          <TimerRing remaining={remaining} total={10} size={54} color="#10b981" />
         </div>
       </div>
 
@@ -148,12 +150,6 @@ export default function SpyVotingScreen({ user, playerId }) {
           </button>
         </div>
       )}
-
-      {/* FIX (P1): The Spy-only "Guess Word" button and modal that existed here
-          have been removed. They allowed the Spy to call submitSpyGuess() during
-          the VOTING phase, bypassing the canonical SPY_GUESS phase flow entirely.
-          The Spy's one guess opportunity is correctly handled by SpyGuessScreen
-          (rendered by App.jsx when phase === PHASES.SPY_GUESS). */}
     </div>
   );
 }

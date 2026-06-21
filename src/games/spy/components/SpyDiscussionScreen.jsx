@@ -9,6 +9,7 @@ import { TimerRing, Avatar, toast } from '../../../components/ui/index.jsx';
 import { useTimer } from '../../../hooks/useTimer.js';
 import { MessageSquare, Users, Info, Send, Terminal, HelpCircle } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
+import { SpyBackground } from '../../../components/game/SpyBackground.jsx';
 
 export default function SpyDiscussionScreen({ user, playerId }) {
   const { roomId, isHost, players, myRole, gameState, language } = useGameStore();
@@ -46,8 +47,9 @@ export default function SpyDiscussionScreen({ user, playerId }) {
 
   return (
     <div className="screen bg-noir-950 flex flex-col overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
+      <SpyBackground />
       {/* Header */}
-      <div className="px-6 pt-safe pt-4 pb-4 border-b border-white/5 bg-black/20 backdrop-blur-xl flex flex-col gap-3">
+      <div className="px-6 pt-safe pt-16 pb-4 border-b border-white/5 bg-black/20 backdrop-blur-xl flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full animate-pulse ${isSpy ? 'bg-emerald-500' : 'bg-blue-500'}`} />
