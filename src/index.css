@@ -348,3 +348,21 @@
 /* ── Card 3D perspective wrapper ────────────────────────────────────────────── */
 .card-3d { transform-style: preserve-3d; }
 
+
+/* ── Mobile performance: suppress GPU-expensive backdrop-blur on low-tier devices */
+@media (max-width: 820px) and (pointer: coarse) {
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
+    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .backdrop-blur-sm {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}

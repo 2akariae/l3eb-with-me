@@ -13,6 +13,7 @@ import BackButton from '../ui/BackButton.jsx';
 import { Share2, Crown, UserX, Users, Zap, ShieldCheck } from 'lucide-react';
 import { GameBackground } from '../game/GameBackground.jsx';
 import { useSpringMouse } from '../../hooks/useMouseTracker.js';
+import { IS_MOBILE } from '../../utils/device.js';
 
 // ── Kick Confirm Modal ────────────────────────────────────────────────────────
 function KickConfirmModal({ player, onConfirm, onCancel, t }) {
@@ -54,18 +55,13 @@ function RoundTable({ players, myPlayerId, isHost, onKick, t, accentColor }) {
 
   const tableR = Math.min(130, 70 + count * 5); 
 
+  const tableStyle = IS_MOBILE
+    ? { width: tableR * 2 + 150, height: tableR * 2 + 150 }
+    : { rotateX, rotateY, x: translateX, y: translateY, perspective: 1200, transformStyle: 'preserve-3d', width: tableR * 2 + 150, height: tableR * 2 + 150 };
+
   return (
     <motion.div 
-      style={{ 
-        rotateX, 
-        rotateY, 
-        x: translateX, 
-        y: translateY, 
-        perspective: 1200, 
-        transformStyle: 'preserve-3d',
-        width: tableR * 2 + 150, 
-        height: tableR * 2 + 150 
-      }}
+      style={tableStyle}
       className="relative flex-shrink-0 flex items-center justify-center select-none touch-none" 
     >
       {/* ── Interactive Neon Rings (CSS Accelerated) ── */}
@@ -273,4 +269,3 @@ export default function LobbyScreen({ user, playerId }) {
     </div>
   );
 }
-

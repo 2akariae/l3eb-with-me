@@ -3,9 +3,34 @@ import React, { useMemo } from 'react';
 import { motion, useTransform } from 'framer-motion';
 import { useSpringMouse } from '../../hooks/useMouseTracker.js';
 import { BatSystem } from './BatSystem.jsx';
+import { IS_MOBILE } from '../../utils/device.js';
 
 // ── Star twinkle layer (parallax via spring values) ───────────────────────────
 function StarLayer({ count, px, py, speed, topMax = 55 }) {
+  // Mobile: render a single SVG background — zero motion.div elements
+  if (IS_MOBILE) {
+    const svgStars = useMemo(() => {
+      const dots = Array.from({ length: count }, () => {
+        const x = (Math.random() * 100).toFixed(1);
+        const y = (Math.random() * topMax).toFixed(1);
+        const r = Math.random() < 0.06 ? 1.5 : Math.random() < 0.22 ? 1 : 0.5;
+        const o = (0.15 + Math.random() * 0.55).toFixed(2);
+        return `<circle cx="${x}" cy="${y}" r="${r}" fill="white" opacity="${o}"/>`;
+      });
+      return `url("data:image/svg+xml,${encodeURIComponent(
+        `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 ${topMax}'>${dots.join('')}</svg>`
+      )}")`;
+    }, [count, topMax]);
+    return (
+      <div className="absolute inset-0" style={{
+        backgroundImage: svgStars,
+        backgroundSize: '100% 100%',
+        backgroundRepeat: 'no-repeat',
+      }} />
+    );
+  }
+
+  // Desktop: original motion.div stars
   const stars = useMemo(() =>
     Array.from({ length: count }, (_, i) => ({
       id:    i,
@@ -16,10 +41,8 @@ function StarLayer({ count, px, py, speed, topMax = 55 }) {
       delay: Math.random() * 5,
     })),
   [count]);
-
   const x = useTransform(px, [-1, 1], [speed * 22, -speed * 22]);
   const y = useTransform(py, [-1, 1], [speed * 14, -speed * 14]);
-
   return (
     <motion.div className="absolute inset-0" style={{ x, y }}>
       {stars.map((s) => (

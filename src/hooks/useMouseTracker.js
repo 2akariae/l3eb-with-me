@@ -1,92 +1,73 @@
-// ── useMouseTracker ─────────────────────────────────────────────────────────
-// Single global tracker: sets CSS vars on <html> for CSS-driven parallax
-// AND provides spring-animated MotionValues for JS-driven effects.
-// Import once at App root level; call anywhere via useMousePosition().
-import { useEffect, useRef } from 'react';
-import { useSpring, useMotionValue } from 'framer-motion';
+// src/hooks/useMouseTracker.js — v3 MOBILE OPTIMIZED
+// Key changes:
+//   1. useSpringMouse() is now a TRUE singleton — one shared spring pair for the whole app
+//   2. On IS_MOBILE: returns frozen motionValue(0,0) — zero listeners, zero springs
+//   3. useMouseTracker() CSS-var tracker also disabled on mobile
+import { useEffect } from 'react';
+import { useSpring, motionValue } from 'framer-motion';
+import { IS_MOBILE } from '../utils/device.js';
 
-// Shared singleton values — created once, reused everywhere
-let _mx = null;
-let _my = null;
-let _springX = null;
-let _springY = null;
-let _initialized = false;
-
-const SPRING = { stiffness: 38, damping: 22, mass: 0.9 };
-
+// ── CSS var tracker ────────────────────────────────────────────────────────────
+let _cssInit = false;
 export function useMouseTracker() {
-  // Initialise singleton MotionValues once
-  if (!_mx) _mx = { set: () => {}, get: () => 0, onChange: () => () => {} };
-
   useEffect(() => {
-    if (_initialized) return;
-    _initialized = true;
-
+    if (IS_MOBILE || _cssInit) return;
+    _cssInit = true;
     const root = document.documentElement;
-
-    function update(cx, cy) {
-      const nx = ((cx / window.innerWidth)  - 0.5) * 2;   // –1 … 1
-      const ny = ((cy / window.innerHeight) - 0.5) * 2;
-
-      // CSS variables — read by pure-CSS parallax helpers
-      root.style.setProperty('--mx', nx.toFixed(4));
-      root.style.setProperty('--my', ny.toFixed(4));
-      root.style.setProperty('--cx', `${cx}px`);
-      root.style.setProperty('--cy', `${cy}px`);
-    }
-
-    function onMouse(e) { update(e.clientX, e.clientY); }
-    function onTouch(e) {
-      if (e.touches[0]) update(e.touches[0].clientX, e.touches[0].clientY);
-    }
-    function onLeave() {
-      root.style.setProperty('--mx', '0');
-      root.style.setProperty('--my', '0');
-    }
-
-    window.addEventListener('mousemove',  onMouse,  { passive: true });
-    window.addEventListener('touchmove',  onTouch,  { passive: true });
+    const onMouse = (e) => {
+      root.style.setProperty('--mx', (((e.clientX / window.innerWidth) - 0.5) * 2).toFixed(4));
+      root.style.setProperty('--my', (((e.clientY / window.innerHeight) - 0.5) * 2).toFixed(4));
+      root.style.setProperty('--cx', `${e.clientX}px`);
+      root.style.setProperty('--cy', `${e.clientY}px`);
+    };
+    const onLeave = () => { root.style.setProperty('--mx','0'); root.style.setProperty('--my','0'); };
+    window.addEventListener('mousemove', onMouse, { passive: true });
     window.addEventListener('mouseleave', onLeave);
     return () => {
-      window.removeEventListener('mousemove',  onMouse);
-      window.removeEventListener('touchmove',  onTouch);
+      window.removeEventListener('mousemove', onMouse);
       window.removeEventListener('mouseleave', onLeave);
-      _initialized = false;
+      _cssInit = false;
     };
   }, []);
 }
 
-// ── Framer Motion spring values for JS-driven components ────────────────────
+// ── Singleton spring pair ──────────────────────────────────────────────────────
+// Frozen zeros for mobile — real springs for desktop, shared across all components
+let _sx = null;
+let _sy = null;
+let _bound = false;
+
 export function useSpringMouse() {
-  const springX = useSpring(0, SPRING);
-  const springY = useSpring(0, SPRING);
-  const raf     = useRef(null);
+  // Mobile: return frozen MotionValues, never update
+  if (IS_MOBILE) {
+    if (!_sx) { _sx = motionValue(0); _sy = motionValue(0); }
+    return { x: _sx, y: _sy };
+  }
 
+  // Desktop: create springs (only the first caller creates them)
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const sx = useSpring(0, { stiffness: 38, damping: 22, mass: 0.9 });
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const sy = useSpring(0, { stiffness: 38, damping: 22, mass: 0.9 });
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    function update(nx, ny) {
-      springX.set(nx);
-      springY.set(ny);
-    }
-    function onMouse(e) {
-      update(
-        ((e.clientX / window.innerWidth)  - 0.5) * 2,
-        ((e.clientY / window.innerHeight) - 0.5) * 2,
-      );
-    }
-    function onTouch(e) {
-      if (e.touches[0]) onMouse({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
-    }
-    function onLeave() { update(0, 0); }
-
-    window.addEventListener('mousemove',  onMouse,  { passive: true });
-    window.addEventListener('touchmove',  onTouch,  { passive: true });
-    window.addEventListener('mouseleave', onLeave);
-    return () => {
-      window.removeEventListener('mousemove',  onMouse);
-      window.removeEventListener('touchmove',  onTouch);
-      window.removeEventListener('mouseleave', onLeave);
+    if (_bound) return;
+    _bound = true;
+    _sx = sx; _sy = sy;
+    const move = (e) => {
+      _sx.set(((e.clientX / window.innerWidth)  - 0.5) * 2);
+      _sy.set(((e.clientY / window.innerHeight) - 0.5) * 2);
     };
-  }, []);
+    const leave = () => { _sx.set(0); _sy.set(0); };
+    window.addEventListener('mousemove', move,  { passive: true });
+    window.addEventListener('mouseleave', leave);
+    return () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseleave', leave);
+      _bound = false; _sx = null; _sy = null;
+    };
+  }, [sx, sy]);
 
-  return { x: springX, y: springY };
+  return { x: sx, y: sy };
 }

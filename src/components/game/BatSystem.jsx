@@ -4,49 +4,30 @@ import { motion } from 'framer-motion';
 
 // ── SVG Bat with animated wing-flap ──────────────────────────────────────────
 const WING_UP_L   = 'M 22 15 C 16 8, 6 5, 0 9 C 6 14, 15 17, 22 16';
-const WING_DOWN_L = 'M 22 15 C 16 22, 6 26, 0 21 C 6 17, 15 15, 22 16';
 const WING_UP_R   = 'M 34 15 C 40 8, 50 5, 56 9 C 50 14, 41 17, 34 16';
-const WING_DOWN_R = 'M 34 15 C 40 22, 50 26, 56 21 C 50 17, 41 15, 34 16';
 
 function BatSVG({ size, flapDuration }) {
+  const flapStyle = {
+    transformOrigin: 'center',
+    animation: `bat-flap ${flapDuration}s ease-in-out infinite alternate`,
+  };
   return (
-    <svg
-      width={size}
-      height={size * 0.6}
-      viewBox="0 0 56 34"
-      fill="none"
-      style={{ filter: 'drop-shadow(0 2px 6px rgba(20,0,40,0.7))' }}
-    >
-      {/* Body */}
-      <ellipse cx="28" cy="18" rx="5.5" ry="4.5" fill="#1a0830" />
-      {/* Head */}
-      <ellipse cx="28" cy="13" rx="4"   ry="3.5" fill="#1a0830" />
-      {/* Ears */}
-      <polygon points="24,11 21.5,7 26,10" fill="#1a0830" />
-      <polygon points="32,11 34.5,7 30,10" fill="#1a0830" />
-      {/* Eyes */}
-      <circle cx="26.5" cy="13" r="1"   fill="#e02020" opacity="0.85" />
-      <circle cx="29.5" cy="13" r="1"   fill="#e02020" opacity="0.85" />
-      {/* Left wing */}
-      <motion.path
-        fill="#26103e"
-        stroke="#1a0830" strokeWidth="0.5"
-        initial={{ d: WING_UP_L }}
-        animate={{ d: [WING_UP_L, WING_DOWN_L] }}
-        transition={{ duration: flapDuration, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-      />
-      {/* Right wing */}
-      <motion.path
-        fill="#26103e"
-        stroke="#1a0830" strokeWidth="0.5"
-        initial={{ d: WING_UP_R }}
-        animate={{ d: [WING_UP_R, WING_DOWN_R] }}
-        transition={{ duration: flapDuration, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-      />
-      {/* Wing membrane vein lines — static (Framer Motion cannot animate SVG attributes like y2) */}
-      <line x1="22" y1="16" x2="6"  y2="14" stroke="#341660" strokeWidth="0.6" />
-      <line x1="34" y1="16" x2="50" y2="14" stroke="#341660" strokeWidth="0.6" />
-    </svg>
+    <>
+      <style>{`@keyframes bat-flap { from { transform: scaleY(1); } to { transform: scaleY(-0.5); } }`}</style>
+      <svg width={size} height={size * 0.6} viewBox="0 0 56 34" fill="none">
+        {/* Static wings — CSS animation instead of JS path morphing */}
+        <g style={flapStyle}>
+          <path d={WING_UP_L} fill="#26103e" stroke="#1a0830" strokeWidth="0.5" />
+          <path d={WING_UP_R} fill="#26103e" stroke="#1a0830" strokeWidth="0.5" />
+        </g>
+        <ellipse cx="28" cy="18" rx="5.5" ry="4.5" fill="#1a0830" />
+        <ellipse cx="28" cy="13" rx="4"   ry="3.5" fill="#1a0830" />
+        <polygon points="24,11 21.5,7 26,10"  fill="#1a0830" />
+        <polygon points="32,11 34.5,7 30,10"  fill="#1a0830" />
+        <circle cx="26.5" cy="13" r="1" fill="#e02020" opacity="0.85" />
+        <circle cx="29.5" cy="13" r="1" fill="#e02020" opacity="0.85" />
+      </svg>
+    </>
   );
 }
 
