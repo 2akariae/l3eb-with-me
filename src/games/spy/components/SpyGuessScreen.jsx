@@ -90,15 +90,14 @@ export default function SpyGuessScreen({ user, playerId }) {
       <SpyParallaxBackground />
       
       <div className="relative z-10 px-6 pt-safe pt-8 pb-6 flex flex-col items-center gap-6">
-        <div className="flex items-center justify-between w-full glass-panel p-4 rounded-2xl border border-white/10 shadow-2xl">
+        <div className="flex items-center justify-between w-full glass-panel p-4 rounded-2xl border border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse neon-glow-green" />
+            <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-emerald-400 text-[11px] font-black uppercase tracking-[0.4em] font-mono">
               {isAr ? 'المحطة الأخيرة' : 'FINAL TRANSMISSION'}
             </span>
           </div>
           <div className="relative">
-             <div className="absolute inset-0 bg-emerald-500/20 blur-md rounded-full" />
              <TimerRing remaining={remaining} total={30} size={44} color="#10b981" strokeWidth={3} />
           </div>
         </div>
@@ -106,9 +105,9 @@ export default function SpyGuessScreen({ user, playerId }) {
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="w-24 h-24 rounded-[2rem] bg-emerald-500/10 border-2 border-emerald-500/40 flex items-center justify-center backdrop-blur-lg shadow-[0_0_30px_rgba(16,185,129,0.15)]"
+          className="w-24 h-24 rounded-[2rem] bg-emerald-500/10 border-2 border-emerald-500/40 flex items-center justify-center"
         >
-          <Ghost size={48} className="text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+          <Ghost size={48} className="text-emerald-400" />
         </motion.div>
       </div>
 
@@ -130,9 +129,9 @@ export default function SpyGuessScreen({ user, playerId }) {
               whileHover={{ scale: 1.02, backgroundColor: 'rgba(16, 185, 129, 0.15)' }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedWord(item.word.en)}
-              className={`px-4 py-6 rounded-2xl border transition-all duration-300 text-sm font-bold tracking-wider backdrop-blur-md ${
+              className={`px-4 py-6 rounded-2xl border transition-all duration-300 text-sm font-bold tracking-wider ${
                 selectedWord === item.word.en 
-                ? 'bg-emerald-500/30 border-emerald-500 text-white neon-glow-green-strong'
+                ? 'bg-emerald-500/30 border-emerald-500 text-white'
                 : 'glass-panel text-smoke-300 hover:border-emerald-500/50'
               }`}
             >
@@ -146,13 +145,14 @@ export default function SpyGuessScreen({ user, playerId }) {
         <motion.div 
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "tween", duration: 0.1, ease: "linear" }}
           className="relative z-10 p-8 pt-0"
         >
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => submitSpyGuess(roomId, selectedWord)}
-            className="w-full h-16 rounded-2xl bg-emerald-600 text-white font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-[0_10px_30px_rgba(16,185,129,0.4)] border border-emerald-400/30"
+            className="w-full h-16 rounded-2xl bg-emerald-600 text-white font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 border border-emerald-400/30"
           >
             <Check size={24} strokeWidth={3} />
             {isAr ? 'تأكيد' : 'CONFIRM'}

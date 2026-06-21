@@ -25,7 +25,7 @@ import { TimerRing, Avatar, toast } from '../../../components/ui/index.jsx';
 import { useTimer } from '../../../hooks/useTimer.js';
 import { Gavel } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
-import { GameBackground } from "@/components/game/GameBackground.jsx";
+import { SpyParallaxBackground } from './SpyParallaxBackground.jsx';
 
 export default function SpyVotingScreen({ user, playerId }) {
   const { roomId, isHost, players, myRole, gameState, language, votes, setVotes } = useGameStore();
@@ -59,8 +59,8 @@ export default function SpyVotingScreen({ user, playerId }) {
   const totalVotes   = Object.keys(votes ?? {}).length;
 
   return (
-    <div className="screen bg-zinc-950 flex flex-col overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
-      <GameBackground />
+    <div className="screen flex flex-col overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
+      <SpyParallaxBackground />
 
       {/* Header */}
       <div className="px-6 pt-safe pt-16 pb-6 border-b border-white/5 bg-zinc-950/90">

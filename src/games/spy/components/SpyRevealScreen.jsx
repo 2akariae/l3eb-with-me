@@ -1,14 +1,12 @@
-// ─── THE SPY — SpyRevealScreen.jsx (v8) ──────────────────────────────────────
-// FIX: category/word are bilingual objects { en, ar } — resolved with language key.
-// FIX: no hardcoded inline strings; all text via useTranslation.
 import React, { useState } from 'react';
-import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../../store/gameStore.js';
 import { TimerRing } from '../../../components/ui/index.jsx';
 import { useTimer } from '../../../hooks/useTimer.js';
 import { Ghost, Shield, HelpCircle, Terminal } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
 import BackButton from '../../../components/ui/BackButton.jsx';
+import { SpyParallaxBackground } from './SpyParallaxBackground.jsx';
 
 function GlitchText({ text, className }) {
   return (
@@ -16,10 +14,10 @@ function GlitchText({ text, className }) {
       <span className="relative z-10">{text}</span>
       <motion.span className="absolute inset-0 text-emerald-500 z-0 opacity-50"
         animate={{ x: [-2, 2, -2], opacity: [0.5, 0.8, 0.5] }}
-        transition={{ duration: 0.1, repeat: Infinity, ease: "linear" }}>{text}</motion.span>
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}>{text}</motion.span>
       <motion.span className="absolute inset-0 text-blue-500 z-0 opacity-50"
         animate={{ x: [2, -2, 2], opacity: [0.5, 0.8, 0.5] }}
-        transition={{ duration: 0.1, repeat: Infinity, delay: 0.05, ease: "linear" }}>{text}</motion.span>
+        transition={{ type: "tween", duration: 0.1, ease: "linear" }}>{text}</motion.span>
     </div>
   );
 }
@@ -45,10 +43,9 @@ export default function SpyRevealScreen({ user, onExpire }) {
 
   const { clearRoom } = useGameStore();
   return (
-    <div className="screen bg-zinc-950 overflow-hidden flex flex-col items-center justify-center p-6 gap-10">
+    <div className="screen overflow-hidden flex flex-col items-center justify-center p-6 gap-10">
+      <SpyParallaxBackground />
       <BackButton onClick={clearRoom} />
-      <div className="absolute inset-0 opacity-10 pointer-events-none"
-        style={{ backgroundImage: 'radial-gradient(circle, #333 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
       <div className="absolute top-8 right-8 z-20">
         <TimerRing remaining={remaining} total={10} size={60} color={isSpy ? '#10b981' : '#3b82f6'} />
