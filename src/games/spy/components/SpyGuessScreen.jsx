@@ -18,6 +18,7 @@ export default function SpyGuessScreen({ user, playerId }) {
   const isAr = language === 'ar';
   const isSpy = myRole === 'spy';
   const [selectedWord, setSelectedWord] = useState(null);
+  const [choices, setChoices] = useState([]);
 
   const { remaining } = useTimer(gameState, async () => {
     if (isHost) await expireSpyGuess(roomId);
@@ -28,34 +29,34 @@ export default function SpyGuessScreen({ user, playerId }) {
 
   const activeWord = gameState?.word;
   
-  const choices = useMemo(() => {
-    if (!activeWord) return [];
+  useEffect(() => {
+    if (!activeWord) return;
 
     // Flatten all words from all packs into one searchable pool
     const allWords = WORD_PACKS.flatMap(p => p.words);
 
     // Find the correct answer entry
     const correct = allWords.find(w => w.word.en === activeWord.en);
-    if (!correct) return [];
+    if (!correct) return;
 
     const correctHintEn = (correct.hint?.en ?? '').toLowerCase().trim();
 
     // Candidates = everything that is NOT the secret word
     const candidates = allWords.filter(w => w.word.en !== activeWord.en);
 
-    // Tier 1: exact same hint (most confusing — same theme)
+    // Tier 1: exact same hint
     const tier1 = candidates.filter(
       w => (w.hint?.en ?? '').toLowerCase().trim() === correctHintEn
     );
 
-    // Tier 2: words whose hint partially overlaps (at least one shared token)
+    // Tier 2: words whose hint partially overlaps
     const hintTokens = correctHintEn.split(/\s+/).filter(Boolean);
     const tier2 = candidates.filter(w => {
       const wHint = (w.hint?.en ?? '').toLowerCase();
       return !tier1.includes(w) && hintTokens.some(tok => wHint.includes(tok));
     });
 
-    // Tier 3: same category/pack as the secret word (fallback)
+    // Tier 3: same category/pack as the secret word
     const correctPack = WORD_PACKS.find(p => p.words.some(w => w.word.en === activeWord.en));
     const tier3 = correctPack
       ? correctPack.words.filter(
@@ -63,7 +64,7 @@ export default function SpyGuessScreen({ user, playerId }) {
         )
       : [];
 
-    // Tier 4: remaining words (last resort)
+    // Tier 4: remaining words
     const tier4 = candidates.filter(
       w => !tier1.includes(w) && !tier2.includes(w) && !tier3.includes(w)
     );
@@ -81,7 +82,7 @@ export default function SpyGuessScreen({ user, playerId }) {
     const distractors = pool.slice(0, 5);
 
     // Return 1 correct + 5 distractors, shuffled
-    return shuffle([correct, ...distractors]);
+    setChoices(shuffle([correct, ...distractors]));
   }, [activeWord]);
 
   // Container variants for staggered reveal

@@ -646,15 +646,10 @@ export async function resolveSpyVoting(roomId) {
   const updates = {};
   updates[`${gamePath}/gameState/votedOutId`] = mostVotedId;
 
-  if (mostVotedId === spyId) {
-    updates[`${gamePath}/gameState/phase`]          = PHASES.SPY_GUESS;
-    updates[`${gamePath}/gameState/timerStartedAt`] = serverTimestamp();
-    updates[`${gamePath}/gameState/timerDuration`]  = 30;
-  } else {
-    updates[`${gamePath}/gameState/phase`]  = PHASES.GAME_OVER;
-    updates[`${gamePath}/gameState/winner`] = 'spy';
-    updates[`rooms/${roomId}/meta/status`]  = 'finished';
-  }
+  // ALWAYS proceed to guess phase
+  updates[`${gamePath}/gameState/phase`]          = PHASES.SPY_GUESS;
+  updates[`${gamePath}/gameState/timerStartedAt`] = serverTimestamp();
+  updates[`${gamePath}/gameState/timerDuration`]  = 30;
 
   await update(ref(db), updates);
 }
