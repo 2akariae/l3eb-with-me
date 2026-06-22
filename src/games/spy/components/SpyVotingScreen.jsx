@@ -21,7 +21,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useGameStore } from '../../../store/gameStore.js';
 import { submitVote, resolveSpyVoting, subscribeVotes } from '../../../services/gameEngine.js';
-import { TimerRing, Avatar, toast } from '../../../components/ui/index.jsx';
+import { TimerRing, Avatar, toast, PremiumCard } from '../../../components/ui/index.jsx';
 import { useTimer } from '../../../hooks/useTimer.js';
 import { Gavel } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
@@ -109,45 +109,47 @@ export default function SpyVotingScreen({ user, playerId }) {
             const voteCount = Object.values(votes ?? {}).filter((v) => v === uid).length;
             const isSelected = myVote === uid;
             return (
-              <motion.button
-                variants={itemVariants}
+              <PremiumCard
                 key={uid}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                padding="p-0"
                 onClick={() => handleVote(uid)}
-                disabled={!!myVote || uid === playerId}
-                className={`relative h-20 rounded-[2rem] flex items-center px-6 border-2 transition-all ${
+                className={`relative h-20 transition-all ${
                   isSelected
-                    ? 'bg-emerald-900/40 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]'
+                    ? 'border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]'
                     : uid === playerId
-                    ? 'bg-white/5 border-white/5 opacity-50 grayscale'
-                    : 'bg-white/5 border-white/10 hover:bg-white/[0.08] hover:border-white/20'
+                    ? 'border-white/5 opacity-50 grayscale'
+                    : 'border-white/10 hover:border-white/20'
                 }`}
-                style={{
-                  boxShadow: isSelected ? '0 0 30px rgba(16,185,129,0.2)' : 'none'
-                }}
               >
-                <div className={`relative p-0.5 rounded-full ${isSelected ? 'ring-2 ring-emerald-500' : ''}`}>
-                  <Avatar uid={uid} name={p.name} avatar={p.avatar} size="sm" />
-                </div>
-                <div className="flex-1 ml-4 text-left">
-                  <p className="text-white font-black text-sm tracking-tight">{p.name}</p>
-                  <p className={`text-[9px] font-black uppercase tracking-widest ${isSelected ? 'text-emerald-500' : 'text-smoke-600'}`}>
-                    {uid === playerId
-                      ? (isAr ? 'أنت' : 'YOU')
-                      : (isAr ? 'مشتبه به' : 'SUSPECT')}
-                  </p>
-                </div>
-                {voteCount > 0 && (
-                  <div className="flex gap-1.5">
-                    {Array.from({ length: voteCount }).map((_, vi) => (
-                      <motion.div 
-                        initial={{ scale: 0 }} animate={{ scale: 1 }}
-                        key={vi} className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
-                    ))}
+                <div className={`h-full flex items-center px-6 ${
+                  isSelected
+                    ? 'bg-emerald-900/40'
+                    : uid === playerId
+                    ? 'bg-white/5'
+                    : 'bg-white/5 hover:bg-white/[0.08]'
+                }`}>
+                  <div className={`relative p-0.5 rounded-full ${isSelected ? 'ring-2 ring-emerald-500' : ''}`}>
+                    <Avatar uid={uid} name={p.name} avatar={p.avatar} size="sm" />
                   </div>
-                )}
-              </motion.button>
+                  <div className="flex-1 ml-4 text-left">
+                    <p className="text-white font-black text-sm tracking-tight">{p.name}</p>
+                    <p className={`text-[9px] font-black uppercase tracking-widest ${isSelected ? 'text-emerald-500' : 'text-smoke-600'}`}>
+                      {uid === playerId
+                        ? (isAr ? 'أنت' : 'YOU')
+                        : (isAr ? 'مشتبه به' : 'SUSPECT')}
+                    </p>
+                  </div>
+                  {voteCount > 0 && (
+                    <div className="flex gap-1.5">
+                      {Array.from({ length: voteCount }).map((_, vi) => (
+                        <motion.div 
+                          initial={{ scale: 0 }} animate={{ scale: 1 }}
+                          key={vi} className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </PremiumCard>
             );
           })}
         </motion.div>

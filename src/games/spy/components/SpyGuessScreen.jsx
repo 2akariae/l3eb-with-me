@@ -5,7 +5,7 @@ import {
   submitSpyGuess,
   expireSpyGuess,
 } from '../../../services/gameEngine.js';
-import { TimerRing, toast } from '../../../components/ui/index.jsx';
+import { TimerRing, toast, PremiumCard } from '../../../components/ui/index.jsx';
 import { useTimer } from '../../../hooks/useTimer.js';
 import { Ghost, ShieldAlert, Check } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
@@ -106,13 +106,14 @@ export default function SpyGuessScreen({ user, playerId }) {
     return (
       <div className="screen flex flex-col items-center justify-center p-8 text-center" dir={isAr ? 'rtl' : 'ltr'}>
         <SpyParallaxBackground />
-        <motion.div
-          animate={{ scale: [1, 1.04, 1], opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-24 h-24 rounded-3xl bg-zinc-900 border border-emerald-500/30 flex items-center justify-center mb-8 mx-auto"
+        <PremiumCard
+          mode="online"
+          className="w-24 h-24 mb-8 mx-auto"
         >
-          <ShieldAlert size={48} className="text-emerald-500" />
-        </motion.div>
+          <div className="flex items-center justify-center h-full">
+            <ShieldAlert size={48} className="text-emerald-500" />
+          </div>
+        </PremiumCard>
         <h1 className="text-3xl font-black text-white uppercase tracking-[0.2em] mb-3">
           {isAr ? 'الجاسوس يخمّن...' : 'THE SPY IS GUESSING...'}
         </h1>
@@ -126,8 +127,6 @@ export default function SpyGuessScreen({ user, playerId }) {
       </div>
     );
   }
-
-  const cfg = { glow: '#10b981', bg: 'bg-zinc-900', border: 'border-emerald-500/40' };
 
   return (
     <div className="screen flex flex-col overflow-hidden" dir={isAr ? 'rtl' : 'ltr'}>
@@ -146,13 +145,14 @@ export default function SpyGuessScreen({ user, playerId }) {
           </div>
         </div>
         
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="w-24 h-24 rounded-[2rem] bg-emerald-950/40 border-2 border-emerald-500/40 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)]"
+        <PremiumCard
+          mode="online"
+          className="w-24 h-24"
         >
-          <Ghost size={48} className="text-emerald-400" />
-        </motion.div>
+          <div className="flex items-center justify-center h-full">
+            <Ghost size={48} className="text-emerald-400" />
+          </div>
+        </PremiumCard>
       </div>
 
       <div className="relative z-10 flex-1 flex flex-col px-6 pb-6 gap-8 overflow-y-auto scrollbar-hide">
@@ -170,16 +170,28 @@ export default function SpyGuessScreen({ user, playerId }) {
             <motion.button
               key={i}
               variants={itemVariants}
-              whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(16,185,129,0.3)' }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedWord(item.word.en)}
-              className={`px-4 py-6 rounded-2xl border-2 transition-all duration-300 text-sm font-bold tracking-wider ${
-                selectedWord === item.word.en 
-                ? 'bg-emerald-900/40 border-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)]'
-                : 'bg-zinc-900/60 border-white/10 text-smoke-300 hover:border-emerald-500/50 hover:bg-zinc-800'
-              }`}
+              className="w-full"
             >
-              {isAr ? item.word.ar : item.word.en}
+              <PremiumCard
+                mode="online"
+                padding="p-0"
+                className={`w-full ${
+                  selectedWord === item.word.en 
+                  ? 'border-emerald-500'
+                  : 'border-white/10'
+                }`}
+              >
+                <div className={`px-4 py-6 text-sm font-bold tracking-wider text-center ${
+                  selectedWord === item.word.en 
+                  ? 'text-white'
+                  : 'text-smoke-300'
+                }`}>
+                  {isAr ? item.word.ar : item.word.en}
+                </div>
+              </PremiumCard>
             </motion.button>
           ))}
         </motion.div>

@@ -7,6 +7,7 @@ import { useOfflineStore } from '../../../store/offlineStore.js';
 import { useTranslation } from '../../../constants/translations.js';
 import { GameBackground } from "@/components/game/GameBackground.jsx";
 import { Ghost, Shield, Terminal } from 'lucide-react';
+import { PremiumCard } from '../../../components/ui/index.jsx';
 
 const SPY_CFG = {
   spy:     { glow: '#10b981', bg: 'bg-zinc-900', border: 'border-emerald-500/40' },
@@ -34,66 +35,61 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
           transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         >
         {/* FRONT */}
-        <motion.div 
-          className="flex flex-col items-center justify-center gap-5 overflow-hidden select-none"
-          style={{
-            position: 'absolute', inset: 0, backfaceVisibility: 'hidden',
-            background: 'linear-gradient(135deg, #18181b 0%, #09090b 100%)',
-            border: '1.5px solid rgba(255, 255, 255, 0.1)', borderRadius: 28,
-            boxShadow: '0 0 20px rgba(0,0,0,0.5)'
-          }}
+        <PremiumCard 
+          mode="offline"
+          className="absolute inset-0"
+          style={{ backfaceVisibility: 'hidden' }}
         >
-          <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-            <Terminal size={40} className="text-emerald-500" />
+          <div className="flex flex-col items-center justify-center gap-5 overflow-hidden select-none h-full">
+            <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+              <Terminal size={40} className="text-emerald-500" />
+            </div>
+            <p className="text-[11px] font-black tracking-[0.3em] uppercase text-emerald-500/60">
+              {isAr ? 'اضغط للكشف' : 'HOLD TO REVEAL'}
+            </p>
           </div>
-          <p className="text-[11px] font-black tracking-[0.3em] uppercase text-emerald-500/60">
-            {isAr ? 'اضغط للكشف' : 'HOLD TO REVEAL'}
-          </p>
-        </motion.div>
+        </PremiumCard>
 
         {/* BACK */}
-        <motion.div 
-          className="flex flex-col items-center justify-center gap-6 relative overflow-hidden select-none p-8 text-center"
-          style={{
-            position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)',
-            background: 'linear-gradient(135deg, #09090b 0%, #18181b 100%)',
-            border: `2px solid ${cfg.glow}`,
-            borderRadius: 28,
-            boxShadow: `0 0 50px ${cfg.glow}40, inset 0 0 20px ${cfg.glow}20`
-          }}
+        <PremiumCard 
+          mode="offline"
+          className="absolute inset-0"
+          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
-          <motion.div 
-            animate={{ scale: [1, 1.1, 1], filter: [`drop-shadow(0 0 10px ${cfg.glow})`, `drop-shadow(0 0 20px ${cfg.glow})`, `drop-shadow(0 0 10px ${cfg.glow})`] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            style={{ color: cfg.glow }}>
-            {isSpy ? <Ghost size={60} /> : <Shield size={60} />}
-          </motion.div>
-          <p className="text-2xl font-black tracking-[0.1em] text-white uppercase">
-            {isSpy
-              ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
-              : (isAr ? 'أنت مواطن' : 'YOU ARE A CITIZEN')}
-          </p>
+          <div className="flex flex-col items-center justify-center gap-6 relative overflow-hidden select-none p-8 text-center h-full">
+            <motion.div 
+              animate={{ scale: [1, 1.1, 1], filter: [`drop-shadow(0 0 10px ${cfg.glow})`, `drop-shadow(0 0 20px ${cfg.glow})`, `drop-shadow(0 0 10px ${cfg.glow})`] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              style={{ color: cfg.glow }}>
+              {isSpy ? <Ghost size={60} /> : <Shield size={60} />}
+            </motion.div>
+            <p className="text-2xl font-black tracking-[0.1em] text-white uppercase">
+              {isSpy
+                ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
+                : (isAr ? 'أنت مواطن' : 'YOU ARE A CITIZEN')}
+            </p>
 
-          <div className="w-14 h-px rounded-full" style={{ background: cfg.glow, opacity: 0.4 }} />
-          {isSpy ? (
-            <div className="text-emerald-400/80 text-xs font-bold leading-relaxed">
-              {isAr ? 'أنت لا تعرف الكلمة السرية.' : 'You do not know the secret word.'}
-              {displayHint && (
-                <p className="text-white mt-2 font-bold">
-                  {isAr ? 'تلميح الكلمة:' : 'Hint:'} {displayHint}
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="text-blue-400 font-bold text-lg">
-              {displayWord}
-            </div>
-          )}
-        </motion.div>
+            <div className="w-14 h-px rounded-full" style={{ background: cfg.glow, opacity: 0.4 }} />
+            {isSpy ? (
+              <div className="text-emerald-400/80 text-xs font-bold leading-relaxed">
+                {isAr ? 'أنت لا تعرف الكلمة السرية.' : 'You do not know the secret word.'}
+                {displayHint && (
+                  <p className="text-white mt-2 font-bold">
+                    {isAr ? 'تلميح الكلمة:' : 'Hint:'} {displayHint}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="text-blue-400 font-bold text-lg">
+                {displayWord}
+              </div>
+            )}
+          </div>
+        </PremiumCard>
       </motion.div>
     </motion.div>
-    </div>
-    );
+  </div>
+  );
 }
 
 export default function OfflineSpyRevealScreen() {
@@ -180,7 +176,6 @@ export default function OfflineSpyRevealScreen() {
       >
         {isLast ? (isAr ? 'إنهاء' : 'FINISH') : (isAr ? 'التالي' : 'NEXT')} → {envelopeIndex < players.length - 1 ? players[envelopeIndex + 1]?.name : '...'}
       </motion.button>
-      </motion.div>
-      );
-      }
-
+    </motion.div>
+  );
+}

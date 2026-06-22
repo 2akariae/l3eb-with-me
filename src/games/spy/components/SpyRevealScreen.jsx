@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../../store/gameStore.js';
-import { TimerRing } from '../../../components/ui/index.jsx';
+import { TimerRing, PremiumCard } from '../../../components/ui/index.jsx';
 import { useTimer } from '../../../hooks/useTimer.js';
 import { Ghost, Shield, HelpCircle, Terminal } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
@@ -26,7 +26,6 @@ export default function SpyRevealScreen({ user, onExpire }) {
   const { myRole, gameState, language } = useGameStore();
   const [revealed, setRevealed] = useState(false);
   const t    = useTranslation(language);
-  const isAr = language === 'ar';
   const { remaining } = useTimer(gameState, onExpire);
 
   const isSpy = myRole === 'spy';
@@ -34,12 +33,6 @@ export default function SpyRevealScreen({ user, onExpire }) {
   // Resolve bilingual game data
   const displayWord = typeof gameState?.word === 'object' ? (gameState?.word?.[language] ?? gameState?.word?.en ?? '') : (gameState?.word ?? '');
   const displayHint = typeof gameState?.hint === 'object' ? (gameState?.hint?.[language] ?? gameState?.hint?.en ?? '') : (gameState?.hint ?? '');
-
-  const SPY_CONFIG = {
-    spy:     { glow: '#10b981', bg: 'bg-zinc-900', border: 'border-emerald-500/40' },
-    citizen: { glow: '#3b82f6', bg: 'bg-zinc-900', border: 'border-blue-500/40' },
-  };
-  const cfg = SPY_CONFIG[isSpy ? 'spy' : 'citizen'];
 
   const { clearRoom } = useGameStore();
   return (
@@ -63,19 +56,17 @@ export default function SpyRevealScreen({ user, onExpire }) {
         </h2>
       </motion.div>
 
-      <motion.div
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+      <PremiumCard
         onClick={() => setRevealed(true)}
-        className="relative w-64 h-96 cursor-pointer"
+        className="w-64 h-96 cursor-pointer"
+        mode="online"
       >
         <AnimatePresence mode="wait">
           {!revealed ? (
             <motion.div key="hidden"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-              className="w-full h-full rounded-[2.5rem] bg-zinc-900 border border-white/10 flex flex-col items-center justify-center gap-6">
+              className="w-full h-full flex flex-col items-center justify-center gap-6">
               <div className="w-20 h-20 rounded-full bg-black/40 border border-white/10 flex items-center justify-center">
                 <HelpCircle size={40} className="text-smoke-500" />
               </div>
@@ -83,19 +74,14 @@ export default function SpyRevealScreen({ user, onExpire }) {
             </motion.div>
           ) : (
             <motion.div key="revealed"
-              initial={{ opacity: 0, scale: 0.8, rotateY: 180 }}
-              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-              className={`w-full h-full rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center gap-6 border-2 ${cfg.bg} ${cfg.border}`}
-              style={{ 
-                boxShadow: `0 0 50px ${cfg.glow}40, inset 0 0 20px ${cfg.glow}20`,
-                borderColor: cfg.glow
-              }}>
-              <motion.div
-                className="p-6 rounded-3xl bg-black/40 border border-white/10"
-                style={{ color: cfg.glow, boxShadow: `0 0 30px ${cfg.glow}60` }}>
+              className="w-full h-full flex flex-col items-center justify-center p-8 text-center gap-6">
+              <div className="p-6 rounded-3xl bg-black/40 border border-white/10"
+                style={{ color: isSpy ? '#10b981' : '#3b82f6' }}>
                 {isSpy ? <Ghost size={60} /> : <Shield size={60} />}
-              </motion.div>
+              </div>
 
               <div>
                 <GlitchText
@@ -131,7 +117,7 @@ export default function SpyRevealScreen({ user, onExpire }) {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </PremiumCard>
 
       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
         transition={{ type: "tween", duration: 0.1, ease: "linear" }}

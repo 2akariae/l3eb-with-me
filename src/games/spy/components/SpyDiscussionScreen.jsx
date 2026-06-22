@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../../store/gameStore.js';
 import { advanceToVoting, sendChatMessage, subscribeChat } from '../../../services/gameEngine.js';
-import { TimerRing, Avatar, toast } from '../../../components/ui/index.jsx';
+import { TimerRing, Avatar, toast, PremiumCard } from '../../../components/ui/index.jsx';
 import { useTimer } from '../../../hooks/useTimer.js';
 import { MessageSquare, Users, Info, Send, Terminal, HelpCircle } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
@@ -60,14 +60,7 @@ export default function SpyDiscussionScreen({ user, playerId }) {
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-          className={`p-5 rounded-3xl border ${
-            isSpy 
-              ? 'bg-emerald-950/20 border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.15)]' 
-              : 'bg-purple-950/20 border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.15)]'
-          }`}
-        >
+        <PremiumCard mode="online">
           <div className="flex items-center gap-4">
             <div className={`p-3 rounded-2xl bg-black/40 ${isSpy ? 'text-emerald-400' : 'text-purple-400'}`}>
               <Info size={24} />
@@ -87,7 +80,7 @@ export default function SpyDiscussionScreen({ user, playerId }) {
               <p className="text-purple-400 font-black text-sm tracking-tight">{displayHint}</p>
             </div>
           )}
-        </motion.div>
+        </PremiumCard>
       </div>
 
       {/* Tabs */}
@@ -178,11 +171,10 @@ export default function SpyDiscussionScreen({ user, playerId }) {
               className="absolute inset-0 p-6 overflow-y-auto scrollbar-hide">
               <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 gap-4">
                 {alivePlayers.map(([uid, p]) => (
-                  <motion.div 
-                    variants={itemVariants}
-                    key={uid} 
-                    whileHover={{ scale: 1.02 }}
-                    className="bg-zinc-900 border border-white/10 rounded-2xl p-5 flex items-center justify-between transition-all hover:border-white/20 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                  <PremiumCard
+                    key={uid}
+                    padding="p-5"
+                    className="flex items-center justify-between"
                   >
                     <div className="flex items-center gap-5">
                       <Avatar uid={uid} name={p.name} avatar={p.avatar} size="sm" />
@@ -194,7 +186,7 @@ export default function SpyDiscussionScreen({ user, playerId }) {
                       </div>
                     </div>
                     <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
-                  </motion.div>
+                  </PremiumCard>
                 ))}
               </motion.div>
             </motion.div>
