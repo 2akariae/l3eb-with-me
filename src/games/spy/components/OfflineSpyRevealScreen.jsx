@@ -24,20 +24,17 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
   const displayHint = typeof hint === 'object' ? (hint?.[language] ?? hint?.en ?? '') : (hint ?? '');
 
   return (
-    <div style={{ perspective: 1000, width: 220, height: 310 }}>
+    <div className="relative w-[220px] h-[310px] [perspective:1000px]">
       <motion.div
-        style={{ width: '100%', height: '100%', transformStyle: 'preserve-3d', rotateX: tiltX, rotateY: tiltY }}
-        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
+        className="w-full h-full relative [transform-style:preserve-3d] transition-all duration-300"
+        animate={{ rotateY: pressing ? 180 : 0 }}
+        style={{ rotateX: tiltX, rotateY: tiltY }}
       >
-        <motion.div
-          style={{ width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
-          animate={{ rotateY: pressing ? 180 : 0 }}
-          transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-        >
         {/* FRONT */}
         <PremiumCard 
           mode="offline"
-          className="absolute inset-0"
+          role={role}
+          className="absolute inset-0 w-full h-full"
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="flex flex-col items-center justify-center gap-5 overflow-hidden select-none h-full">
@@ -53,7 +50,8 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
         {/* BACK */}
         <PremiumCard 
           mode="offline"
-          className="absolute inset-0"
+          role={role}
+          className="absolute inset-0 w-full h-full"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
           <div className="flex flex-col items-center justify-center gap-6 relative overflow-hidden select-none p-8 text-center h-full">
@@ -87,8 +85,7 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
           </div>
         </PremiumCard>
       </motion.div>
-    </motion.div>
-  </div>
+    </div>
   );
 }
 
