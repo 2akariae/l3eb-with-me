@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore.js';
 import { Avatar } from '../ui/index.jsx';
+import { containerVariants, itemVariants, modalVariants } from '../../constants/motion.js';
 
 /* ── SVG Players Icon ── */
 function PlayersIcon({ size = 20, color = '#c9943a' }) {
@@ -61,10 +62,8 @@ export function FloatingPlayerList({ myPlayerId }) {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 12 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 400 }}
+            variants={modalVariants}
+            initial="hidden" animate="visible" exit="exit"
             className="fixed bottom-44 right-4 z-50 w-64 rounded-[2rem] overflow-hidden shadow-2xl flex flex-col"
             style={{ background: 'rgba(5,2,2,0.96)', backdropFilter: 'blur(24px)', border: '1.5px solid rgba(255,255,255,0.1)' }}
           >
@@ -77,30 +76,33 @@ export function FloatingPlayerList({ myPlayerId }) {
             </div>
 
             {/* List */}
-            <div className="max-h-80 overflow-y-auto px-3 py-3 flex flex-col gap-1 scrollbar-hide">
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden" animate="visible"
+              className="max-h-80 overflow-y-auto px-3 py-3 flex flex-col gap-1 scrollbar-hide">
               {alive.map((p) => (
-                <div key={p.uid} className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-white/5 transition-all">
+                <motion.div variants={itemVariants} key={p.uid} className="flex items-center gap-3 px-3 py-2 rounded-2xl hover:bg-white/5 transition-all">
                   <Avatar uid={p.uid} name={p.name} avatar={p.avatar} size="xs" />
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-xs font-bold truncate tracking-tight">{p.name}</p>
                     {p.uid === myPlayerId && <p className="text-gold-500/60 text-[9px] font-black uppercase tracking-widest mt-0.5">You</p>}
                   </div>
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
-                </div>
+                </motion.div>
               ))}
 
               {dead.length > 0 && (
                 <>
-                  <div className="text-smoke-600 text-[9px] font-black uppercase tracking-[0.2em] px-3 mt-4 mb-1">Eliminated</div>
+                  <motion.div variants={itemVariants} className="text-smoke-600 text-[9px] font-black uppercase tracking-[0.2em] px-3 mt-4 mb-1">Eliminated</motion.div>
                   {dead.map((p) => (
-                    <div key={p.uid} className="flex items-center gap-3 px-3 py-2 rounded-2xl opacity-40 grayscale">
+                    <motion.div variants={itemVariants} key={p.uid} className="flex items-center gap-3 px-3 py-2 rounded-2xl opacity-40 grayscale">
                       <Avatar uid={p.uid} name={p.name} avatar={p.avatar} size="xs" dead />
                       <p className="text-smoke-400 text-xs font-medium truncate">{p.name}</p>
-                    </div>
+                    </motion.div>
                   ))}
                 </>
               )}
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

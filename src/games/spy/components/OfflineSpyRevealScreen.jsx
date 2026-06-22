@@ -91,8 +91,9 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
           )}
         </motion.div>
       </motion.div>
+    </motion.div>
     </div>
-  );
+    );
 }
 
 export default function OfflineSpyRevealScreen() {
@@ -182,14 +183,4 @@ export default function OfflineSpyRevealScreen() {
       </motion.div>
       );
       }
-)', border: '1px solid rgba(255,255,255,0.1)' }}>
-        <span className="relative z-10">
-          {isLast
-            ? (isAr ? 'ابدأ اللعبة' : 'START GAME')
-            : `${t('nextPlayer')} → ${players[envelopeIndex + 1]?.name}`}
-        </span>
-      </motion.button>
-    </motion.div>
-  );
-}
 
