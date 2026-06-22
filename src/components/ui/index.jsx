@@ -42,16 +42,19 @@ function DeadX({ size }) {
   );
 }
 
-export function PremiumCard({ children, className, mode='online', style, padding='p-6', ...props }) {
-  const isOnline = mode === 'online';
-  const borderColor = isOnline ? 'border-cyan-500/40' : 'border-amber-500/40';
+export function PremiumCard({ children, className, mode='online', role='citizen', style, padding='p-6', ...props }) {
+  const isSpy = role === 'spy';
+  
+  // Neon intensity configurations
+  const borderColor = isSpy ? 'border-cyan-500/80' : 'border-rose-500/80';
+  const shadow = isSpy ? 'shadow-[0_0_30px_rgba(6,182,212,0.4)]' : 'shadow-[0_0_30px_rgba(244,63,94,0.4)]';
 
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       style={{ ...style }}
-      className={`relative rounded-2xl bg-zinc-900/95 border ${borderColor} ${padding} ${className}`}
+      className={`relative rounded-3xl bg-[#0b071a] bg-gradient-to-b from-[#110b29] to-[#05030d] border-2 ${borderColor} ${shadow} ${padding} ${className}`}
       {...props}
     >
       <div className="relative z-10 w-full h-full">
