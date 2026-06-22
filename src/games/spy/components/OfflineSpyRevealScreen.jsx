@@ -23,67 +23,70 @@ function SpyCard({ role, pressing, language, word, hint }) {
   const displayHint = typeof hint === 'object' ? (hint?.[language] ?? hint?.en ?? '') : (hint ?? '');
 
   return (
-    <div className="flex items-center justify-center w-[220px] h-[310px]">
+    <div className="flex items-center justify-center w-[300px] h-[440px]">
       <div className="relative w-full h-full [perspective:1000px]">
         <motion.div 
           className="w-full h-full relative [transform-style:preserve-3d]"
           animate={{ rotateY: pressing ? 180 : 0 }}
           transition={{ type: "tween", duration: 0.4, ease: "easeInOut" }}
         >
-          {/* FRONT */}
+          {/* FRONT FACE */}
           <PremiumCard 
             mode="offline"
             role={role}
             padding="p-8"
             className="absolute inset-0 w-full h-full [backface-visibility:hidden]"
           >
-            <div className="flex flex-col items-center justify-center gap-5 select-none h-full w-full">
+            <div className="w-full h-full flex flex-col justify-center items-center gap-6">
               <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)]">
                 <Terminal size={40} className="text-emerald-500" />
               </div>
-              <p className="text-[11px] font-black tracking-[0.3em] uppercase text-emerald-500/60 mt-4">
+              <p className="text-[11px] font-black tracking-[0.3em] uppercase text-emerald-500/60">
                 {isAr ? 'اضغط للكشف' : 'HOLD TO REVEAL'}
               </p>
             </div>
           </PremiumCard>
 
-          {/* BACK */}
+          {/* BACK FACE */}
           <PremiumCard 
             mode="offline"
             role={role}
             padding="p-8"
             className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]"
           >
-            <div className="flex flex-col items-center justify-center gap-6 select-none text-center h-full w-full">
+            <div className="w-full h-full flex flex-col justify-between items-center text-center">
               <motion.div 
                 animate={{ scale: [1, 1.1, 1], filter: [`drop-shadow(0 0 10px ${cfg.glow})`, `drop-shadow(0 0 20px ${cfg.glow})`, `drop-shadow(0 0 10px ${cfg.glow})`] }}
                 transition={{ duration: 2, repeat: Infinity }}
                 style={{ color: cfg.glow }}
-                className="mb-6"
+                className="mt-4"
               >
                 {isSpy ? <Ghost size={60} /> : <Shield size={60} />}
               </motion.div>
-              <p className="text-2xl font-black tracking-[0.1em] text-white uppercase mb-4">
-                {isSpy
-                  ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
-                  : (isAr ? 'أنت مواطن' : 'YOU ARE A CITIZEN')}
-              </p>
 
-              <div className="w-14 h-px rounded-full mb-6" style={{ background: cfg.glow, opacity: 0.4 }} />
-              {isSpy ? (
-                <div className="text-emerald-400/80 text-xs font-bold leading-relaxed">
-                  {isAr ? 'أنت لا تعرف الكلمة السرية.' : 'You do not know the secret word.'}
-                  {displayHint && (
-                    <p className="text-white mt-2 font-bold">
-                      {isAr ? 'تلميح الكلمة:' : 'Hint:'} {displayHint}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="text-blue-400 font-bold text-lg">
-                  {displayWord}
-                </div>
-              )}
+              <div className="flex-1 flex flex-col justify-center items-center">
+                <p className="text-2xl font-black tracking-[0.1em] text-white uppercase mb-4">
+                  {isSpy
+                    ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
+                    : (isAr ? 'أنت مواطن' : 'YOU ARE A CITIZEN')}
+                </p>
+
+                <div className="w-14 h-px rounded-full mb-6" style={{ background: cfg.glow, opacity: 0.4 }} />
+                {isSpy ? (
+                  <div className="text-emerald-400/80 text-xs font-bold leading-relaxed px-2">
+                    {isAr ? 'أنت لا تعرف الكلمة السرية.' : 'You do not know the secret word.'}
+                    {displayHint && (
+                      <p className="text-white mt-4 font-bold bg-black/40 p-3 rounded-xl border border-emerald-500/30">
+                        {isAr ? 'تلميح الكلمة:' : 'Hint:'} {displayHint}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-blue-400 font-bold text-lg">
+                    {displayWord}
+                  </div>
+                )}
+              </div>
             </div>
           </PremiumCard>
         </motion.div>
