@@ -177,7 +177,8 @@ export default function LobbyScreen({ user, playerId }) {
 
   function handleShare() {
     const base = (import.meta.env.VITE_APP_URL || window.location.origin).replace(/\/$/, '');
-    const url = `${base}?room=${roomId}`;
+    // Add timestamp to force fresh link, avoid caching
+    const url = `${base}?room=${roomId}&t=${Date.now()}`;
     if (navigator.share) {
       navigator.share({ title: 'Game Invite', text: `Room: ${roomId}`, url }).catch(() => {});
     } else {
