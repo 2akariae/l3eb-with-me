@@ -24,11 +24,16 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
   const displayHint = typeof hint === 'object' ? (hint?.[language] ?? hint?.en ?? '') : (hint ?? '');
 
   return (
-    <div className="relative w-[220px] h-[310px] [perspective:1000px]">
+    <div className="relative w-[220px] h-[310px]">
       <motion.div
-        className="w-full h-full relative [transform-style:preserve-3d] transition-all duration-300"
+        className="w-full h-full relative transition-all duration-300"
         animate={{ rotateY: pressing ? 180 : 0 }}
-        style={{ rotateX: tiltX, rotateY: tiltY }}
+        style={{ 
+          rotateX: tiltX, 
+          rotateY: tiltY,
+          transformStyle: 'preserve-3d',
+          perspective: 1000 
+        }}
       >
         {/* FRONT */}
         <PremiumCard 

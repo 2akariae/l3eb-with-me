@@ -116,10 +116,8 @@ app.post('/api/gemini/word', geminiLimiter, async (req, res) => {
   const prompt = `Generate ONE secret word for the party game "The Spy".
 Return ONLY valid JSON — no markdown, no code fences, no explanation:
 {"word":{"en":"Airport","ar":"مطار"},"hint":{"en":"Travel","ar":"سفر"}}
-Rules: word must be a common, concrete noun (one word). hint must be 1-2
-ABSTRACT or METAPHORICAL words that do NOT give the word away, making it
-very difficult for the spy to directly guess the target noun. Be creative and
-highly varied.`;
+Rules: word must be a common, concrete noun (one word). hint must be 1-2 words.
+CRITICAL: Generate ABSOLUTELY ABSTRACT, OBSCURE, or METAPHORICAL hints. The hint must be extremely difficult to associate directly with the secret word to ensure the spy cannot easily guess it. Use distant concepts or abstract feelings.`;
 
   try {
     const upstream = await fetch(
