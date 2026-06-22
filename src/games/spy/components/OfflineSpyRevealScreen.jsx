@@ -32,33 +32,48 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
           style={{ width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
           animate={{ rotateY: pressing ? 180 : 0 }}
           transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-        >
-          {/* FRONT */}
-          <div style={{
+        {/* FRONT */}
+        <motion.div 
+          className="flex flex-col items-center justify-center gap-5 overflow-hidden select-none"
+          style={{
             position: 'absolute', inset: 0, backfaceVisibility: 'hidden',
-            background: '#18181b',
-            border: '1px solid #27272a', borderRadius: 28,
-          }} className="flex flex-col items-center justify-center gap-5 overflow-hidden select-none">
-            <Terminal size={40} className="text-emerald-500 opacity-60" />
-            <p className="text-[11px] font-mono tracking-[0.3em] uppercase text-smoke-500">
-              {isAr ? 'اضغط للكشف' : 'HOLD TO REVEAL'}
-            </p>
+            background: 'linear-gradient(135deg, #18181b 0%, #09090b 100%)',
+            border: '1.5px solid rgba(255, 255, 255, 0.1)', borderRadius: 28,
+            boxShadow: '0 0 20px rgba(0,0,0,0.5)'
+          }}
+        >
+          <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+            <Terminal size={40} className="text-emerald-500" />
           </div>
+          <p className="text-[11px] font-black tracking-[0.3em] uppercase text-emerald-500/60">
+            {isAr ? 'اضغط للكشف' : 'HOLD TO REVEAL'}
+          </p>
+        </motion.div>
 
-          {/* BACK */}
-          <div style={{
+        {/* BACK */}
+        <motion.div 
+          className="flex flex-col items-center justify-center gap-6 relative overflow-hidden select-none p-8 text-center"
+          style={{
             position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)',
-            background: '#18181b', border: `1.5px solid ${cfg.border}`,
+            background: 'linear-gradient(135deg, #09090b 0%, #18181b 100%)',
+            border: `2px solid ${cfg.glow}`,
             borderRadius: 28,
-          }} className="flex flex-col items-center justify-center gap-5 relative overflow-hidden select-none p-6 text-center">
-            <div style={{ color: cfg.glow }}>
-              {isSpy ? <Ghost size={50} /> : <Shield size={50} />}
-            </div>
-            <p className="text-xl font-black tracking-[0.1em] text-white uppercase">
-              {isSpy
-                ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
-                : (isAr ? 'أنت مواطن'   : 'YOU ARE A CITIZEN')}
-            </p>
+            boxShadow: `0 0 50px ${cfg.glow}40, inset 0 0 20px ${cfg.glow}20`
+          }}
+        >
+          <motion.div 
+            animate={{ scale: [1, 1.1, 1], filter: [`drop-shadow(0 0 10px ${cfg.glow})`, `drop-shadow(0 0 20px ${cfg.glow})`, `drop-shadow(0 0 10px ${cfg.glow})`] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            style={{ color: cfg.glow }}>
+            {isSpy ? <Ghost size={60} /> : <Shield size={60} />}
+          </motion.div>
+          <p className="text-2xl font-black tracking-[0.1em] text-white uppercase">
+            {isSpy
+              ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
+              : (isAr ? 'أنت مواطن' : 'YOU ARE A CITIZEN')}
+          </p>
+        </motion.div>
+
             <div className="w-14 h-px rounded-full" style={{ background: cfg.glow, opacity: 0.4 }} />
             {isSpy ? (
               <div className="text-emerald-400/80 text-xs font-bold leading-relaxed">
