@@ -145,7 +145,8 @@ export default function OfflineSpyRevealScreen() {
         </h1>
       </motion.div>
 
-      <div className="relative z-10 touch-none"
+      <div 
+        className="relative z-10 touch-none w-[220px] h-[310px] flex items-center justify-center"
         onPointerDown={() => setPressing(true)}
         onPointerUp={() => setPressing(false)}
         onPointerCancel={() => setPressing(false)}
