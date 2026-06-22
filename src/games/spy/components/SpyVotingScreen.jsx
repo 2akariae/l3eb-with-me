@@ -26,6 +26,7 @@ import { useTimer } from '../../../hooks/useTimer.js';
 import { Gavel } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
 import { SpyParallaxBackground } from './SpyParallaxBackground.jsx';
+import { containerVariants, itemVariants } from '../../../constants/motion.js';
 
 export default function SpyVotingScreen({ user, playerId }) {
   const { roomId, isHost, players, myRole, gameState, language, votes, setVotes } = useGameStore();
@@ -100,43 +101,56 @@ export default function SpyVotingScreen({ user, playerId }) {
 
       {/* Voting list */}
       <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
-        <div className="grid grid-cols-1 gap-3">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden" animate="visible"
+          className="grid grid-cols-1 gap-3">
           {alivePlayers.map(([uid, p]) => {
             const voteCount = Object.values(votes ?? {}).filter((v) => v === uid).length;
+            const isSelected = myVote === uid;
             return (
               <motion.button
+                variants={itemVariants}
                 key={uid}
-                transition={{ type: "tween", duration: 0.1, ease: "linear" }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => handleVote(uid)}
                 disabled={!!myVote || uid === playerId}
                 className={`relative h-20 rounded-[2rem] flex items-center px-6 border-2 transition-all ${
-                  myVote === uid
-                    ? 'bg-emerald-500/20 border-emerald-500'
+                  isSelected
+                    ? 'bg-emerald-900/40 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]'
                     : uid === playerId
                     ? 'bg-white/5 border-white/5 opacity-50 grayscale'
-                    : 'bg-white/5 border-white/10 hover:bg-white/[0.08]'
+                    : 'bg-white/5 border-white/10 hover:bg-white/[0.08] hover:border-white/20'
                 }`}
+                style={{
+                  boxShadow: isSelected ? '0 0 30px rgba(16,185,129,0.2)' : 'none'
+                }}
               >
-                <Avatar uid={uid} name={p.name} avatar={p.avatar} size="sm" />
+                <div className={`relative p-0.5 rounded-full ${isSelected ? 'ring-2 ring-emerald-500' : ''}`}>
+                  <Avatar uid={uid} name={p.name} avatar={p.avatar} size="sm" />
+                </div>
                 <div className="flex-1 ml-4 text-left">
-                  <p className="text-white font-black text-sm">{p.name}</p>
-                  <p className="text-smoke-600 text-[9px] font-black uppercase tracking-widest">
+                  <p className="text-white font-black text-sm tracking-tight">{p.name}</p>
+                  <p className={`text-[9px] font-black uppercase tracking-widest ${isSelected ? 'text-emerald-500' : 'text-smoke-600'}`}>
                     {uid === playerId
                       ? (isAr ? 'أنت' : 'YOU')
                       : (isAr ? 'مشتبه به' : 'SUSPECT')}
                   </p>
                 </div>
                 {voteCount > 0 && (
-                  <div className="flex gap-1">
+                  <div className="flex gap-1.5">
                     {Array.from({ length: voteCount }).map((_, vi) => (
-                      <div key={vi} className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <motion.div 
+                        initial={{ scale: 0 }} animate={{ scale: 1 }}
+                        key={vi} className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
                     ))}
                   </div>
                 )}
               </motion.button>
             );
           })}
-        </div>
+        </motion.div>
       </div>
 
       {/* Host resolve footer */}
