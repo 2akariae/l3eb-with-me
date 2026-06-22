@@ -29,14 +29,13 @@ export default function SpyRevealScreen({ user, onExpire }) {
   const { remaining } = useTimer(gameState, onExpire);
 
   const isSpy = myRole === 'spy';
-
-  // Resolve bilingual game data
   const displayWord = typeof gameState?.word === 'object' ? (gameState?.word?.[language] ?? gameState?.word?.en ?? '') : (gameState?.word ?? '');
   const displayHint = typeof gameState?.hint === 'object' ? (gameState?.hint?.[language] ?? gameState?.hint?.en ?? '') : (gameState?.hint ?? '');
 
   const { clearRoom } = useGameStore();
+
   return (
-    <div className="screen overflow-hidden flex flex-col items-center justify-center p-6 gap-10">
+    <div className="screen overflow-hidden flex flex-col items-center justify-center p-6 gap-6">
       <SpyParallaxBackground />
       <BackButton onClick={clearRoom} />
 
@@ -44,45 +43,34 @@ export default function SpyRevealScreen({ user, onExpire }) {
         <TimerRing remaining={remaining} total={10} size={60} color={isSpy ? '#10b981' : '#3b82f6'} />
       </div>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-        className="text-center">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <Terminal size={14} className="text-emerald-500" />
-          <p className="text-emerald-500/60 text-[10px] font-black uppercase tracking-[0.3em] font-mono">{t('decryptionInit')}</p>
-        </div>
-        <h2 className="display text-3xl font-black text-white uppercase tracking-tight">
-          {revealed ? t('identityRevealed') : t('decryptingRole')}
-        </h2>
-      </motion.div>
-
-      <PremiumCard
-        onClick={() => setRevealed(true)}
-        className="w-full max-w-xs h-96 cursor-pointer flex flex-col items-center justify-center"
-        mode="online"
-        role={isSpy ? 'spy' : 'citizen'}
+      {/* Stable 3D Flip Container */}
+      <div 
+        className="w-[300px] h-[450px] [perspective:1000px] cursor-pointer"
+        onClick={() => setRevealed(!revealed)}
       >
-        <AnimatePresence mode="wait">
-          {!revealed ? (
-            <motion.div key="hidden"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="w-full h-full flex flex-col items-center justify-center gap-6">
+        <motion.div 
+          className="w-full h-full relative [transform-style:preserve-3d] transition-all duration-700"
+          animate={{ rotateY: revealed ? 180 : 0 }}
+        >
+          {/* FRONT FACE */}
+          <div className="absolute inset-0 w-full h-full [backface-visibility:hidden]">
+            <PremiumCard mode="online" role={isSpy ? 'spy' : 'citizen'} className="w-full h-full flex flex-col items-center justify-center p-8 gap-6">
               <div className="w-20 h-20 rounded-full bg-black/40 border border-white/10 flex items-center justify-center animate-pulse">
                 <HelpCircle size={40} className="text-white" />
               </div>
               <p className="text-white text-xs font-black uppercase tracking-[0.3em]">{t('tapToDecrypt')}</p>
-            </motion.div>
-          ) : (
-            <motion.div key="revealed"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="w-full h-full flex flex-col items-center justify-center p-4 text-center gap-6">
+            </PremiumCard>
+          </div>
+
+          {/* BACK FACE */}
+          <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
+            <PremiumCard mode="online" role={isSpy ? 'spy' : 'citizen'} className="w-full h-full flex flex-col items-center justify-center p-4 text-center gap-6">
               <div className="p-4 rounded-3xl bg-black/40 border border-white/10">
                 {isSpy ? <Ghost size={48} className="text-cyan-400" /> : <Shield size={48} className="text-rose-400" />}
               </div>
 
               <div className="w-full">
-                <h3 className="text-3xl font-black text-white uppercase tracking-widest text-center">
+                <h3 className="text-2xl font-black text-white uppercase tracking-widest text-center">
                   {isSpy ? t('theSpy').toUpperCase() : t('citizen').toUpperCase()}
                 </h3>
                 <div className="h-px w-16 bg-white/20 mx-auto mt-4 mb-4" />
@@ -102,7 +90,7 @@ export default function SpyRevealScreen({ user, onExpire }) {
                 ) : (
                   <div className="space-y-4">
                     <p className="text-zinc-400 text-xs font-bold uppercase tracking-wider">{t('secretWordIs').toUpperCase()}:</p>
-                    <p className="text-white text-3xl font-black tracking-wider uppercase">{displayWord}</p>
+                    <p className="text-white text-2xl font-black tracking-wider uppercase">{displayWord}</p>
                     {displayHint && (
                       <p className="text-[10px] text-rose-400 uppercase font-black tracking-widest">
                         {t('wordHint').toUpperCase()}: {displayHint}
@@ -111,16 +99,14 @@ export default function SpyRevealScreen({ user, onExpire }) {
                   </div>
                 )}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </PremiumCard>
+            </PremiumCard>
+          </div>
+        </motion.div>
+      </div>
 
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-        className="text-smoke-600 text-[10px] font-black uppercase tracking-[0.2em] font-mono text-center">
+      <p className="text-smoke-600 text-[10px] font-black uppercase tracking-[0.2em] font-mono text-center">
         {revealed ? t('maintainSilence') : t('tapToDecrypt')}
-      </motion.p>
+      </p>
     </div>
   );
 }
