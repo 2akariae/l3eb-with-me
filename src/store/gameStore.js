@@ -112,6 +112,12 @@ export const useGameStore = create((set, get) => ({
     safeWrite('mafia_lang', lang);
     set({ language: lang });
   },
+  theme: safeRead('mafia_theme', 'theme-dark'),
+  setTheme: (theme) => {
+    safeWrite('mafia_theme', theme);
+    set({ theme });
+    document.documentElement.className = theme;
+  },
 
   // ── UI State ──────────────────────────────────────────────────────────────
   chatOpen:      false,

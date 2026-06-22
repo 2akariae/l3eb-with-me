@@ -73,8 +73,12 @@ export default function App() {
   const {
     user, setUser, roomId, isHost, playerId, myRole,
     setRoom, language, setLanguage, gameType,
-    resetSession, settingsOpen, toggleSettings,
+    resetSession, settingsOpen, toggleSettings, theme,
   } = useGameStore();
+
+  useEffect(() => {
+    document.documentElement.className = theme;
+  }, [theme]);
 
   const offlinePhase   = useOfflineStore((s) => s.phase);
   const setOfflineLang = useOfflineStore((s) => s.setLanguage);

@@ -6,16 +6,8 @@
 
 @layer base {
   :root {
-    /* Base Dark Theme (Current) */
-    --bg-main: #03020a;
-    --bg-panel: rgba(15, 15, 20, 0.6);
-    --text-main: white;
-    
-    /* Theme: Deep Midnight (Example alternative) */
-    --theme-midnight-bg: #0f172a;
-    --theme-midnight-panel: rgba(30, 41, 59, 0.6);
-    --theme-midnight-text: #f1f5f9;
-
+  /* ── Themes ─────────────────────────────────────────────────────────────── */
+  :root {
     --crimson: #e02020;
     --gold-400: #e8c060;
     --gold-500: #c9943a;
@@ -23,6 +15,22 @@
     --neon-magenta: #d946ef;
     --glass-blur: 16px;
     --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  .theme-dark {
+    --bg-main: #03020a;
+    --bg-panel: rgba(15, 15, 20, 0.6);
+    --text-main: white;
+  }
+  .theme-midnight {
+    --bg-main: #0f172a;
+    --bg-panel: rgba(30, 41, 59, 0.6);
+    --text-main: #f1f5f9;
+  }
+  .theme-obsidian {
+    --bg-main: #020617;
+    --bg-panel: rgba(15, 23, 42, 0.6);
+    --text-main: #f8fafc;
   }
 
   * {

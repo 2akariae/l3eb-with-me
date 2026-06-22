@@ -57,10 +57,10 @@ function ProfilePicturePicker({ photo, onChange, language }) {
   );
 }
 
-const SEC = { MAIN: 'main', PROFILE: 'profile', LANGUAGE: 'language', ACCOUNT: 'account' };
+const SEC = { MAIN: 'main', PROFILE: 'profile', LANGUAGE: 'language', ACCOUNT: 'account', THEME: 'theme' };
 
 export default function SettingsPanel({ onClose }) {
-  const { language, setLanguage, profile, setProfile, user, resetSession } = useGameStore();
+  const { language, setLanguage, profile, setProfile, user, resetSession, theme, setTheme } = useGameStore();
   const setOfflineLang = useOfflineStore((s) => s.setLanguage);
   const t = useTranslation(language);
   const isAr = language === 'ar';
@@ -125,6 +125,7 @@ export default function SettingsPanel({ onClose }) {
                 {sec === SEC.PROFILE  && t('editProfile')}
                 {sec === SEC.LANGUAGE && t('language')}
                 {sec === SEC.ACCOUNT  && (isAr ? 'الحساب' : 'Account')}
+                {sec === SEC.THEME    && (isAr ? 'المظهر' : 'Theme')}
               </h3>
             </div>
           </div>
@@ -170,6 +171,17 @@ export default function SettingsPanel({ onClose }) {
                   <p className="text-white font-black text-base tracking-tight truncate">
                     {isGuest ? (isAr ? 'ضيف' : 'Guest') : (user?.email ?? user?.displayName ?? '—')}
                   </p>
+                </div>
+                <ChevronRight size={18} className="text-smoke-600 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </button>
+
+              <button onClick={() => setSec(SEC.THEME)} className={rowClasses}>
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0 shadow-inner">
+                  <Camera size={24} className="text-purple-500 bloom" />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-[9px] font-black text-smoke-600 uppercase tracking-[0.2em] mb-1">{isAr ? 'المظهر' : 'Theme'}</p>
+                  <p className="text-white font-black text-base tracking-tight">{isAr ? 'اختر مظهر' : 'Choose Theme'}</p>
                 </div>
                 <ChevronRight size={18} className="text-smoke-600 group-hover:text-white group-hover:translate-x-1 transition-all" />
               </button>
@@ -264,6 +276,25 @@ export default function SettingsPanel({ onClose }) {
                   {loggingOut ? '...' : (isAr ? 'تسجيل الخروج' : 'Terminate Session')}
                 </motion.button>
               )}
+            </motion.div>
+          )}
+
+          {sec === SEC.THEME && (
+            <motion.div key="theme" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 20, opacity: 0 }}
+              className="p-8 flex flex-col gap-4"
+            >
+              {[
+                { id: 'theme-dark',     label: isAr ? 'ظلام' : 'Dark',     color: '#03020a' },
+                { id: 'theme-midnight', label: isAr ? 'منتصف الليل' : 'Midnight', color: '#0f172a' },
+                { id: 'theme-obsidian', label: isAr ? 'حجر أسود' : 'Obsidian', color: '#020617' },
+              ].map((t) => (
+                <button key={t.id} onClick={() => setTheme(t.id)}
+                  className={`flex items-center gap-5 w-full h-20 px-6 rounded-[2.5rem] border transition-all ${theme === t.id ? 'bg-white/10 border-white/40 shadow-2xl' : 'bg-white/5 border-white/5 opacity-60 hover:opacity-100'}`}>
+                  <div className="w-10 h-10 rounded-full border border-white/20" style={{ background: t.color }} />
+                  <p className="text-white font-black text-lg flex-1 text-left">{t.label}</p>
+                  {theme === t.id && <motion.div layoutId="check" className="w-8 h-8 rounded-full bg-white flex items-center justify-center"><Check size={16} className="text-noir-950" strokeWidth={3} /></motion.div>}
+                </button>
+              ))}
             </motion.div>
           )}
         </AnimatePresence>
