@@ -245,9 +245,6 @@ export async function advanceGamePhase(roomId, phase, durationMs) {
       // ✅ FIXED: write to platform-compatible path
       [`rooms/${roomId}/detective/gameState/phase`]:    phase,
       [`rooms/${roomId}/detective/gameState/deadline`]: deadline,
-      // Keep a copy in the detective-exclusive namespace for detective hooks
-      [`games/detective/${roomId}/phase/current`]:      phase,
-      [`games/detective/${roomId}/phase/deadline`]:     deadline,
       [`rooms/${roomId}/meta/status`]:                  'playing',
     };
     await update(ref(db), updates);
