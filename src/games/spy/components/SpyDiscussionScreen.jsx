@@ -7,6 +7,7 @@ import { useTimer } from '../../../hooks/useTimer.js';
 import { MessageSquare, Users, Info, Send, Terminal, HelpCircle } from 'lucide-react';
 import { useTranslation } from '../../../constants/translations.js';
 import { SpyParallaxBackground } from './SpyParallaxBackground.jsx';
+import { containerVariants, itemVariants } from '../../../constants/motion.js';
 
 export default function SpyDiscussionScreen({ user, playerId }) {
   const { roomId, isHost, players, myRole, gameState, language } = useGameStore();
@@ -60,29 +61,30 @@ export default function SpyDiscussionScreen({ user, playerId }) {
         </div>
 
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-          className={`p-4 rounded-2xl border flex items-center justify-between ${
-            isSpy ? 'bg-emerald-500/10 border-emerald-500/40' : 'bg-purple-500/10 border-purple-500/40'
+          initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+          className={`p-5 rounded-3xl border ${
+            isSpy 
+              ? 'bg-emerald-950/20 border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.15)]' 
+              : 'bg-purple-950/20 border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.15)]'
           }`}
         >
           <div className="flex items-center gap-4">
-            <div className={`p-2.5 rounded-xl bg-black/40 ${isSpy ? 'text-emerald-400' : 'text-purple-400'}`}>
-              <Info size={20} />
+            <div className={`p-3 rounded-2xl bg-black/40 ${isSpy ? 'text-emerald-400' : 'text-purple-400'}`}>
+              <Info size={24} />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-0.5">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-1">
                 {isSpy ? t('wordHint').toUpperCase() : t('secretWordIs').toUpperCase()}
               </p>
-              <p className="text-white font-black text-base tracking-widest">
+              <p className="text-white font-black text-lg tracking-widest uppercase">
                 {isSpy ? displayHint : displayWord}
               </p>
             </div>
           </div>
           {!isSpy && displayHint && (
-            <div className="text-right border-l border-white/10 pl-4">
+            <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
               <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">{t('wordHint').toUpperCase()}</p>
-              <p className="text-purple-400 font-bold text-xs tracking-tight">{displayHint}</p>
+              <p className="text-purple-400 font-black text-sm tracking-tight">{displayHint}</p>
             </div>
           )}
         </motion.div>
@@ -97,7 +99,7 @@ export default function SpyDiscussionScreen({ user, playerId }) {
           <motion.button 
             key={id} 
             onClick={() => setTab(id)}
-            transition={{ type: "tween", duration: 0.1, ease: "linear" }}
+            whileTap={{ scale: 0.95 }}
             className={`flex-1 h-12 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 border ${
               activeTab === id 
               ? 'bg-white/15 text-white border-white/20' 
@@ -114,25 +116,26 @@ export default function SpyDiscussionScreen({ user, playerId }) {
         <AnimatePresence mode="wait">
           {activeTab === 'chat' ? (
             <motion.div key="chat" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ type: "tween", duration: 0.1, ease: "linear" }}
               className="absolute inset-0 flex flex-col">
               <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-5 scrollbar-hide">
                 {messages.length === 0 && (
-                  <div className="flex-1 flex flex-col items-center justify-center opacity-30 text-center gap-6">
-                    <div className="w-20 h-20 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
-                      <Terminal size={32} className="text-white/50" />
+                  <motion.div variants={itemVariants} className="flex-1 flex flex-col items-center justify-center opacity-30 text-center gap-6">
+                    <div className="w-24 h-24 rounded-full border-2 border-dashed border-white/20 flex items-center justify-center">
+                      <Terminal size={40} className="text-white/50" />
                     </div>
                     <p className="text-[11px] font-black uppercase tracking-[0.4em] max-w-[200px] leading-loose">
                       {isAr ? 'القناة مشفرة. ابدأ الإرسال...' : 'Channel Encrypted. Start transmitting...'}
                     </p>
-                  </div>
+                  </motion.div>
                 )}
+                <motion.div 
+                  variants={containerVariants}
+                  initial="hidden" animate="visible"
+                  className="flex flex-col gap-5">
                 {messages.map((msg, i) => {
                   const isMe = msg.uid === playerId;
                   return (
-                    <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                      transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-                      className={`flex gap-4 ${isMe ? 'flex-row-reverse' : ''}`}>
+                    <motion.div variants={itemVariants} key={i} className={`flex gap-4 ${isMe ? 'flex-row-reverse' : ''}`}>
                       <div className="mt-1">
                         <Avatar uid={msg.uid} name={msg.name} avatar={msg.avatar} size="xs" />
                       </div>
@@ -140,13 +143,14 @@ export default function SpyDiscussionScreen({ user, playerId }) {
                         <span className="text-smoke-500 text-[10px] font-black mb-1.5 px-1 uppercase tracking-wider">{msg.name}</span>
                         <div className={`px-5 py-3 rounded-2xl text-[13px] text-white/95 leading-relaxed border ${
                           isMe 
-                          ? 'bg-white/15 border-white/20 rounded-tr-none' 
+                          ? 'bg-emerald-900/40 border-emerald-500/30 rounded-tr-none' 
                           : 'bg-zinc-900 border-white/10 text-smoke-300 rounded-tl-none'
                         }`}>{msg.text}</div>
                       </div>
                     </motion.div>
                   );
                 })}
+                </motion.div>
               </div>
 
               <div className="p-6 bg-zinc-950/90 border-t border-white/10 flex gap-3">
@@ -158,7 +162,7 @@ export default function SpyDiscussionScreen({ user, playerId }) {
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 />
                 <motion.button
-                  transition={{ type: "tween", duration: 0.1, ease: "linear" }}
+                  whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                   onClick={handleSend} disabled={!input.trim()}
                   className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
                     input.trim() 
@@ -171,28 +175,28 @@ export default function SpyDiscussionScreen({ user, playerId }) {
             </motion.div>
           ) : (
             <motion.div key="players" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              transition={{ type: "tween", duration: 0.1, ease: "linear" }}
               className="absolute inset-0 p-6 overflow-y-auto scrollbar-hide">
-              <div className="grid grid-cols-1 gap-4">
+              <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 gap-4">
                 {alivePlayers.map(([uid, p]) => (
                   <motion.div 
+                    variants={itemVariants}
                     key={uid} 
-                    transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-                    className="bg-zinc-900 border border-white/10 rounded-2xl p-5 flex items-center justify-between transition-all"
+                    whileHover={{ scale: 1.02 }}
+                    className="bg-zinc-900 border border-white/10 rounded-2xl p-5 flex items-center justify-between transition-all hover:border-white/20 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]"
                   >
                     <div className="flex items-center gap-5">
                       <Avatar uid={uid} name={p.name} avatar={p.avatar} size="sm" />
                       <div>
-                        <p className="text-white font-black text-base tracking-wide">{p.name}</p>
+                        <p className="text-white font-black text-sm tracking-wide">{p.name}</p>
                         <p className="text-smoke-500 text-[10px] font-black uppercase tracking-[0.2em] mt-0.5">
                           {uid === playerId ? (isAr ? 'أنت' : 'YOU') : (isAr ? 'عميل' : 'OPERATIVE')}
                         </p>
                       </div>
                     </div>
-                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
                   </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
