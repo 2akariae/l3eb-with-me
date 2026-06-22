@@ -64,7 +64,9 @@ export default function SpyRevealScreen({ user, onExpire }) {
       </motion.div>
 
       <motion.div
-        transition={{ type: "tween", duration: 0.1, ease: "linear" }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => setRevealed(true)}
         className="relative w-64 h-96 cursor-pointer"
       >
@@ -81,13 +83,18 @@ export default function SpyRevealScreen({ user, onExpire }) {
             </motion.div>
           ) : (
             <motion.div key="revealed"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              transition={{ type: "tween", duration: 0.1, ease: "linear" }}
-              className={`w-full h-full rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center gap-6 border-2 ${cfg.bg} ${cfg.border}`}>
+              initial={{ opacity: 0, scale: 0.8, rotateY: 180 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+              className={`w-full h-full rounded-[2.5rem] flex flex-col items-center justify-center p-8 text-center gap-6 border-2 ${cfg.bg} ${cfg.border}`}
+              style={{ 
+                boxShadow: `0 0 50px ${cfg.glow}40, inset 0 0 20px ${cfg.glow}20`,
+                borderColor: cfg.glow
+              }}>
               <motion.div
                 className="p-6 rounded-3xl bg-black/40 border border-white/10"
-                style={{ color: cfg.glow }}>
-                {isSpy ? <Ghost size={50} /> : <Shield size={50} />}
+                style={{ color: cfg.glow, boxShadow: `0 0 30px ${cfg.glow}60` }}>
+                {isSpy ? <Ghost size={60} /> : <Shield size={60} />}
               </motion.div>
 
               <div>

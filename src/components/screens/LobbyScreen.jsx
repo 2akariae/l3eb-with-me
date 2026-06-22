@@ -54,10 +54,10 @@ function RoundTable({ players, myPlayerId, isHost, onKick, t, accentColor }) {
   const count = players.length;
   if (count === 0) return null;
 
-  const tableR = Math.min(130, 70 + count * 5); 
+  const tableR = Math.min(130, 40 + count * 5); // Reduced table radius to prevent crowding
 
   const tableStyle = IS_MOBILE
-    ? { width: tableR * 2 + 150, height: tableR * 2 + 150 }
+    ? { width: '100vw', height: 'auto', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }
     : { rotateX, rotateY, x: translateX, y: translateY, perspective: 1200, transformStyle: 'preserve-3d', width: tableR * 2 + 150, height: tableR * 2 + 150 };
 
   return (
@@ -65,7 +65,7 @@ function RoundTable({ players, myPlayerId, isHost, onKick, t, accentColor }) {
       variants={containerVariants}
       initial="hidden" animate="visible"
       style={tableStyle}
-      className="relative flex-shrink-0 flex items-center justify-center select-none touch-none" 
+      className={`relative flex-shrink-0 flex items-center justify-center select-none touch-none ${IS_MOBILE ? 'mt-10' : ''}`} 
     >
       {/* ── Interactive Neon Rings (CSS Accelerated) ── */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
