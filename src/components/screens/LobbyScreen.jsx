@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence, useTransform } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore.js';
+import { containerVariants, itemVariants } from '../../constants/motion.js';
 import {
   startGame, startSpyGame, leaveRoom, kickPlayer,
   subscribeJoinRequests, resolveJoinRequest,
@@ -61,24 +62,32 @@ function RoundTable({ players, myPlayerId, isHost, onKick, t, accentColor }) {
 
   return (
     <motion.div 
+      variants={containerVariants}
+      initial="hidden" animate="visible"
       style={tableStyle}
       className="relative flex-shrink-0 flex items-center justify-center select-none touch-none" 
     >
       {/* ── Interactive Neon Rings (CSS Accelerated) ── */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="absolute w-[90%] h-[90%] rounded-full border border-white/5 animate-[spin_40s_linear_infinite]" />
-        <div className="absolute w-[100%] h-[100%] rounded-full border border-dashed border-white/10 animate-[spin_60s_linear_infinite_reverse]" />
+        <motion.div 
+          animate={{ rotate: 360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-[90%] h-[90%] rounded-full border border-white/10 neon-cyan-border" />
+        <motion.div 
+          animate={{ rotate: -360 }}
+          transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-[110%] h-[110%] rounded-full border border-dashed border-white/20 neon-magenta-border" />
         <div 
-          className="absolute w-[80%] h-[80%] rounded-full opacity-20 blur-2xl"
+          className="absolute w-[70%] h-[70%] rounded-full opacity-30 blur-3xl"
           style={{ background: `radial-gradient(circle, ${accentColor} 0%, transparent 70%)` }}
         />
         
         {/* Dynamic Scanning Ring */}
         <motion.div 
-          animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.3, 0.1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute rounded-full border-2"
-          style={{ width: tableR * 2.2, height: tableR * 2.2, borderColor: accentColor }}
+          style={{ width: tableR * 2.2, height: tableR * 2.2, borderColor: accentColor, boxShadow: `0 0 20px ${accentColor}` }}
         />
       </div>
 
@@ -92,7 +101,8 @@ function RoundTable({ players, myPlayerId, isHost, onKick, t, accentColor }) {
           const isConnected = p.connected !== false;
 
           return (
-            <div
+            <motion.div
+              variants={itemVariants}
               key={p.uid}
               style={{
                 position: 'absolute',
@@ -102,12 +112,6 @@ function RoundTable({ players, myPlayerId, isHost, onKick, t, accentColor }) {
                 transformStyle: 'preserve-3d'
               }}
             >
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1, translateZ: 50 }}
-                exit={{ opacity: 0, scale: 0 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 25, delay: i * 0.05 }}
-              >
                 <div className="flex flex-col items-center gap-3">
                   <div className="relative">
                     {p.isHost && (
@@ -141,8 +145,7 @@ function RoundTable({ players, myPlayerId, isHost, onKick, t, accentColor }) {
                     </p>
                   </div>
                 </div>
-              </motion.div>
-            </div>
+            </motion.div>
           );
         })}
       </AnimatePresence>
