@@ -32,6 +32,7 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
           style={{ width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
           animate={{ rotateY: pressing ? 180 : 0 }}
           transition={{ type: "tween", duration: 0.1, ease: "linear" }}
+        >
         {/* FRONT */}
         <motion.div 
           className="flex flex-col items-center justify-center gap-5 overflow-hidden select-none"
