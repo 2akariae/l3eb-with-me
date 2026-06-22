@@ -6,50 +6,32 @@ import { useOfflineStore } from '../../store/offlineStore.js';
 import { ParallaxStars } from '../game/ParallaxStars.jsx';
 import { useTranslation } from '../../constants/translations.js';
 
-function TiltButton({ onClick, children, className, accentColor }) {
+function TiltButton({ onClick, children, className, accentColor, mode }) {
   const ref = useRef(null);
-  const x = useSpring(0, { stiffness: 120, damping: 24 });
-  const y = useSpring(0, { stiffness: 120, damping: 24 });
   
-  const rotateX = useTransform(y, [-0.5, 0.5], [12, -12]);
-  const rotateY = useTransform(x, [-0.5, 0.5], [-12, 12]);
-  const glowX = useTransform(x, [-0.5, 0.5], ['20%', '80%']);
-  const glowY = useTransform(y, [-0.5, 0.5], ['20%', '80%']);
-
-  const onMove = useCallback((e) => {
-    if (!ref.current) return;
-    const r = ref.current.getBoundingClientRect();
-    x.set((e.clientX - r.left) / r.width - 0.5);
-    y.set((e.clientY - r.top) / r.height - 0.5);
-  }, [x, y]);
-
-  const onLeave = useCallback(() => { x.set(0); y.set(0); }, [x, y]);
+  // Cyber aesthetic configurations
+  const isOnline = mode === 'online';
+  const gradient = isOnline 
+    ? 'from-cyan-500/20 via-transparent to-purple-600/20'
+    : 'from-amber-500/20 via-transparent to-rose-600/20';
+  const border = isOnline ? 'border-cyan-500/30' : 'border-amber-500/30';
 
   return (
     <motion.button
       ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      whileTap={{ scale: 0.96 }}
-      whileHover={{ y: -5 }}
       onClick={onClick}
-      style={{ rotateX, rotateY, perspective: 1200, transformStyle: 'preserve-3d' }}
-      className={`relative w-full rounded-[2.5rem] overflow-hidden group h-36 ${className}`}
+      whileHover={{ scale: 1.03, rotateX: 4, rotateY: -4, translateZ: 10 }}
+      whileTap={{ scale: 0.98 }}
+      style={{ perspective: 1200, transformStyle: 'preserve-3d', willChange: 'transform' }}
+      className={`relative w-full rounded-[2rem] overflow-hidden group h-32 bg-zinc-950/90 border ${border} ${className}`}
     >
-      <div className="absolute inset-0 bg-noir-900/40 backdrop-blur-2xl border border-white/5 group-hover:border-white/10 transition-colors" />
-      <motion.div 
-        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity"
-        style={{ 
-          background: `radial-gradient(circle at ${glowX} ${glowY}, ${accentColor}, transparent 70%)` 
-        }}
-      />
+      {/* Dynamic Gradient Overlay */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-50`} />
       
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-      </div>
-
-      <div className="relative z-10 flex items-center gap-8 px-8 h-full" style={{ transform: 'translateZ(40px)' }}>
+      {/* Background Pulse Effect */}
+      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05)_0%,transparent_70%)] animate-pulse" />
+      
+      <div className="relative z-10 flex items-center gap-6 px-6 h-full">
         {children}
       </div>
     </motion.button>
@@ -143,7 +125,7 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
 
         <div className="w-full flex flex-col gap-6">
           <motion.div variants={item}>
-            <TiltButton onClick={onOnline} accentColor="#3b82f6">
+            <TiltButton onClick={onOnline} mode="online">
               <div className="w-16 h-16 rounded-[1.25rem] flex items-center justify-center shrink-0 bg-blue-500/10 border border-blue-500/20 shadow-2xl group-hover:scale-110 transition-transform duration-500">
                 <Wifi size={32} strokeWidth={1.5} className="text-blue-400" />
               </div>
@@ -159,7 +141,7 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
           </motion.div>
 
           <motion.div variants={item}>
-            <TiltButton onClick={onOffline} accentColor="#e8c060">
+            <TiltButton onClick={onOffline} mode="offline">
               <div className="w-16 h-16 rounded-[1.25rem] flex items-center justify-center shrink-0 bg-gold-500/10 border border-gold-500/20 shadow-2xl group-hover:scale-110 transition-transform duration-500">
                 <Smartphone size={32} strokeWidth={1.5} className="text-gold-400" />
               </div>
