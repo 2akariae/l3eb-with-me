@@ -6,32 +6,29 @@ import { useOfflineStore } from '../../store/offlineStore.js';
 import { ParallaxStars } from '../game/ParallaxStars.jsx';
 import { useTranslation } from '../../constants/translations.js';
 
-function TiltButton({ onClick, children, className, accentColor, mode }) {
-  const ref = useRef(null);
-  
+function TiltButton({ onClick, children, className, mode }) {
   // Cyber aesthetic configurations
   const isOnline = mode === 'online';
-  const gradient = isOnline 
-    ? 'from-cyan-500/20 via-transparent to-purple-600/20'
-    : 'from-amber-500/20 via-transparent to-rose-600/20';
-  const border = isOnline ? 'border-cyan-500/30' : 'border-amber-500/30';
+  const borderGradient = isOnline 
+    ? 'from-cyan-400 to-fuchsia-500'
+    : 'from-amber-400 to-rose-600';
 
   return (
     <motion.button
-      ref={ref}
       onClick={onClick}
-      whileHover={{ scale: 1.03, rotateX: 4, rotateY: -4, translateZ: 10 }}
+      whileHover={{ scale: 1.02, rotateX: 2, rotateY: -2 }}
       whileTap={{ scale: 0.98 }}
-      style={{ perspective: 1200, transformStyle: 'preserve-3d', willChange: 'transform' }}
-      className={`relative w-full rounded-[2rem] overflow-hidden group h-32 bg-zinc-950/90 border ${border} ${className}`}
+      style={{ perspective: 1000, transformStyle: 'preserve-3d', willChange: 'transform' }}
+      className={`relative w-full rounded-2xl overflow-hidden group h-32 p-[1px] ${className}`}
     >
-      {/* Dynamic Gradient Overlay */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-50`} />
+      {/* Neon Hover Ring (Border) */}
+      <div className={`absolute inset-0 bg-gradient-to-r ${borderGradient} opacity-50 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl`} />
       
-      {/* Background Pulse Effect */}
-      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05)_0%,transparent_70%)] animate-pulse" />
-      
-      <div className="relative z-10 flex items-center gap-6 px-6 h-full">
+      {/* Obsidian Glass Body */}
+      <div className="relative w-full h-full rounded-[14px] bg-gradient-to-b from-zinc-900/90 to-black/95 flex items-center gap-6 px-8 overflow-hidden">
+        {/* Specular Reflection */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent" />
+        
         {children}
       </div>
     </motion.button>
@@ -126,32 +123,24 @@ export default function ModeSelectScreen({ onOnline, onOffline, onBack }) {
         <div className="w-full flex flex-col gap-6">
           <motion.div variants={item}>
             <TiltButton onClick={onOnline} mode="online">
-              <div className="w-16 h-16 rounded-[1.25rem] flex items-center justify-center shrink-0 bg-blue-500/10 border border-blue-500/20 shadow-2xl group-hover:scale-110 transition-transform duration-500">
-                <Wifi size={32} strokeWidth={1.5} className="text-blue-400" />
+              <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-cyan-950/50 border border-cyan-500/30 shrink-0">
+                <Wifi size={24} className="text-cyan-400" />
               </div>
               <div className="text-left flex-1">
-                <p className="text-white font-black text-2xl tracking-tight">{t('onlineMode')}</p>
-                <p className="text-smoke-400 text-xs mt-1 font-bold opacity-60 uppercase tracking-tighter">{t('multiDevice')}</p>
-                <div className="mt-3 flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_blue]" />
-                  <p className="text-blue-400 text-[9px] font-black uppercase tracking-[0.2em]">{t('recommended')}</p>
-                </div>
+                <p className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400 uppercase tracking-widest">{t('onlineMode')}</p>
+                <p className="text-xs text-zinc-500 font-bold uppercase tracking-tighter mt-1">{t('multiDevice')}</p>
               </div>
             </TiltButton>
           </motion.div>
 
           <motion.div variants={item}>
             <TiltButton onClick={onOffline} mode="offline">
-              <div className="w-16 h-16 rounded-[1.25rem] flex items-center justify-center shrink-0 bg-gold-500/10 border border-gold-500/20 shadow-2xl group-hover:scale-110 transition-transform duration-500">
-                <Smartphone size={32} strokeWidth={1.5} className="text-gold-400" />
+              <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-amber-950/50 border border-amber-500/30 shrink-0">
+                <Smartphone size={24} className="text-amber-400" />
               </div>
               <div className="text-left flex-1">
-                <p className="text-white font-black text-2xl tracking-tight">{t('offlineMode')}</p>
-                <p className="text-smoke-400 text-xs mt-1 font-bold opacity-60 uppercase tracking-tighter">{t('oneDevice')}</p>
-                <div className="mt-3 flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse shadow-[0_0_8px_gold]" />
-                  <p className="text-gold-400 text-[9px] font-black uppercase tracking-[0.2em]">{t('inPerson')}</p>
-                </div>
+                <p className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400 uppercase tracking-widest">{t('offlineMode')}</p>
+                <p className="text-xs text-zinc-500 font-bold uppercase tracking-tighter mt-1">{t('oneDevice')}</p>
               </div>
             </TiltButton>
           </motion.div>
