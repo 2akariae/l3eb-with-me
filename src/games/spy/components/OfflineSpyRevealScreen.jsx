@@ -175,7 +175,14 @@ export default function OfflineSpyRevealScreen() {
         transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         onClick={handleNext}
         className="relative z-10 mt-7 h-14 px-10 rounded-2xl font-black text-sm uppercase tracking-[0.18em] text-white"
-        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+        style={{ background: 'rgba(255,255,255,0.05)' }}
+      >
+        {isLast ? (isAr ? 'إنهاء' : 'FINISH') : (isAr ? 'التالي' : 'NEXT')} → {envelopeIndex < players.length - 1 ? players[envelopeIndex + 1]?.name : '...'}
+      </motion.button>
+      </motion.div>
+      );
+      }
+)', border: '1px solid rgba(255,255,255,0.1)' }}>
         <span className="relative z-10">
           {isLast
             ? (isAr ? 'ابدأ اللعبة' : 'START GAME')
