@@ -39,10 +39,11 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
         <PremiumCard 
           mode="offline"
           role={role}
+          padding="p-8"
           className="absolute inset-0 w-full h-full"
           style={{ backfaceVisibility: 'hidden' }}
         >
-          <div className="flex flex-col items-center justify-center gap-5 overflow-hidden select-none h-full">
+          <div className="flex flex-col items-center justify-center gap-5 select-none h-full w-full">
             <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)]">
               <Terminal size={40} className="text-emerald-500" />
             </div>
@@ -56,10 +57,11 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
         <PremiumCard 
           mode="offline"
           role={role}
+          padding="p-8"
           className="absolute inset-0 w-full h-full"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
-          <div className="flex flex-col items-center justify-center gap-6 relative overflow-hidden select-none p-8 text-center h-full">
+          <div className="flex flex-col items-center justify-center gap-6 select-none text-center h-full w-full">
             <motion.div 
               animate={{ scale: [1, 1.1, 1], filter: [`drop-shadow(0 0 10px ${cfg.glow})`, `drop-shadow(0 0 20px ${cfg.glow})`, `drop-shadow(0 0 10px ${cfg.glow})`] }}
               transition={{ duration: 2, repeat: Infinity }}
