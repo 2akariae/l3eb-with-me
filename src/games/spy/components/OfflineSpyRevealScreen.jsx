@@ -73,24 +73,22 @@ function SpyCard({ role, pressing, tiltX, tiltY, language, word, hint }) {
               ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
               : (isAr ? 'أنت مواطن' : 'YOU ARE A CITIZEN')}
           </p>
-        </motion.div>
 
-            <div className="w-14 h-px rounded-full" style={{ background: cfg.glow, opacity: 0.4 }} />
-            {isSpy ? (
-              <div className="text-emerald-400/80 text-xs font-bold leading-relaxed">
-                {isAr ? 'أنت لا تعرف الكلمة السرية.' : 'You do not know the secret word.'}
-                {displayHint && (
-                  <p className="text-white mt-2 font-bold">
-                    {isAr ? 'تلميح الكلمة:' : 'Hint:'} {displayHint}
-                  </p>
-                )}
-              </div>
-            ) : (
-              <div className="text-blue-400 font-bold text-lg">
-                {displayWord}
-              </div>
-            )}
-          </div>
+          <div className="w-14 h-px rounded-full" style={{ background: cfg.glow, opacity: 0.4 }} />
+          {isSpy ? (
+            <div className="text-emerald-400/80 text-xs font-bold leading-relaxed">
+              {isAr ? 'أنت لا تعرف الكلمة السرية.' : 'You do not know the secret word.'}
+              {displayHint && (
+                <p className="text-white mt-2 font-bold">
+                  {isAr ? 'تلميح الكلمة:' : 'Hint:'} {displayHint}
+                </p>
+              )}
+            </div>
+          ) : (
+            <div className="text-blue-400 font-bold text-lg">
+              {displayWord}
+            </div>
+          )}
         </motion.div>
       </motion.div>
     </div>
