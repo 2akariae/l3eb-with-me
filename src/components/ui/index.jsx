@@ -44,24 +44,18 @@ function DeadX({ size }) {
 
 export function PremiumCard({ children, className, mode='online', style, padding='p-6', ...props }) {
   const isOnline = mode === 'online';
-  const borderGradient = isOnline 
-    ? 'from-cyan-400 to-fuchsia-500'
-    : 'from-amber-400 to-rose-600';
+  const borderColor = isOnline ? 'border-cyan-500/40' : 'border-amber-500/40';
 
   return (
     <motion.div
-      whileHover={{ scale: 1.05, rotateX: 6, rotateY: -6, translateZ: 20 }}
-      style={{ perspective: 1000, transformStyle: "preserve-3d", ...style }}
-      className={`relative rounded-2xl overflow-hidden p-[1px] ${className}`}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      style={{ ...style }}
+      className={`relative rounded-2xl bg-zinc-900/95 border ${borderColor} ${padding} ${className}`}
       {...props}
     >
-      <div className={`absolute inset-0 bg-gradient-to-r ${borderGradient} opacity-50`} />
-      
-      <div className={`relative w-full h-full rounded-[14px] bg-gradient-to-br from-[#0c081e] via-[#05030b] to-[#160e33] border border-white/10 ${padding} [transform:translateZ(40px)]`}>
-         <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent opacity-40" />
-         <div className="relative z-10">
-           {children}
-         </div>
+      <div className="relative z-10 w-full h-full">
+        {children}
       </div>
     </motion.div>
   );
