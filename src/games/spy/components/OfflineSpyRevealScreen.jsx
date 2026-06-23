@@ -14,87 +14,64 @@ const SPY_CFG = {
   citizen: { glow: '#3b82f6', bg: 'bg-zinc-900', border: 'border-blue-500/40' },
 };
 
-function SpyCard({ role, pressing, language, word, hint }) {
+function SpyCard({ role, pressing, language, word, hint, handleNext }) {
   const cfg   = SPY_CFG[role];
   const isSpy = role === 'spy';
   const isAr  = language === 'ar';
 
-  const displayWord = typeof word === 'object' ? (word?.[language] ?? word?.en ?? '') : (word ?? '');
-  const displayHint = typeof hint === 'object' ? (hint?.[language] ?? hint?.en ?? '') : (hint ?? '');
-
   return (
-    /* 1. Main Screen Anchor - Keeps everything dead center and prevents shifting */
-    <div className="flex w-full items-center justify-center overflow-hidden">
+    <div className="flex w-full flex-col items-center justify-center min-h-[60vh] overflow-hidden">
       
-      {/* 2. The Strict Fixed Box - NEVER use h-full or h-screen on this element */}
+      {/* The strict anchor frame */}
       <div className="relative w-[280px] h-[400px] flex-shrink-0 [perspective:1000px]">
         
-        {/* 3. The Flip Engine */}
-        <motion.div 
+        <motion.div
           className="w-full h-full relative [transform-style:preserve-3d]"
           animate={{ rotateY: pressing ? 180 : 0 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+          transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
         >
           
-          {/* 4. FRONT FACE (Absolute layer, identical layout) */}
+          {/* 1. FRONT FACE */}
           <div className="absolute inset-0 w-full h-full [backface-visibility:hidden]">
-            {/* Do not change this inner flex layout */}
-            <PremiumCard 
-              mode="offline"
-              role={role}
-              padding="p-6"
-              className="w-full h-full flex flex-col justify-between items-center"
-            >
-              <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-                <Terminal size={40} className="text-emerald-500" />
+            {/* Inner Box with Flex Centering */}
+            <div className="w-full h-full flex flex-col items-center justify-center bg-[#0b071a] border-[2px] border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.3)] rounded-3xl p-6">
+              
+              {/* Top Icon */}
+              <div className="text-cyan-400 mb-6">
+                <Terminal size={48} />
               </div>
-              <p className="text-[11px] font-black tracking-[0.3em] uppercase text-emerald-500/60">
-                {isAr ? 'اضغط للكشف' : 'HOLD TO REVEAL'}
-              </p>
-            </PremiumCard>
+              
+              <p className="text-cyan-400 text-xl font-bold tracking-wider">{isAr ? 'اضغط للكشف' : 'HOLD TO REVEAL'}</p>
+            </div>
           </div>
 
-          {/* 5. BACK FACE (Absolute layer, pre-rotated) */}
+          {/* 2. BACK FACE */}
           <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
-            {/* Do not change this inner flex layout */}
-            <PremiumCard 
-              mode="offline"
-              role={role}
-              padding="p-6"
-              className="w-full h-full flex flex-col justify-between items-center text-center"
-            >
-              <motion.div 
-                animate={{ scale: [1, 1.1, 1], filter: [`drop-shadow(0 0 10px ${cfg.glow})`, `drop-shadow(0 0 20px ${cfg.glow})`, `drop-shadow(0 0 10px ${cfg.glow})`] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                style={{ color: cfg.glow }}
-              >
-                {isSpy ? <Ghost size={48} /> : <Shield size={48} />}
-              </motion.div>
-
-              <div className="flex-1 flex flex-col justify-center items-center">
-                <p className="text-2xl font-black tracking-[0.1em] text-white uppercase mb-4">
-                  {isSpy
+            {/* Inner Box with Flex Space-Between */}
+            <div className="w-full h-full flex flex-col items-center justify-between bg-[#0b071a] border-[2px] border-rose-500/50 shadow-[0_0_20px_rgba(244,63,94,0.3)] rounded-3xl p-6">
+              
+              {/* Top Content: Icon, Title, Role */}
+              <div className="flex flex-col items-center mt-6">
+                <div className="text-blue-500 mb-4">
+                  {isSpy ? <Ghost size={48} /> : <Shield size={48} />}
+                </div>
+                <h2 className="text-white text-3xl font-bold mb-2">
+                  {isSpy 
                     ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
                     : (isAr ? 'أنت مواطن' : 'YOU ARE A CITIZEN')}
-                </p>
-
-                <div className="w-14 h-px rounded-full mb-6" style={{ background: cfg.glow, opacity: 0.4 }} />
-                {isSpy ? (
-                  <div className="text-emerald-400/80 text-xs font-bold leading-relaxed">
-                    {isAr ? 'أنت لا تعرف الكلمة السرية.' : 'You do not know the secret word.'}
-                    {displayHint && (
-                      <p className="text-white mt-4 font-bold bg-black/40 p-3 rounded-xl border border-emerald-500/30">
-                        {isAr ? 'تلميح الكلمة:' : 'Hint:'} {displayHint}
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="text-blue-400 font-bold text-lg">
-                    {displayWord}
-                  </div>
-                )}
+                </h2>
+                <p className="text-blue-400 text-xl font-medium">{word}</p>
               </div>
-            </PremiumCard>
+
+              {/* Bottom Content: The NEXT Button STRICTLY INSIDE the card */}
+              <button 
+                onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                className="w-full py-3 mt-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl transition-all font-medium"
+              >
+                {isAr ? 'التالي' : 'NEXT'}
+              </button>
+              
+            </div>
           </div>
 
         </motion.div>
@@ -168,8 +145,8 @@ export default function OfflineSpyRevealScreen() {
       >
         <SpyCard
           role={role} pressing={pressing}
-          tiltX={rawTiltX} tiltY={rawTiltY}
           language={language} word={word} hint={hint}
+          handleNext={handleNext}
         />
       </div>
 

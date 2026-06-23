@@ -43,75 +43,62 @@ export default function SpyRevealScreen({ user, onExpire }) {
         <TimerRing remaining={remaining} total={10} size={60} color={isSpy ? '#10b981' : '#3b82f6'} />
       </div>
 
-      {/* 1. Main Screen Anchor - Keeps everything dead center and prevents shifting */}
-      <div className="flex w-full min-h-[65vh] items-center justify-center overflow-hidden cursor-pointer" onClick={() => setRevealed(!revealed)}>
+      <div className="flex w-full flex-col items-center justify-center min-h-[60vh] overflow-hidden">
         
-        {/* 2. The Strict Fixed Box - NEVER use h-full or h-screen on this element */}
+        {/* The strict anchor frame */}
         <div className="relative w-[280px] h-[400px] flex-shrink-0 [perspective:1000px]">
           
-          {/* 3. The Flip Engine */}
-          <motion.div 
+          <motion.div
             className="w-full h-full relative [transform-style:preserve-3d]"
             animate={{ rotateY: revealed ? 180 : 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
           >
             
-            {/* 4. FRONT FACE (Absolute layer, identical layout) */}
+            {/* 1. FRONT FACE */}
             <div className="absolute inset-0 w-full h-full [backface-visibility:hidden]">
-              {/* Do not change this inner flex layout */}
-              <PremiumCard mode="online" role={isSpy ? 'spy' : 'citizen'} className="w-full h-full flex flex-col justify-between items-center p-6">
-                <div className="w-20 h-20 rounded-full bg-black/40 border border-white/10 flex items-center justify-center animate-pulse">
-                  <HelpCircle size={40} className="text-white" />
+              {/* Inner Box with Flex Centering */}
+              <div className="w-full h-full flex flex-col items-center justify-center bg-[#0b071a] border-[2px] border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.3)] rounded-3xl p-6">
+                
+                {/* Top Icon */}
+                <div className="text-cyan-400 mb-6">
+                  <HelpCircle size={48} />
                 </div>
-                <p className="text-white text-xs font-black uppercase tracking-[0.3em]">{t('tapToDecrypt')}</p>
-              </PremiumCard>
+                
+                <p className="text-cyan-400 text-xl font-bold tracking-wider">{t('tapToDecrypt')}</p>
+              </div>
             </div>
 
-            {/* 5. BACK FACE (Absolute layer, pre-rotated) */}
+            {/* 2. BACK FACE */}
             <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
-              {/* Do not change this inner flex layout */}
-              <PremiumCard mode="online" role={isSpy ? 'spy' : 'citizen'} className="w-full h-full flex flex-col justify-between items-center p-6 text-center">
-                <div className="p-4 rounded-3xl bg-black/40 border border-white/10">
-                  {isSpy ? <Ghost size={48} className="text-cyan-400" /> : <Shield size={48} className="text-rose-400" />}
-                </div>
-
-                <div className="w-full">
-                  <h3 className="text-2xl font-black text-white uppercase tracking-widest text-center">
+              {/* Inner Box with Flex Space-Between */}
+              <div className="w-full h-full flex flex-col items-center justify-between bg-[#0b071a] border-[2px] border-rose-500/50 shadow-[0_0_20px_rgba(244,63,94,0.3)] rounded-3xl p-6">
+                
+                {/* Top Content: Icon, Title, Role */}
+                <div className="flex flex-col items-center mt-6">
+                  <div className="text-blue-500 mb-4">
+                    {isSpy ? <Ghost size={48} /> : <Shield size={48} />}
+                  </div>
+                  <h2 className="text-white text-3xl font-bold mb-2">
                     {isSpy ? t('theSpy').toUpperCase() : t('citizen').toUpperCase()}
-                  </h3>
-                  <div className="h-px w-16 bg-white/20 mx-auto mt-4 mb-4" />
-
-                  {isSpy ? (
-                    <div className="space-y-4">
-                      <p className="text-white text-sm font-bold leading-relaxed">
-                        {t('spyRoleDesc')}
-                      </p>
-                      {displayHint && (
-                        <div className="p-3 rounded-xl bg-black/40 border border-cyan-500/30">
-                          <p className="text-[10px] text-cyan-400 uppercase font-black tracking-widest mb-1">{t('wordHint')}</p>
-                          <p className="text-white font-bold text-sm">{displayHint}</p>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <p className="text-zinc-400 text-xs font-bold uppercase tracking-wider">{t('secretWordIs').toUpperCase()}:</p>
-                      <p className="text-white text-2xl font-black tracking-wider uppercase">{displayWord}</p>
-                      {displayHint && (
-                        <p className="text-[10px] text-rose-400 uppercase font-black tracking-widest">
-                          {t('wordHint').toUpperCase()}: {displayHint}
-                        </p>
-                      )}
-                    </div>
-                  )}
+                  </h2>
+                  <p className="text-blue-400 text-xl font-medium">{isSpy ? t('spyRoleDesc') : displayWord}</p>
                 </div>
-              </PremiumCard>
+
+                {/* Bottom Content: The NEXT Button STRICTLY INSIDE the card */}
+                <button 
+                  onClick={() => setRevealed(false)}
+                  className="w-full py-3 mt-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl transition-all font-medium"
+                >
+                  {t('tapToDecrypt')}
+                </button>
+                
+              </div>
             </div>
 
           </motion.div>
         </div>
       </div>
-
+      
       <p className="text-smoke-600 text-[10px] font-black uppercase tracking-[0.2em] font-mono text-center">
         {revealed ? t('maintainSilence') : t('tapToDecrypt')}
       </p>
