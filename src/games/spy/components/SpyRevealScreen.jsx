@@ -43,13 +43,13 @@ export default function SpyRevealScreen({ user, onExpire }) {
         <TimerRing remaining={remaining} total={10} size={60} color={isSpy ? '#10b981' : '#3b82f6'} />
       </div>
 
-      {/* Stable 3D Flip Container */}
+      {/* Ghost Anchor Box */}
       <div 
-        className="w-[300px] h-[450px] [perspective:1000px] cursor-pointer"
+        className="relative w-[300px] h-[450px] mx-auto flex-shrink-0 [perspective:1000px] cursor-pointer"
         onClick={() => setRevealed(!revealed)}
       >
         <motion.div 
-          className="w-full h-full relative [transform-style:preserve-3d] transition-all duration-700"
+          className="w-full h-full relative [transform-style:preserve-3d]"
           animate={{ rotateY: revealed ? 180 : 0 }}
         >
           {/* FRONT FACE */}
