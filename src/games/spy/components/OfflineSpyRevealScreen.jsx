@@ -23,72 +23,82 @@ function SpyCard({ role, pressing, language, word, hint }) {
   const displayHint = typeof hint === 'object' ? (hint?.[language] ?? hint?.en ?? '') : (hint ?? '');
 
   return (
-    <div className="relative w-[300px] h-[450px] mx-auto flex-shrink-0">
-      <motion.div 
-        className="w-full h-full relative [transform-style:preserve-3d] [perspective:1000px]"
-        animate={{ rotateY: pressing ? 180 : 0 }}
-        transition={{ type: "tween", duration: 0.4, ease: "easeInOut" }}
-      >
-        {/* FRONT FACE */}
-        <PremiumCard 
-          mode="offline"
-          role={role}
-          padding="p-8"
-          className="absolute inset-0 w-full h-full [backface-visibility:hidden]"
+    /* 1. Main Screen Anchor - Keeps everything dead center and prevents shifting */
+    <div className="flex w-full items-center justify-center overflow-hidden">
+      
+      {/* 2. The Strict Fixed Box - NEVER use h-full or h-screen on this element */}
+      <div className="relative w-[280px] h-[400px] flex-shrink-0 [perspective:1000px]">
+        
+        {/* 3. The Flip Engine */}
+        <motion.div 
+          className="w-full h-full relative [transform-style:preserve-3d]"
+          animate={{ rotateY: pressing ? 180 : 0 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
         >
-          <div className="w-full h-full flex flex-col justify-center items-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-              <Terminal size={40} className="text-emerald-500" />
-            </div>
-            <p className="text-[11px] font-black tracking-[0.3em] uppercase text-emerald-500/60">
-              {isAr ? 'اضغط للكشف' : 'HOLD TO REVEAL'}
-            </p>
-          </div>
-        </PremiumCard>
-
-        {/* BACK FACE */}
-        <PremiumCard 
-          mode="offline"
-          role={role}
-          padding="p-8"
-          className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]"
-        >
-          <div className="w-full h-full flex flex-col justify-between items-center text-center">
-            <motion.div 
-              animate={{ scale: [1, 1.1, 1], filter: [`drop-shadow(0 0 10px ${cfg.glow})`, `drop-shadow(0 0 20px ${cfg.glow})`, `drop-shadow(0 0 10px ${cfg.glow})`] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              style={{ color: cfg.glow }}
-              className="mt-4"
+          
+          {/* 4. FRONT FACE (Absolute layer, identical layout) */}
+          <div className="absolute inset-0 w-full h-full [backface-visibility:hidden]">
+            {/* Do not change this inner flex layout */}
+            <PremiumCard 
+              mode="offline"
+              role={role}
+              padding="p-6"
+              className="w-full h-full flex flex-col justify-between items-center"
             >
-              {isSpy ? <Ghost size={60} /> : <Shield size={60} />}
-            </motion.div>
-
-            <div className="flex-1 flex flex-col justify-center items-center">
-              <p className="text-2xl font-black tracking-[0.1em] text-white uppercase mb-4">
-                {isSpy
-                  ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
-                  : (isAr ? 'أنت مواطن' : 'YOU ARE A CITIZEN')}
+              <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                <Terminal size={40} className="text-emerald-500" />
+              </div>
+              <p className="text-[11px] font-black tracking-[0.3em] uppercase text-emerald-500/60">
+                {isAr ? 'اضغط للكشف' : 'HOLD TO REVEAL'}
               </p>
-
-              <div className="w-14 h-px rounded-full mb-6" style={{ background: cfg.glow, opacity: 0.4 }} />
-              {isSpy ? (
-                <div className="text-emerald-400/80 text-xs font-bold leading-relaxed px-2">
-                  {isAr ? 'أنت لا تعرف الكلمة السرية.' : 'You do not know the secret word.'}
-                  {displayHint && (
-                    <p className="text-white mt-4 font-bold bg-black/40 p-3 rounded-xl border border-emerald-500/30">
-                      {isAr ? 'تلميح الكلمة:' : 'Hint:'} {displayHint}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="text-blue-400 font-bold text-lg">
-                  {displayWord}
-                </div>
-              )}
-            </div>
+            </PremiumCard>
           </div>
-        </PremiumCard>
-      </motion.div>
+
+          {/* 5. BACK FACE (Absolute layer, pre-rotated) */}
+          <div className="absolute inset-0 w-full h-full [backface-visibility:hidden] [transform:rotateY(180deg)]">
+            {/* Do not change this inner flex layout */}
+            <PremiumCard 
+              mode="offline"
+              role={role}
+              padding="p-6"
+              className="w-full h-full flex flex-col justify-between items-center text-center"
+            >
+              <motion.div 
+                animate={{ scale: [1, 1.1, 1], filter: [`drop-shadow(0 0 10px ${cfg.glow})`, `drop-shadow(0 0 20px ${cfg.glow})`, `drop-shadow(0 0 10px ${cfg.glow})`] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                style={{ color: cfg.glow }}
+              >
+                {isSpy ? <Ghost size={48} /> : <Shield size={48} />}
+              </motion.div>
+
+              <div className="flex-1 flex flex-col justify-center items-center">
+                <p className="text-2xl font-black tracking-[0.1em] text-white uppercase mb-4">
+                  {isSpy
+                    ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
+                    : (isAr ? 'أنت مواطن' : 'YOU ARE A CITIZEN')}
+                </p>
+
+                <div className="w-14 h-px rounded-full mb-6" style={{ background: cfg.glow, opacity: 0.4 }} />
+                {isSpy ? (
+                  <div className="text-emerald-400/80 text-xs font-bold leading-relaxed">
+                    {isAr ? 'أنت لا تعرف الكلمة السرية.' : 'You do not know the secret word.'}
+                    {displayHint && (
+                      <p className="text-white mt-4 font-bold bg-black/40 p-3 rounded-xl border border-emerald-500/30">
+                        {isAr ? 'تلميح الكلمة:' : 'Hint:'} {displayHint}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-blue-400 font-bold text-lg">
+                    {displayWord}
+                  </div>
+                )}
+              </div>
+            </PremiumCard>
+          </div>
+
+        </motion.div>
+      </div>
     </div>
   );
 }
