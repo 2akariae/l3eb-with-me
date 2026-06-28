@@ -4,7 +4,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { useOfflineStore } from '../../../store/offlineStore.js';
-import { useTranslation } from '../../../constants/translations.js';
 import { GameBackground } from "@/components/game/GameBackground.jsx";
 import { Ghost, Shield, Terminal } from 'lucide-react';
 import { PremiumCard } from '../../../components/ui/index.jsx';
@@ -14,10 +13,8 @@ const SPY_CFG = {
   citizen: { glow: '#3b82f6', bg: 'bg-zinc-900', border: 'border-blue-500/40' },
 };
 
-function SpyCard({ role, pressing, language, word, hint, handleNext }) {
-  const cfg   = SPY_CFG[role];
+function SpyCard({ role, isRevealed, word, handleNext }) {
   const isSpy = role === 'spy';
-  const isAr  = language === 'ar';
 
   return (
     <div className="flex w-full flex-col items-center justify-center min-h-[60vh] overflow-hidden">
@@ -27,7 +24,7 @@ function SpyCard({ role, pressing, language, word, hint, handleNext }) {
         
         <motion.div
           className="w-full h-full relative [transform-style:preserve-3d]"
-          animate={{ rotateY: pressing ? 180 : 0 }}
+          animate={{ rotateY: isRevealed ? 180 : 0 }}
           transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
         >
           
@@ -41,7 +38,7 @@ function SpyCard({ role, pressing, language, word, hint, handleNext }) {
                 <Terminal size={48} />
               </div>
               
-              <p className="text-cyan-400 text-xl font-bold tracking-wider">{isAr ? 'اضغط للكشف' : 'HOLD TO REVEAL'}</p>
+              <p className="text-cyan-400 text-xl font-bold tracking-wider">Tap to Reveal</p>
             </div>
           </div>
 
@@ -56,9 +53,7 @@ function SpyCard({ role, pressing, language, word, hint, handleNext }) {
                   {isSpy ? <Ghost size={48} /> : <Shield size={48} />}
                 </div>
                 <h2 className="text-white text-3xl font-bold mb-2">
-                  {isSpy 
-                    ? (isAr ? 'أنت الجاسوس' : 'YOU ARE THE SPY')
-                    : (isAr ? 'أنت مواطن' : 'YOU ARE A CITIZEN')}
+                  {isSpy ? 'YOU ARE THE SPY' : 'YOU ARE A CITIZEN'}
                 </h2>
                 <p className="text-blue-400 text-xl font-medium">{word}</p>
               </div>
@@ -68,7 +63,7 @@ function SpyCard({ role, pressing, language, word, hint, handleNext }) {
                 onClick={(e) => { e.stopPropagation(); handleNext(); }}
                 className="w-full py-3 mt-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl transition-all font-medium"
               >
-                {isAr ? 'التالي' : 'NEXT'}
+                Next
               </button>
               
             </div>
@@ -81,9 +76,7 @@ function SpyCard({ role, pressing, language, word, hint, handleNext }) {
 }
 
 export default function OfflineSpyRevealScreen() {
-  const { players, envelopeIndex, nextEnvelope, language, roles, word, hint, spyId } = useOfflineStore();
-  const t      = useTranslation(language);
-  const isAr   = language === 'ar';
+  const { players, envelopeIndex, nextEnvelope, roles, word, spyId } = useOfflineStore();
 
   const [pressing,  setPressing]  = useState(false);
   const [confirmed, setConfirmed] = useState(false);
@@ -129,7 +122,7 @@ export default function OfflineSpyRevealScreen() {
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
         transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         className="relative z-10 text-center mb-7">
-        <p className="text-smoke-500 text-[11px] tracking-[0.38em] uppercase font-mono">{t('passPhoneTo')}</p>
+        <p className="text-smoke-500 text-[11px] tracking-[0.38em] uppercase font-mono">PASS PHONE TO</p>
         <h1 className="text-4xl font-black text-white tracking-wider mt-1.5"
           style={{ fontFamily: 'Playfair Display, serif' }}>
           {player?.name?.toUpperCase()}
@@ -144,8 +137,8 @@ export default function OfflineSpyRevealScreen() {
         onPointerLeave={() => setPressing(false)}
       >
         <SpyCard
-          role={role} pressing={pressing}
-          language={language} word={word} hint={hint}
+          role={role} isRevealed={pressing}
+          word={word}
           handleNext={handleNext}
         />
       </div>
@@ -154,7 +147,7 @@ export default function OfflineSpyRevealScreen() {
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
         transition={{ type: "tween", duration: 0.1, ease: "linear" }}
         className="relative z-10 mt-6 text-smoke-500 text-xs tracking-[0.28em] font-mono">
-        {pressing ? t('releaseToHide') : t('tapHoldReveal')}
+        {pressing ? 'RELEASE TO HIDE' : 'TAP AND HOLD TO REVEAL'}
       </motion.p>
 
       <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -163,7 +156,7 @@ export default function OfflineSpyRevealScreen() {
         className="relative z-10 mt-7 h-14 px-10 rounded-2xl font-black text-sm uppercase tracking-[0.18em] text-white"
         style={{ background: 'rgba(255,255,255,0.05)' }}
       >
-        {isLast ? (isAr ? 'إنهاء' : 'FINISH') : (isAr ? 'التالي' : 'NEXT')} → {envelopeIndex < players.length - 1 ? players[envelopeIndex + 1]?.name : '...'}
+        {isLast ? 'FINISH' : 'NEXT'} → {envelopeIndex < players.length - 1 ? players[envelopeIndex + 1]?.name : '...'}
       </motion.button>
     </motion.div>
   );
