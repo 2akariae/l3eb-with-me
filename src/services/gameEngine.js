@@ -20,6 +20,7 @@ import {
   onValue, onDisconnect, serverTimestamp,
 } from './firebaseConfig.js';
 import { set as dbSet } from 'firebase/database';
+import { runTransaction } from 'firebase/database';
 import { assignRoles, getAlphaMafia, PHASES, PHASE_TIMING } from '../constants/game.js';
 import { generateSpyWord } from '../games/spy/hooks/useGeminiWords.js';
 
@@ -140,7 +141,8 @@ export async function joinRoom(user, roomId, name, avatar, tabPlayerId) {
   const gameType = meta.gameType || 'mafia';
   const gsSnap   = await get(ref(db, `${getGamePath(roomId, gameType)}/gameState`));
   const phase    = gsSnap.val()?.phase ?? PHASES.LOBBY;
-  if (phase !== PHASES.LOBBY) throw new Error('Game already started.');
+  const kalimatSpectatorJoin = gameType === 'kalimat' && phase !== PHASES.LOBBY;
+  if (phase !== PHASES.LOBBY && !kalimatSpectatorJoin) throw new Error('Game already started.');
 
   const playerId = tabPlayerId || user.uid;
   await set(ref(db, `rooms/${roomId}/players/${playerId}`), {
@@ -149,7 +151,7 @@ export async function joinRoom(user, roomId, name, avatar, tabPlayerId) {
     name,
     avatar:  avatar || '',
     isHost:  false,
-    isAlive: true,
+    isAlive: !kalimatSpectatorJoin,
     joinedAt: serverTimestamp(),
   });
 
@@ -166,9 +168,37 @@ export async function leaveRoom(playerId, authUid, roomId) {
     // Cancel the onDisconnect handler before intentional removal so it doesn't
     // fire redundantly after the node is already gone.
     await onDisconnect(ref(db, `rooms/${roomId}/players/${playerId}/connected`)).cancel();
+    const beforeMetaSnap = await get(ref(db, `rooms/${roomId}/meta`));
+    const kalimatLeave = beforeMetaSnap.val()?.gameType === 'kalimat';
+    const leavingWord = kalimatLeave ? (await get(ref(db, `kalimatSecrets/${roomId}/${playerId}`))).val() : null;
     await remove(ref(db, `rooms/${roomId}/players/${playerId}`));
-    const snap = await get(ref(db, `rooms/${roomId}/players`));
-    if (!snap.exists()) await remove(ref(db, `rooms/${roomId}`));
+    const [metaSnap, playersAfter] = await Promise.all([
+      get(ref(db, `rooms/${roomId}/meta`)),
+      get(ref(db, `rooms/${roomId}/players`)),
+    ]);
+    const meta = metaSnap.val();
+    if (meta?.gameType === 'kalimat') {
+      await remove(ref(db, `kalimatSecrets/${roomId}/${playerId}`));
+      const remaining = playersAfter.val() || {};
+      const ids = Object.keys(remaining);
+      const survivors = ids.filter((id) => remaining[id]?.isAlive !== false);
+      await runTransaction(ref(db, `rooms/${roomId}/kalimat/gameState`), (state) => {
+        if (!state || state.phase === PHASES.LOBBY || state.phase === PHASES.GAME_OVER) return state;
+        const updated = { ...state, submitted: { ...(state.submitted || {}) }, turnPool: (state.turnPool || []).filter((id) => id !== playerId), words: (state.words || []).filter((word) => word.wordId !== leavingWord?.wordId) };
+        delete updated.submitted[playerId];
+        if (state.guesser === playerId) { updated.phase = PHASES.ROULETTE; updated.guesser = null; updated.spin = null; updated.pendingGuess = null; }
+        if (survivors.length < 2) { updated.phase = PHASES.GAME_OVER; updated.winner = survivors[0] || null; }
+        return updated;
+      });
+      if (meta.hostUid === authUid && ids.length) {
+        const next = remaining[ids[0]];
+        await update(ref(db, `rooms/${roomId}`), {
+          'meta/hostUid': next.authUid || ids[0],
+          [`players/${ids[0]}/isHost`]: true,
+        });
+      }
+    }
+    if (!playersAfter.exists()) await remove(ref(db, `rooms/${roomId}`));
   } catch { /* room may already be gone */ }
 }
 

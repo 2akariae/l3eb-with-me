@@ -27,6 +27,7 @@ import SpyRevealScreen     from '../games/spy/components/SpyRevealScreen.jsx';
 import SpyDiscussionScreen from '../games/spy/components/SpyDiscussionScreen.jsx';
 import SpyVotingScreen     from '../games/spy/components/SpyVotingScreen.jsx';
 import SpyGuessScreen      from '../games/spy/components/SpyGuessScreen.jsx';
+import KalimatRouter from '../games/kalimat/components/KalimatRouter.jsx';
 
 /**
  * @param {Object} props
@@ -41,6 +42,8 @@ export default function OnlineRouter({ authReady, tabPlayerId }) {
   if (!authReady) return null;
   if (!user)      return <AuthScreen key="auth" />;
   if (!roomId)    return <LandingScreen key="landing" user={user} tabPlayerId={tabPlayerId} />;
+
+  if (gameType === 'kalimat') return <KalimatRouter user={user} playerId={myPlayerId} />;
 
   if (gameType === 'spy') {
     switch (phase) {

@@ -26,6 +26,20 @@
         "banned": {
           ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid"
         },
+        "kalimat": {
+          "submissions": {
+            "$playerId": {
+              ".write": "auth !== null && (root.child('rooms').child($roomId).child('players').child($playerId).child('authUid').val() === auth.uid || $playerId === auth.uid || root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid)",
+              ".validate": "!newData.exists() || (newData.hasChildren(['accepted', 'submittedAt']) && newData.child('accepted').isBoolean())"
+            }
+          },
+          "guesses": {
+            "$playerId": {
+              ".write": "auth !== null && (root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid || ((root.child('rooms').child($roomId).child('players').child($playerId).child('authUid').val() === auth.uid || $playerId === auth.uid) && !data.exists() && root.child('rooms').child($roomId).child('kalimat').child('gameState').child('phase').val() === 'guess' && root.child('rooms').child($roomId).child('kalimat').child('gameState').child('guesser').val() === $playerId))",
+              ".validate": "!newData.exists() || (newData.hasChildren(['id', 'wordId', 'playerId', 'guesser']) && newData.child('id').isString() && newData.child('wordId').isString() && newData.child('playerId').isString() && newData.child('guesser').val() === $playerId)"
+            }
+          }
+        },
         "$gameType": {
           ".write": "auth !== null && root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid",
           "nightActions": {
@@ -62,6 +76,15 @@
       "$uid": {
         ".read": "auth !== null",
         ".write": "auth !== null && auth.uid === $uid"
+      }
+    },
+    "kalimatSecrets": {
+      "$roomId": {
+        "$playerId": {
+          ".read": "auth !== null && (root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid || root.child('rooms').child($roomId).child('players').child($playerId).child('authUid').val() === auth.uid || $playerId === auth.uid)",
+          ".write": "auth !== null && (root.child('rooms').child($roomId).child('meta').child('hostUid').val() === auth.uid || ((root.child('rooms').child($roomId).child('players').child($playerId).child('authUid').val() === auth.uid || $playerId === auth.uid) && !data.exists() && root.child('rooms').child($roomId).child('kalimat').child('gameState').child('phase').val() === 'writing'))",
+          ".validate": "!newData.exists() || (newData.hasChildren(['text', 'normalized', 'wordId']) && newData.child('text').isString() && newData.child('text').val().length <= 80 && newData.child('normalized').isString() && newData.child('wordId').isString())"
+        }
       }
     },
     "$other": {

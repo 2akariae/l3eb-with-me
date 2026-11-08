@@ -95,3 +95,8 @@ registerGame({
   descriptionAr: 'ابحث عن الجاسوس بينكم',
   minPlayers:    3,
 });
+
+registerGame({
+  id: 'kalimat', label: 'LKALIMAT', labelAr: 'الكلمات',
+  description: 'Guess who wrote each word', descriptionAr: 'خمّن شكون كتب كل كلمة', minPlayers:  3,
+});

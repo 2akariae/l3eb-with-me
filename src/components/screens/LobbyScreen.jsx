@@ -15,6 +15,7 @@ import { Share2, Crown, UserX, Users, Zap, ShieldCheck } from 'lucide-react';
 import { GameBackground } from '../game/GameBackground.jsx';
 import { useSpringMouse } from '../../hooks/useMouseTracker.js';
 import { IS_MOBILE } from '../../utils/device.js';
+import { startKalimatRoom } from '../../games/kalimat/hooks/useKalimatEngine.js';
 
 // ── Kick Confirm Modal ────────────────────────────────────────────────────────
 function KickConfirmModal({ player, onConfirm, onCancel, t }) {
@@ -167,14 +168,14 @@ export default function LobbyScreen({ user, playerId }) {
   const playerList = Object.entries(players).map(([uid, p]) => ({ uid, ...p }));
   const count = playerList.length;
   const mafiaCount = getMafiaCount(count);
-  const minPlayers = gameType === 'spy' ? 3 : 4;
+  const minPlayers = gameType === 'spy' || gameType === 'kalimat' ? 3 : 4;
   const canStart = count >= minPlayers;
 
   async function handleStart() {
     if (!canStart) { toast(t('needMorePlayers', { n: minPlayers - count }), 'error'); return; }
     setStarting(true);
     try {
-      await (gameType === 'spy' ? startSpyGame(roomId) : startGame(roomId));
+      await (gameType === 'kalimat' ? startKalimatRoom(roomId, players) : gameType === 'spy' ? startSpyGame(roomId) : startGame(roomId));
     } catch (e) { toast(e.message, 'error'); setStarting(false); }
   }
 
@@ -190,7 +191,8 @@ export default function LobbyScreen({ user, playerId }) {
   }
 
   const isSpy = gameType === 'spy';
-  const accentColor = isSpy ? '#10b981' : '#c9943a';
+  const isKalimat = gameType === 'kalimat';
+  const accentColor = isSpy ? '#10b981' : isKalimat ? '#22d3ee' : '#c9943a';
   const requests = Object.entries(joinRequests);
 
   return (
@@ -232,7 +234,7 @@ export default function LobbyScreen({ user, playerId }) {
             >
               <ShieldCheck size={14} style={{ color: accentColor }} />
               <div className="text-[10px] font-black uppercase tracking-widest text-white/60">
-                {isSpy ? `1 ${t('theSpy')} · ${count - 1} ${t('citizens')}` : `${mafiaCount} ${t('mafia')} · 1 ${t('doctor')} · 1 ${t('sheikh')}`}
+                {isKalimat ? t('kalimatDesc') : isSpy ? `1 ${t('theSpy')} · ${count - 1} ${t('citizens')}` : `${mafiaCount} ${t('mafia')} · 1 ${t('doctor')} · 1 ${t('sheikh')}`}
               </div>
             </motion.div>
           )}

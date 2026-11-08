@@ -14,6 +14,9 @@ export const PHASES = {
   EXECUTION:   'execution',
   GAME_OVER:   'game_over',
   SPY_GUESS:   'spy_guess',
+  WRITING:     'writing',
+  ROULETTE:    'roulette',
+  GUESS:       'guess',
 };
 
 export const SKIP_THRESHOLD = 0.5;
