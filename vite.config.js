@@ -3,6 +3,9 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
+  // GitHub Pages serves this project beneath /l3eb-with-me; local and server
+  // deployments continue to use the domain root.
+  base: process.env.GITHUB_PAGES === 'true' ? '/l3eb-with-me/' : '/',
   plugins: [react()],
   resolve: {
     alias: {
