@@ -150,7 +150,13 @@ export default function LandingScreen({ user, tabPlayerId }) {
         {/* Title */}
         <motion.div variants={itemVariants} className="text-center mb-10">
           <h1 className="display font-black tracking-[0.2em] uppercase text-4xl bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-500">
-            {gameType === 'spy' ? t('spyTitle') : t('mafiaTitle')}
+            {gameType === 'kalimat'
+              ? t('kalimatTitle')
+              : gameType === 'spy'
+                ? t('spyTitle')
+                : gameType === 'detective'
+                  ? 'The Detective'
+                  : t('mafiaTitle')}
           </h1>
         </motion.div>
 
